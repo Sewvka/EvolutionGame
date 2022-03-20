@@ -1,5 +1,5 @@
 @ECHO OFF 
 TITLE Best team
-ECHO Please wait, I will run nodes
+ECHO Please wait, I will run n nodes nodes
 
-minikube start --nodes 2 -p node
+minikube start --nodes %1 -p node
