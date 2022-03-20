@@ -7,8 +7,7 @@
 * Task2 - StartDate - EndDate
 
 ### Mikhail Bragin
-* Task1 - StartDate - EndDate
-* Task2 - StartDate - EndDate
+* Read Hail documentation. 
 
 ### Egor Maximov
 * Task1 - StartDate - EndDate
