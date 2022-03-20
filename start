@@ -1,0 +1,5 @@
+#!/bin/bash
+
+toilet "Привет бомжи"
+
+minikube start --nodes 2 -p node
