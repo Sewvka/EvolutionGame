@@ -53,9 +53,17 @@ public class EvolutionGame extends ApplicationAdapter {
 		if(Gdx.input.isTouched()) {
 			Vector3 touchPos = new Vector3();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos);
-			card.x = touchPos.x - card.getWidth() / 2;
-			card.y = touchPos.y - card.getHeight() / 2;
+//			System.out.println(touchPos.x > card.x);
+//			System.out.println(touchPos.x < (card.x + card.width));
+//			System.out.println((480-touchPos.y) > card.y);
+//			System.out.println((480-touchPos.y) < (card.y + card.height));
+//			System.out.println("--------------------------");
+			//Тут проверка на то, что нажатие внутри карты почему-то не работает, надо разобраться
+			if (touchPos.x > card.x && touchPos.x < (card.x + card.width) && (480-touchPos.y) < card.y && (480-touchPos.y) > (card.y + card.height) ) {
+				camera.unproject(touchPos);
+				card.x = touchPos.x - card.width / 2;
+				card.y = touchPos.y - card.height / 2;
+			}
 		}
 
 	}
