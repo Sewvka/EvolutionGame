@@ -8,9 +8,10 @@ import com.badlogic.gdx.utils.Pool;
 public class CardManager {
     private final Array<Card> activeCards;
 
-    // card pool.
     private final Pool<Card> cardPool;
     private final EvolutionGame game;
+
+    private boolean cardSelected;
 
     public CardManager(EvolutionGame game) {
         this.game = game;
@@ -21,6 +22,7 @@ public class CardManager {
                 return new Card();
             }
         };
+        cardSelected = false;
     }
 
     public Card newCard(int id, int x, int y) {
@@ -38,11 +40,13 @@ public class CardManager {
 
     public void updateMovement(Vector2 mousepos) {
         for (Card c : activeCards) {
-            if (c.contains(mousepos)) {
+            if (c.contains(mousepos) && !cardSelected) {
                 c.setSizeMod(1.2f);
+                cardSelected = true;
             }
             else {
                 c.setSizeMod(1);
+                cardSelected = false;
             }
         }
     }

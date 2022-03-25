@@ -38,7 +38,7 @@ public class Card extends Rectangle implements Pool.Poolable {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(image, x-(sizeMod-1)/2*sizeMod, y-(sizeMod-1)/2*sizeMod, width*sizeMod, height*sizeMod);
+        batch.draw(image, x-(sizeMod-1)/2*width, y-(sizeMod-1)/2*height, width*sizeMod, height*sizeMod);
     }
 
     @Override
