@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Card extends Rectangle implements Pool.Poolable {
-    private static Map<Integer, String> cardIDs;
+    private static final Map<Integer, String> cardIDs;
     static {
         HashMap<Integer, String> aMap = new HashMap<>();
         aMap.put(1, "burrower-fat");
@@ -20,14 +20,18 @@ public class Card extends Rectangle implements Pool.Poolable {
 
     private Texture image;
     private float sizeMod;
+    float rotation;
+    boolean inDeck;
 
-    public Card() {
-        this.width = 200;
-        this.height = 280;
+    public Card(float w, float h) {
+        this.width = w;
+        this.height = h;
         this.x = 0;
         this.y = 0;
         this.image = null;
         this.sizeMod = 1;
+        this.rotation = 0;
+        this.inDeck = false;
     }
 
     public void init(EvolutionGame game, Integer id, float x, float y) {
@@ -35,15 +39,19 @@ public class Card extends Rectangle implements Pool.Poolable {
         this.x = x;
         this.y = y;
         this.sizeMod = 1;
+        this.rotation = 0;
+        this.inDeck = true;
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(image, x-(sizeMod-1)/2*width, y-(sizeMod-1)/2*height, width*sizeMod, height*sizeMod);
+        batch.draw(image, x, y, width/2,height/2, width, height, sizeMod, sizeMod, rotation, 0, 0, 440, 620, false, false);
     }
 
     @Override
     public void reset() {
         this.sizeMod = 1;
+        this.rotation = 0;
+        this.inDeck = false;
     }
 
     public void setSizeMod(float sizeMod) {

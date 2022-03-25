@@ -18,51 +18,32 @@ import com.badlogic.gdx.math.Rectangle;
 public class EvolutionGame extends Game {
 	SpriteBatch batch;
 	public BitmapFont font;
-	private Rectangle card;
 	public AssetManager assets;
-	private int worldSizeX;
-	private int worldSizeY;
+	private float worldSizeX;
+	private float worldSizeY;
 
-	public int getWorldSizeX() {
+	public float getWorldSizeX() {
 		return worldSizeX;
 	}
 
-	public int getWorldSizeY() {
+	public float getWorldSizeY() {
 		return worldSizeY;
 	}
 
-	Pixmap initPixmap, resizePixmap;
-
 	@Override
 	public void create () {
+		//подгрузка ассетов
 		assets = new AssetManager();
 		assets.load("cards/large-fat.png", Texture.class);
 		assets.load("cards/burrower-fat.png", Texture.class);
+		assets.load("cards/cover.png", Texture.class);
+		assets.load("table.png", Texture.class);
+
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 		worldSizeX = 1360;
 		worldSizeY = 720;
 		this.setScreen(new LoadingScreen(this));
-
-
-		//SLAVA's STUFF
-		/*batch = new SpriteBatch();
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
-		card = new Rectangle();
-//		initPixmap = new Pixmap(Gdx.files.internal("cards/big-fat.png"));
-
-		int size = 75;
-		float coeff = 1.4f;
-//		resizePixmap = new Pixmap(size, (int) (size*coeff), initPixmap.getFormat());
-//		initPixmap.dispose();
-		bigFatCard = new Texture(Gdx.files.internal("cards/big-fat.png"));
-//		resizePixmap.dispose();
-		card.x = 800 / 2 - size / 2;
-		card.y = 5;
-		card.height = (int) size*coeff;
-		card.width = size;*/
-
 	}
 
 	@Override

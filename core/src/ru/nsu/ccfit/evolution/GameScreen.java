@@ -11,16 +11,24 @@ public class GameScreen implements Screen {
 
     final EvolutionGame game;
     OrthographicCamera camera;
-    private CardManager cManager;
+    private final Deck deck;
+    private final CreatureTable table;
 
     public GameScreen(final EvolutionGame game) {
+        //вот всё это говно хорошо бы по методам для красоты разобрать
         this.game = game;
-        cManager = new CardManager(game);
+        table = new CreatureTable(game, 700, 160);
+        deck = new Deck(game, table);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.getWorldSizeX(), game.getWorldSizeY());
 
-        cManager.newCard(1, 200, 50);
-        cManager.newCard(2, 500, 50);
+        //для эксперимента генерим в колоду карты (максимум карт - 6)
+        deck.addCard(1);
+        deck.addCard(2);
+        deck.addCard(1);
+        deck.addCard(1);
+        deck.addCard(1);
+        deck.addCard(2);
     }
 
     @Override
@@ -35,18 +43,17 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        cManager.drawAll(game.batch);
+        game.batch.draw(table.tableTexture, table.x, table.y, table.width, table.height);
+        deck.drawAll(game.batch);
+        table.drawAll(game.batch);
         game.batch.end();
 
         Vector3 mousePos = new Vector3();
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
-        cManager.updateMovement(new Vector2(mousePos.x, mousePos.y));
 
-        if (Gdx.input.isTouched()) {
-
-        }
-
+        deck.update(new Vector2(mousePos.x, mousePos.y));
+        table.update();
     }
 
     @Override
