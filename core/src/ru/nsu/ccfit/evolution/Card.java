@@ -35,7 +35,7 @@ public class Card extends Rectangle implements Pool.Poolable {
     }
 
     public void init(EvolutionGame game, Integer id, float x, float y) {
-        this.image = game.assets.get("cards/" + cardIDs.get(id) + ".png", Texture.class);
+        this.image = game.assets.get("oldcards/" + cardIDs.get(id) + ".png", Texture.class);
         this.x = x;
         this.y = y;
         this.sizeMod = 1;

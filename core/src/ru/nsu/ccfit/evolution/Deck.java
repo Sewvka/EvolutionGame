@@ -75,8 +75,9 @@ public class Deck {
                         forRemoval = i;
                         table.addCreature();
                         cardPool.free(c);
-                        newDialog dia = new newDialog();
-                        dia.show();
+                        //Dialog Test (slava)
+//                        newDialog dia = new newDialog();
+//                        dia.show();
                     }
                     else {
                         c.inDeck = true;

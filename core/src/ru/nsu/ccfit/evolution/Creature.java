@@ -20,7 +20,7 @@ public class Creature extends Rectangle implements Pool.Poolable {
     }
 
     public void init(EvolutionGame game) {
-        this.image = game.assets.get("cards/cover.png", Texture.class);
+        this.image = game.assets.get("oldcards/cover.png", Texture.class);
     }
 
     public void draw(SpriteBatch batch) {
