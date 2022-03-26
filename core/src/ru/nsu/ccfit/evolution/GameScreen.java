@@ -44,8 +44,8 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
         game.batch.draw(table.tableTexture, table.x, table.y, table.width, table.height);
-        deck.drawAll(game.batch);
         table.drawAll(game.batch);
+        deck.drawAll(game.batch);
         game.batch.end();
 
         Vector3 mousePos = new Vector3();
