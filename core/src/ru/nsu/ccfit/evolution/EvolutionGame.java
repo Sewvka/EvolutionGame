@@ -34,9 +34,9 @@ public class EvolutionGame extends Game {
 	public void create () {
 		//подгрузка ассетов
 		assets = new AssetManager();
-		assets.load("cards/large-fat.png", Texture.class);
-		assets.load("cards/burrower-fat.png", Texture.class);
-		assets.load("cards/cover.png", Texture.class);
+		assets.load("oldcards/large-fat.png", Texture.class);
+		assets.load("oldcards/burrower-fat.png", Texture.class);
+		assets.load("oldcards/cover.png", Texture.class);
 		assets.load("table.png", Texture.class);
 
 		font = new BitmapFont();
