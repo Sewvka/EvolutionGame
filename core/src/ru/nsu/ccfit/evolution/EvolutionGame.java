@@ -48,25 +48,9 @@ public class EvolutionGame extends Game {
 
 	@Override
 	public void render () {
+
 		super.render();
-		/* SLAVA'S STUFF
-		camera.update();
-		batch.begin();
-		batch.draw(bigFatCard, card.x, card.y);
-		batch.end();
-
-		//TODO make it work with all cards, maybe as a class dnd(drag and drop)
-		if(Gdx.input.isTouched()) {
-			Vector3 touchPos = new Vector3();
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			if ((touchPos.x > card.x && touchPos.x < (card.x + card.width)) && ((480-touchPos.y) > card.y && (480-touchPos.y) < (card.y + card.height))) {
-				camera.unproject(touchPos);
-				card.x = touchPos.x - card.width / 2;
-				card.y = touchPos.y - card.height / 2;
-			}
-		}
-
-		 */
+		
 	}
 	
 	@Override
