@@ -29,7 +29,7 @@ public class EvolutionGame extends Game {
 	public float getWorldSizeY() {
 		return worldSizeY;
 	}
-
+	//TODO In this branch we will work with multiplayer
 	@Override
 	public void create () {
 		//подгрузка ассетов
