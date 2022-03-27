@@ -35,7 +35,7 @@ public class Card extends Rectangle implements Pool.Poolable {
     }
 
     public void init(EvolutionGame game, Integer id, float x, float y) {
-        this.image = game.assets.get("oldcards/" + cardIDs.get(id) + ".png", Texture.class);
+        this.image = game.assets.get("cards/" + cardIDs.get(id) + ".png", Texture.class);
         this.x = x;
         this.y = y;
         this.sizeMod = 1;
@@ -44,7 +44,7 @@ public class Card extends Rectangle implements Pool.Poolable {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(image, x, y, width/2,height/2, width, height, sizeMod, sizeMod, rotation, 0, 0, 440, 620, false, false);
+        batch.draw(image, x, y, width/2,height/2, width, height, sizeMod, sizeMod, rotation, 0, 0, 743, 1038, false, false);
     }
 
     @Override
