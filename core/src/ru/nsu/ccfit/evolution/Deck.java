@@ -76,8 +76,8 @@ public class Deck {
                         table.addCreature();
                         cardPool.free(c);
                         //Dialog Test (slava)
-//                        newDialog dia = new newDialog();
-//                        dia.show();
+                        newDialog dia = new newDialog();
+                        dia.show();
                     }
                     else {
                         c.inDeck = true;
