@@ -20,6 +20,7 @@ public class newDialog implements Screen {
         System.out.println("1");
         chooseDialog newDialog = new chooseDialog("New dialog", skin);
         System.out.println("2");
+        stage = new Stage();
         newDialog.show(stage);
         System.out.println("3");
     }
