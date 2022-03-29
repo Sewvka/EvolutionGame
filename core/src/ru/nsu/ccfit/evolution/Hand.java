@@ -71,11 +71,21 @@ public class Hand {
                     selectionFlag = true;
                 }
                 else {
+                    //карта играется на стол
                     if (table.contains(mousepos)) {
                         forRemoval = i;
-                        table.addCreature();
+                        //добавляется новое свойство
+                        if (table.creatureSelected()) {
+                            table.addAbility(c.getAbility1());
+                            table.addAbility(c.getAbility2());
+                        }
+                        //добавляется новое существо
+                        else {
+                            table.addCreature();
+                        }
                         cardPool.free(c);
                     }
+                    //карта попадает обратно в колоду
                     else {
                         c.inDeck = true;
                     }

@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class DeckCard extends Card {
     private static final Map<Integer, String> cardIDs;
+    private String ability1;
+    private String ability2;
     static {
         HashMap<Integer, String> aMap = new HashMap<>();
         aMap.put(1, "burrower-fat");
@@ -26,8 +28,22 @@ public class DeckCard extends Card {
 
     public void init(EvolutionGame game, Integer id) {
         super.init();
-        this.image = game.assets.get("cards/" + cardIDs.get(id) + ".png", Texture.class);
+
+        String cardname = cardIDs.get(id);
+        this.image = game.assets.get("cards/" + cardname + ".png", Texture.class);
         this.inDeck = true;
+
+        //несколько костыльно, но делим название файла на название свойств
+        this.ability1 = cardname.substring(0, cardname.indexOf('-'));
+        this.ability2 = cardname.substring(cardname.indexOf('-')+1);
+    }
+
+    public String getAbility1() {
+        return ability1;
+    }
+
+    public String getAbility2() {
+        return ability2;
     }
 
     @Override

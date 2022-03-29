@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
+import java.util.Objects;
+
 public class Creature extends Card {
     private short abilities;
     private float sizeMod;
@@ -30,7 +32,8 @@ public class Creature extends Card {
     }
 
     public void addAbility(String ability) {
-        abilities |= Abilities.get(ability);
+        //временное условие, до того, как добавлю реализацию особых свойств
+        if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
     }
 
     public void removeAbility(String ability) {

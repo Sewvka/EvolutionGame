@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Pool;
 
 public class Card extends Rectangle implements Pool.Poolable {
     public Texture image;
-    private float sizeMod;
-    private float rotation;
+    protected float sizeMod;
+    protected float rotation;
 
     public Card(float w, float h) {
         this.width = w;

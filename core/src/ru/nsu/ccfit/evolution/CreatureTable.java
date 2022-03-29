@@ -42,13 +42,17 @@ public class CreatureTable extends Rectangle {
         activeCreatures.add(c);
     }
 
+    public void addAbility(String ability) {
+        activeCreatures.get(selectedCreature).addAbility(ability);
+    }
+
     public void drawAll(SpriteBatch batch) {
         for (Creature c : activeCreatures) {
             c.draw(batch);
         }
     }
 
-    public boolean isCreatureSelected() {
+    public boolean creatureSelected() {
         return (selectedCreature != -1);
     }
 
