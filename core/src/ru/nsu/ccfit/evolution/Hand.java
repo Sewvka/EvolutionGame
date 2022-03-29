@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-public class Deck {
+public class Hand {
     final float CARD_W = 150;
     final float CARD_H = 210;
     private final Array<Card> activeCards;
@@ -17,7 +17,7 @@ public class Deck {
     private int selectedCard;
     private final CreatureTable table;
 
-    public Deck(EvolutionGame game, CreatureTable table) {
+    public Hand(EvolutionGame game, CreatureTable table) {
         this.game = game;
         this.table = table;
         activeCards = new Array<>(6);

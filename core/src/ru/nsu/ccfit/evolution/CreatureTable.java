@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
 public class CreatureTable extends Rectangle {
-    final float CREATURE_W = 100;
-    final float CREATURE_H = 140;
+    static final float CREATURE_W = 100;
+    static final float CREATURE_H = 140;
     private final Array<Creature> activeCreatures;
 
     private final Pool<Creature> creaturePool;

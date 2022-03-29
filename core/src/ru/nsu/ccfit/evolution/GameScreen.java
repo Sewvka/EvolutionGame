@@ -6,29 +6,33 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
 
     final EvolutionGame game;
     OrthographicCamera camera;
-    private final Deck deck;
+    private final Hand hand;
     private final CreatureTable table;
+    private Viewport viewport;
 
     public GameScreen(final EvolutionGame game) {
         //вот всё это говно хорошо бы по методам для красоты разобрать
         this.game = game;
         table = new CreatureTable(game, 700, 160);
-        deck = new Deck(game, table);
+        hand = new Hand(game, table);
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.getWorldSizeX(), game.getWorldSizeY());
+        viewport = new ExtendViewport(game.getWorldSizeX(), game.getWorldSizeY(), camera);
 
         //для эксперимента генерим в колоду карты (максимум карт - 6)
-        deck.addCard(1);
-        deck.addCard(2);
-        deck.addCard(1);
-        deck.addCard(1);
-        deck.addCard(1);
-        deck.addCard(2);
+        hand.addCard(1);
+        hand.addCard(2);
+        hand.addCard(1);
+        hand.addCard(1);
+        hand.addCard(1);
+        hand.addCard(2);
     }
 
     @Override
@@ -45,14 +49,14 @@ public class GameScreen implements Screen {
         game.batch.begin();
         game.batch.draw(table.tableTexture, table.x, table.y, table.width, table.height);
         table.drawAll(game.batch);
-        deck.drawAll(game.batch);
+        hand.drawAll(game.batch);
         game.batch.end();
 
         Vector3 mousePos = new Vector3();
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
 
-        deck.update(new Vector2(mousePos.x, mousePos.y));
+        hand.update(new Vector2(mousePos.x, mousePos.y));
         table.update();
     }
 
