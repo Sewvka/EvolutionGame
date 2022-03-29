@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.Pool;
 public class Hand {
     final float CARD_W = 150;
     final float CARD_H = 210;
-    private final Array<Card> activeCards;
+    private final Array<DeckCard> activeCards;
 
-    private final Pool<Card> cardPool;
+    private final Pool<DeckCard> cardPool;
     private final EvolutionGame game;
 
     private int selectedCard;
@@ -21,10 +21,10 @@ public class Hand {
         this.game = game;
         this.table = table;
         activeCards = new Array<>(6);
-        cardPool = new Pool<Card>() {
+        cardPool = new Pool<DeckCard>() {
             @Override
-            protected Card newObject() {
-                return new Card(CARD_W, CARD_H);
+            protected DeckCard newObject() {
+                return new DeckCard(CARD_W, CARD_H);
             }
         };
         selectedCard = -1;
@@ -32,14 +32,14 @@ public class Hand {
 
     //добавляем карту в колоду
     public void addCard(int id) {
-        Card c = cardPool.obtain();
+        DeckCard c = cardPool.obtain();
         activeCards.add(c);
         //вот тут не знаю, мб стоит какие-то другие координаты по дефолту указывать
-        c.init(game, id, 0, 0);
+        c.init(game, id);
     }
 
     public void drawAll(SpriteBatch batch) {
-        for (Card c : activeCards) {
+        for (DeckCard c : activeCards) {
             c.draw(batch);
         }
         //последней рисуем выбранную карту, чтобы она отображалась сверху.
@@ -59,7 +59,7 @@ public class Hand {
         boolean selectionFlag = false;
 
         //проходимся по всем картам
-        for (Card c : activeCards) {
+        for (DeckCard c : activeCards) {
             //если карта вне колоды
             if (!c.inDeck) {
                 //пока мышка не отпущена, двигается за курсором
@@ -67,7 +67,7 @@ public class Hand {
                     c.inDeck = false;
                     c.x = mousepos.x - CARD_W / 2;
                     c.y = mousepos.y - CARD_H / 2;
-                    c.rotation = 0;
+                    c.setRotation(0);
                     selectionFlag = true;
                 }
                 else {
@@ -89,7 +89,7 @@ public class Hand {
                 float yOffset = Math.abs(i - (float) (count - 1) / 2) * CARD_W / 8;
                 c.x = game.getWorldSizeX() / 2 - CARD_W / 2 + xOffset;
                 c.y = 50 - yOffset;
-                c.rotation = -(i - (float) (count - 1) / 2) * 8;
+                c.setRotation(-(i - (float) (count - 1) / 2) * 8);
 
                 //если на карту навели мышкой
                 if (c.contains(mousepos)) {

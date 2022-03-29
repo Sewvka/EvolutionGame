@@ -55,9 +55,10 @@ public class GameScreen implements Screen {
         Vector3 mousePos = new Vector3();
         mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mousePos);
+        Vector2 mousePos2d = new Vector2(mousePos.x, mousePos.y);
 
-        hand.update(new Vector2(mousePos.x, mousePos.y));
-        table.update();
+        hand.update(mousePos2d);
+        table.update(mousePos2d);
     }
 
     @Override

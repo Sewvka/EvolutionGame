@@ -5,23 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 public class Card extends Rectangle implements Pool.Poolable {
-    private static final Map<Integer, String> cardIDs;
-    static {
-        HashMap<Integer, String> aMap = new HashMap<>();
-        aMap.put(1, "burrower-fat");
-        aMap.put(2, "large-fat");
-        cardIDs = Collections.unmodifiableMap(aMap);
-    }
-
-    private Texture image;
+    public Texture image;
     private float sizeMod;
-    float rotation;
-    boolean inDeck;
+    private float rotation;
 
     public Card(float w, float h) {
         this.width = w;
@@ -31,16 +18,13 @@ public class Card extends Rectangle implements Pool.Poolable {
         this.image = null;
         this.sizeMod = 1;
         this.rotation = 0;
-        this.inDeck = false;
     }
 
-    public void init(EvolutionGame game, Integer id, float x, float y) {
-        this.image = game.assets.get("cards/" + cardIDs.get(id) + ".png", Texture.class);
-        this.x = x;
-        this.y = y;
+    public void init() {
+        this.x = 0;
+        this.y = 0;
         this.sizeMod = 1;
         this.rotation = 0;
-        this.inDeck = true;
     }
 
     public void draw(SpriteBatch batch) {
@@ -51,10 +35,14 @@ public class Card extends Rectangle implements Pool.Poolable {
     public void reset() {
         this.sizeMod = 1;
         this.rotation = 0;
-        this.inDeck = false;
     }
 
     public void setSizeMod(float sizeMod) {
         this.sizeMod = sizeMod;
     }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
 }
+
