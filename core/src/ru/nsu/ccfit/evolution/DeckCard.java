@@ -1,21 +1,18 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Pool;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeckCard extends Card {
-    private static final Map<Integer, String> cardIDs;
+public class DeckCard extends GameSprite {
     private String ability1;
     private String ability2;
+    private static final Map<Integer, String> cardIDs;
     static {
         HashMap<Integer, String> aMap = new HashMap<>();
-        aMap.put(1, "burrower-fat");
-        aMap.put(2, "large-fat");
+        aMap.put(1, "burrowing-fat");
+        aMap.put(2, "high_body_weight-fat");
         cardIDs = Collections.unmodifiableMap(aMap);
     }
 

@@ -1,24 +1,21 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Pool;
 
 import java.util.Objects;
 
-public class Creature extends Card {
+public class CreatureView extends GameSprite {
     private short abilities;
     private float sizeMod;
 
-    public Creature(float w, float h) {
+    public CreatureView(float w, float h) {
         super(w, h);
         this.abilities = 0;
     }
 
     public void init(EvolutionGame game) {
         super.init();
-        this.image = game.assets.get("cards/cover.png", Texture.class);
+        this.image = game.getLoader().getTexture("cover.png");
     }
 
     @Override

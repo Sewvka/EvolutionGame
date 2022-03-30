@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
-public class Card extends Rectangle implements Pool.Poolable {
+public class GameSprite extends Rectangle implements Pool.Poolable {
     public Texture image;
     protected float sizeMod;
     protected float rotation;
 
-    public Card(float w, float h) {
+    public GameSprite(float w, float h) {
         this.width = w;
         this.height = h;
         this.x = 0;

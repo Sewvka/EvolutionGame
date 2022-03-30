@@ -8,13 +8,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class LoadingScreen implements Screen {
     final EvolutionGame game;
-    private final OrthographicCamera camera;
-
 
     public LoadingScreen(final EvolutionGame game) {
         this.game = game;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, game.getWorldSizeY(), game.getWorldSizeX());
     }
 
     @Override
@@ -24,18 +20,14 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(220, 220, 220, 0);
-        camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
-
-        game.batch.begin();
-        if (game.assets.update()) {
+        if (game.getLoader().isLoaded()) {
             game.setScreen(new GameScreen(game));
         }
         else {
-            game.font.draw(game.batch, "Loading..." + (game.assets.getProgress() * 100) + "%", 100, 150);
+            game.getDrawer().begin();
+            game.getDrawer().drawLoading();
+            game.getDrawer().end();
         }
-        game.batch.end();
     }
 
     @Override

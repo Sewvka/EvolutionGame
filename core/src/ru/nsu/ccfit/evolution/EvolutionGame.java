@@ -1,60 +1,48 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Rectangle;
-
-
 
 public class EvolutionGame extends Game {
-	SpriteBatch batch;
-	public BitmapFont font;
-	public AssetManager assets;
-	private float worldSizeX;
-	private float worldSizeY;
+    private AssetLoader loader;
+    private SpriteDrawer drawer;
+    private Controller controller;
+    public static final float WORLD_SIZE_X = 1360;
+    public static final float WORLD_SIZE_Y = 720;
 
-	public float getWorldSizeX() {
-		return worldSizeX;
-	}
+    @Override
+    public void create() {
+        load();
+    }
 
-	public float getWorldSizeY() {
-		return worldSizeY;
-	}
+    @Override
+    public void render() {
+        super.render();
+    }
 
-	@Override
-	public void create () {
-		//подгрузка ассетов
-		assets = new AssetManager();
-		assets.load("cards/large-fat.png", Texture.class);
-		assets.load("cards/burrower-fat.png", Texture.class);
-		assets.load("cards/cover.png", Texture.class);
-		assets.load("table.png", Texture.class);
+    @Override
+    public void dispose() {
+        loader.dispose();
+        drawer.dispose();
+    }
 
-		font = new BitmapFont();
-		batch = new SpriteBatch();
-		worldSizeX = 1360;
-		worldSizeY = 720;
-		this.setScreen(new LoadingScreen(this));
-	}
+    private void load() {
+        controller = new Controller(this);
+        loader = new AssetLoader();
+        loader.loadAll();
+        drawer = new SpriteDrawer(loader);
+        this.setScreen(new LoadingScreen(this));
+    }
 
-	@Override
-	public void render () {
-		super.render();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		font.dispose();
-		assets.dispose();
-	}
+    public SpriteDrawer getDrawer() {
+        return drawer;
+    }
+
+    public AssetLoader getLoader() {
+        return loader;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
 }
