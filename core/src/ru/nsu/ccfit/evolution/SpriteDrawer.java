@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -11,7 +12,7 @@ public class SpriteDrawer {
     private final SpriteBatch batch;
     private final OrthographicCamera camera;
     private final AssetLoader assets;
-    private ArrayList<Drawable> drawables;
+    private final ArrayList<Drawable> drawables;
 
     public SpriteDrawer(AssetLoader assets) {
         this.assets = assets;
@@ -23,6 +24,10 @@ public class SpriteDrawer {
 
     public void addDrawable(Drawable d) {
         drawables.add(d);
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     public void dispose() {

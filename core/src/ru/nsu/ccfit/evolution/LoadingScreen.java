@@ -1,16 +1,16 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LoadingScreen implements Screen {
     final EvolutionGame game;
+    private final Viewport viewport;
 
     public LoadingScreen(final EvolutionGame game) {
         this.game = game;
+        viewport = new ExtendViewport(EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y, game.getDrawer().getCamera());
     }
 
     @Override
@@ -32,7 +32,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        viewport.update(width, height);
     }
 
     @Override
