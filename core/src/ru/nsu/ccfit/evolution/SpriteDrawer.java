@@ -5,16 +5,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.ArrayList;
+
 public class SpriteDrawer {
     private final SpriteBatch batch;
     private final OrthographicCamera camera;
     private final AssetLoader assets;
+    private ArrayList<Drawable> drawables;
 
     public SpriteDrawer(AssetLoader assets) {
         this.assets = assets;
+        drawables = new ArrayList<>();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y);
         batch = new SpriteBatch();
+    }
+
+    public void addDrawable(Drawable d) {
+        drawables.add(d);
     }
 
     public void dispose() {
@@ -41,8 +49,6 @@ public class SpriteDrawer {
     }
 
     public void drawGame() {
-        /*batch.draw(table.tableTexture, table.x, table.y, table.width, table.height);
-        table.drawAll(batch);
-        hand.drawAll(batch);*/
+        for (Drawable d: drawables) d.draw(batch);
     }
 }

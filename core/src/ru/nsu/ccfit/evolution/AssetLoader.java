@@ -14,10 +14,10 @@ public class AssetLoader {
     }
 
     public void loadAll() {
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i < 20; i++) {
             assets.load("cards/" + Cards.getName(i) + ".png", Texture.class);
          }
-        assets.load("cover.png", Texture.class);
+        assets.load("cards/cover.png", Texture.class);
         assets.load("table.png", Texture.class);
     }
 

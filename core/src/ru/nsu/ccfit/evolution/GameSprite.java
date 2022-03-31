@@ -27,8 +27,8 @@ public class GameSprite extends Rectangle implements Pool.Poolable {
         this.rotation = 0;
     }
 
-    public void draw(SpriteBatch batch) {
-        batch.draw(image, x, y, width/2,height/2, width, height, sizeMod, sizeMod, rotation, 0, 0, 440, 620, false, false);
+    public void draw(SpriteBatch batch, int srcW, int srcH) {
+        batch.draw(image, x, y, width/2,height/2, width, height, sizeMod, sizeMod, rotation, 0, 0, srcW, srcH, false, false);
     }
 
     @Override

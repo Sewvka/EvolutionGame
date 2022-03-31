@@ -12,6 +12,8 @@ public class GameScreen implements Screen {
         this.game = game;
         table = new TableView(game, EvolutionGame.WORLD_SIZE_X /2 - 350, 300, 700, 160);
         handView = new HandView(game, table);
+        game.getDrawer().addDrawable(table);
+        game.getDrawer().addDrawable(handView);
 
         //для эксперимента генерим в колоду карты (максимум карт - 6)
         handView.addCard(1);
@@ -35,8 +37,8 @@ public class GameScreen implements Screen {
 
         Vector2 mousePos = game.getController().getMouseCoords();
 
-        handView.update(mousePos);
-        table.update(mousePos);
+        handView.updateLogic(mousePos);
+        table.updateLogic(mousePos);
     }
 
     @Override

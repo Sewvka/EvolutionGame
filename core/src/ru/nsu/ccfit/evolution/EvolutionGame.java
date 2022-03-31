@@ -1,12 +1,12 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class EvolutionGame extends Game {
     private AssetLoader loader;
     private SpriteDrawer drawer;
     private Controller controller;
+    private CommunicationManager communicationManager;
     public static final float WORLD_SIZE_X = 1360;
     public static final float WORLD_SIZE_Y = 720;
 
@@ -31,6 +31,7 @@ public class EvolutionGame extends Game {
         loader = new AssetLoader();
         loader.loadAll();
         drawer = new SpriteDrawer(loader);
+        communicationManager = new CommunicationManager(this);
         this.setScreen(new LoadingScreen(this));
     }
 
@@ -44,5 +45,9 @@ public class EvolutionGame extends Game {
 
     public Controller getController() {
         return controller;
+    }
+
+    public CommunicationManager getCommunicationManager() {
+        return communicationManager;
     }
 }
