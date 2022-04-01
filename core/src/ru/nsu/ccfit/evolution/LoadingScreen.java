@@ -1,21 +1,19 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.utils.ScreenUtils;
 
-public class LoadingScreen implements Screen {
-    final EvolutionGame game;
-    private final Viewport viewport;
+public class LoadingScreen extends StageScreen {
+    ProgressBar bar;
 
     public LoadingScreen(final EvolutionGame game) {
-        this.game = game;
-        viewport = new ExtendViewport(EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y, game.getDrawer().getCamera());
-    }
-
-    @Override
-    public void show() {
-
+        super(game);
+        bar = new ProgressBar(0, 100, 1, false, game.getSkin(), "default-horizontal");
+        bar.setPosition(EvolutionGame.WORLD_SIZE_X/2 - 200, 150);
+        bar.setSize(400, 20);
+        bar.setAnimateDuration(0.5f);
+        stage.addActor(bar);
+        bar.setValue(0);
     }
 
     @Override
@@ -24,34 +22,12 @@ public class LoadingScreen implements Screen {
             game.setScreen(new GameScreen(game));
         }
         else {
-            game.getDrawer().begin();
-            game.getDrawer().drawLoading();
-            game.getDrawer().end();
+            ScreenUtils.clear(220, 220, 220, 220);
+            game.getCamera().update();
+            bar.setValue(game.getLoader().progress() * 100);
+            bar.updateVisualValue();
+            stage.act();
+            stage.draw();
         }
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }

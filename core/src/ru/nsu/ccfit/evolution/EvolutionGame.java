@@ -1,18 +1,32 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class EvolutionGame extends Game {
     private AssetLoader loader;
-    private SpriteDrawer drawer;
-    private Controller controller;
+    private OrthographicCamera camera;
+    private Skin skin;
     private CommunicationManager communicationManager;
     public static final float WORLD_SIZE_X = 1360;
     public static final float WORLD_SIZE_Y = 720;
 
     @Override
     public void create() {
-        load();
+        skin = new Skin(Gdx.files.internal("styles/uiskin.json"), new TextureAtlas(Gdx.files.internal("styles/uiskin.atlas")));
+        loader = new AssetLoader();
+        loader.loadAll();
+        communicationManager = new CommunicationManager(this);
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y);
+        this.setScreen(new LoadingScreen(this));
     }
 
     @Override
@@ -23,31 +37,28 @@ public class EvolutionGame extends Game {
     @Override
     public void dispose() {
         loader.dispose();
-        drawer.dispose();
-    }
-
-    private void load() {
-        controller = new Controller(this);
-        loader = new AssetLoader();
-        loader.loadAll();
-        drawer = new SpriteDrawer(loader);
-        communicationManager = new CommunicationManager(this);
-        this.setScreen(new LoadingScreen(this));
-    }
-
-    public SpriteDrawer getDrawer() {
-        return drawer;
     }
 
     public AssetLoader getLoader() {
         return loader;
     }
 
-    public Controller getController() {
-        return controller;
-    }
-
     public CommunicationManager getCommunicationManager() {
         return communicationManager;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public Vector2 getMouseCoords() {
+        Vector3 mousePos = new Vector3();
+        mousePos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mousePos);
+        return (new Vector2(mousePos.x, mousePos.y));
+    }
+
+    public Skin getSkin() {
+        return skin;
     }
 }

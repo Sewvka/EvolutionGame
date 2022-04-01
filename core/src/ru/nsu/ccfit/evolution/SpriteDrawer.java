@@ -3,7 +3,6 @@ package ru.nsu.ccfit.evolution;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
@@ -32,10 +31,6 @@ public class SpriteDrawer {
 
     public void dispose() {
         batch.dispose();
-    }
-
-    public void unproject(Vector3 v) {
-        camera.unproject(v);
     }
 
     public void begin() {

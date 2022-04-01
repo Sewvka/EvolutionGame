@@ -1,8 +1,10 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class CardView extends GameSprite {
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
+public class CardView extends GameActor {
     private String ability1;
     private String ability2;
     private boolean inDeck;
@@ -24,11 +26,17 @@ public class CardView extends GameSprite {
         this.inDeck = false;
     }
 
-    public void init(EvolutionGame game, Integer id) {
-        super.init();
+    public void select() {
+        addAction(scaleTo(1.1f, 1.1f,0.2f));
+    }
 
+    public void deselect() {
+        addAction(scaleTo(1,1, 0.2f));
+    }
+
+    public void init(EvolutionGame game, Integer id) {
         String cardname = Cards.getName(id);
-        this.image = game.getLoader().getCardTexture(cardname);
+        this.texture = new TextureRegion(game.getLoader().getCardTexture(cardname));
         this.inDeck = true;
 
         //несколько костыльно, но делим название файла на название свойств
@@ -39,11 +47,8 @@ public class CardView extends GameSprite {
         this.ability2 = cardname.substring(cardname.indexOf('-') + 1);
     }
 
-    public void moveWithCursor(Vector2 mousepos) {
-        inDeck = false;
-        x = mousepos.x - width / 2;
-        y = mousepos.y - height / 2;
-        setRotation(0);
+    public void move(float x, float y, float t) {
+        addAction(parallel(rotateTo(0, t), moveTo(x, y, t)));
     }
 
     public String getAbility1() {
@@ -62,11 +67,9 @@ public class CardView extends GameSprite {
         this.ability2 = null;
     }
 
-    public void updateDeckPosition(int count, int total, EvolutionGame game) {
-        float xOffset = (count - (float) (total - 1) / 2) * width / 2;
-        float yOffset = Math.abs(count - (float) (total - 1) / 2) * height / 8;
-        x = EvolutionGame.WORLD_SIZE_X / 2 - width / 2 + xOffset;
-        y = 50 - yOffset;
-        setRotation(-(count - (float) (total - 1) / 2) * 8);
+    public void updateDeckPosition(int count, int total) {
+        float x = (count - (float) (total - 1) / 2) * getWidth() / 2 - getWidth() / 2;
+        float y = - Math.abs(count - (float) (total - 1) / 2) * getHeight() / 8;
+        addAction(parallel(moveTo( x, y, 0.1f), rotateTo(-(count - (float) (total - 1) / 2) * 8, 0.1f)));
     }
 }

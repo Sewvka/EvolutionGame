@@ -1,23 +1,23 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-public class HandView implements Drawable {
+public class HandView extends Group {
     final float CARD_W = 150;
     final float CARD_H = 210;
-    final int TEXTURE_W = 740;
-    final int TEXTURE_H = 1036;
     private final Array<CardView> activeCards;
     private final Pool<CardView> cardPool;
     private final EvolutionGame game;
     private int selectedCard;
     private final TableView table;
 
-    public HandView(EvolutionGame game, TableView table) {
+    public HandView(EvolutionGame game, float x, float y, TableView table) {
+        setPosition(x, y);
         this.game = game;
         this.table = table;
         activeCards = new Array<>(6);
@@ -30,28 +30,51 @@ public class HandView implements Drawable {
         selectedCard = -1;
     }
 
-    //добавляем карту в колоду
     public void addCard(int id) {
         if (game.getCommunicationManager().requestCardAddition(id)) {
             CardView c = cardPool.obtain();
             c.init(game, id);
             activeCards.add(c);
+            addActor(c);
         }
     }
 
-    public void draw(SpriteBatch batch) {
-        for (CardView c : activeCards) {
-            c.draw(batch, TEXTURE_W, TEXTURE_H);
+    public void removeCard(int i) {
+        if (i >= 0) {
+            CardView c = activeCards.get(i);
+            cardPool.free(c);
+            activeCards.removeIndex(i);
+            removeActor(c);
         }
-        //последней рисуем выбранную карту, чтобы она отображалась сверху.
-        //правда, так получается, что мы рисуем её дважды, но в целом пофиг.
-        if (selectedCard != -1) activeCards.get(selectedCard).draw(batch, TEXTURE_W, TEXTURE_H);
     }
 
-    //хорошо бы сделать красивее и распихать по методам
-    public void updateLogic(Vector2 mousepos) {
+    @Override
+    public void act(float delta) {
         int i = 0;
+        for (CardView c : activeCards) {
+            c.updateDeckPosition(i, activeCards.size);
+            i++;
+        }
+        super.act(delta);
+        Vector2 mousepos = parentToLocalCoordinates(game.getMouseCoords());
 
+        Actor hit = hit(mousepos.x, mousepos.y, true);
+        if (hit != null) {
+            CardView c = (CardView) hit;
+            if (selectedCard != activeCards.indexOf(c, true)) {
+                c.select();
+                if (selectedCard != -1) activeCards.get(selectedCard).deselect();
+                selectedCard = activeCards.indexOf(c, true);
+            }
+        }
+        else if (selectedCard != -1) {
+            activeCards.get(selectedCard).deselect();
+            selectedCard = -1;
+        }
+
+        /*
+
+        int i = 0;
         //ля, хорошо бы переделать так, чтобы прямо во время итерации удалять можно было
         int forRemoval = -1;
 
@@ -91,7 +114,7 @@ public class HandView implements Drawable {
                 }
             } else {
                 //если карта в колоде
-                c.updateDeckPosition(i, activeCards.size, game);
+                c.updateDeckPosition(i, activeCards.size);
                 //если на карту навели мышкой
                 if (c.contains(mousepos)) {
                     //если карта не выбрана, выбираем эту
@@ -116,13 +139,6 @@ public class HandView implements Drawable {
         //ни одна карта не выбрана
         if (!selectionFlag) selectedCard = -1;
         //удаляем карту
-        removeCard(forRemoval);
-    }
-
-    public void removeCard(int i) {
-        if (i >= 0) {
-            cardPool.free(activeCards.get(i));
-            activeCards.removeIndex(i);
-        }
+        removeCard(forRemoval);*/
     }
 }
