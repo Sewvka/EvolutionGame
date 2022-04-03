@@ -38,4 +38,8 @@ public class HandModel {
         cardPool.free(activeCards.get(i));
         activeCards.removeIndex(i);
     }
+
+    public int getCardIndex(CardModel card) {
+        return activeCards.indexOf(card, true);
+    }
 }

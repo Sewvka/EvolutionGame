@@ -1,7 +1,13 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import sun.tools.jconsole.Tab;
 
 import java.util.Objects;
 
@@ -14,14 +20,19 @@ public class CreatureView extends GameActor {
         super(w, h);
         this.abilities = 0;
         this.texture = new TextureRegion(game.getLoader().getTexture("cards/cover.png"));
+        addListener(new CreatureInputListener(this));
     }
 
     public void select() {
-        addAction(scaleTo(1.1f, 0.2f));
+        addAction(scaleTo(1.1f, 1.1f, 0.2f));
+        TableView parent = (TableView) getParent();
+        parent.setSelectedCreature(this);
     }
 
     public void deselect() {
-        addAction(scaleTo(1, 0.2f));
+        addAction(scaleTo(1, 1, 0.2f));
+        TableView parent = (TableView) getParent();
+        parent.setSelectedCreature(null);
     }
 
     @Override
@@ -45,5 +56,28 @@ public class CreatureView extends GameActor {
 
     public void removeAbility(String ability) {
         abilities -= Abilities.get(ability);
+    }
+
+    public void updateTablePosition(int count, int total) {
+        float x = (count - (float) (total - 1) / 2) * (getWidth()+20) - getWidth() / 2 + getParent().getOriginX();
+        addAction(moveTo( x, getY(), 0.1f));
+    }
+
+    private class CreatureInputListener extends InputListener {
+        CreatureView parentCreature;
+
+        private CreatureInputListener(CreatureView parent) {
+            this.parentCreature = parent;
+        }
+
+        @Override
+        public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+            select();
+        }
+
+        @Override
+        public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+            deselect();
+        }
     }
 }

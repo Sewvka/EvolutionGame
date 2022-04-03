@@ -1,11 +1,15 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+
+import javax.smartcardio.Card;
+import java.security.InvalidParameterException;
 
 public class HandView extends Group {
     final float CARD_W = 150;
@@ -13,7 +17,6 @@ public class HandView extends Group {
     private final Array<CardView> activeCards;
     private final Pool<CardView> cardPool;
     private final EvolutionGame game;
-    private int selectedCard;
     private final TableView table;
 
     public HandView(EvolutionGame game, float x, float y, TableView table) {
@@ -27,7 +30,6 @@ public class HandView extends Group {
                 return new CardView(CARD_W, CARD_H);
             }
         };
-        selectedCard = -1;
     }
 
     public void addCard(int id) {
@@ -39,106 +41,36 @@ public class HandView extends Group {
         }
     }
 
-    public void removeCard(int i) {
-        if (i >= 0) {
-            CardView c = activeCards.get(i);
-            cardPool.free(c);
-            activeCards.removeIndex(i);
-            removeActor(c);
-        }
+    public void removeCardAt(int index) {
+        if (index < 0) throw new InvalidParameterException("Card index must be positive");
+        CardView c = activeCards.get(index);
+        cardPool.free(c);
+        activeCards.removeIndex(index);
+        removeActor(c);
+    }
+
+    public void removeCard(CardView c) {
+        cardPool.free(c);
+        activeCards.removeIndex(activeCards.indexOf(c, true));
+        removeActor(c);
     }
 
     @Override
     public void act(float delta) {
         int i = 0;
         for (CardView c : activeCards) {
-            c.updateDeckPosition(i, activeCards.size);
+            if (c.isInDeck()) c.updateDeckPosition(i, activeCards.size);
             i++;
         }
         super.act(delta);
         Vector2 mousepos = parentToLocalCoordinates(game.getMouseCoords());
+    }
 
-        Actor hit = hit(mousepos.x, mousepos.y, true);
-        if (hit != null) {
-            CardView c = (CardView) hit;
-            if (selectedCard != activeCards.indexOf(c, true)) {
-                c.select();
-                if (selectedCard != -1) activeCards.get(selectedCard).deselect();
-                selectedCard = activeCards.indexOf(c, true);
-            }
-        }
-        else if (selectedCard != -1) {
-            activeCards.get(selectedCard).deselect();
-            selectedCard = -1;
-        }
+    public TableView getTable() {
+        return table;
+    }
 
-        /*
-
-        int i = 0;
-        //ля, хорошо бы переделать так, чтобы прямо во время итерации удалять можно было
-        int forRemoval = -1;
-
-        //была ли выбрана карта в цикле
-        //нужно, чтобы сбросить выбор карты после цикла в случае, если ни одна не выбрана.
-        boolean selectionFlag = false;
-
-        //проходимся по всем картам
-        for (CardView c : activeCards) {
-            //если карта вне колоды
-            if (!c.isInDeck()) {
-                //пока мышка не отпущена, двигается за курсором
-                if (Gdx.input.isTouched()) {
-                    c.moveWithCursor(mousepos);
-                    selectionFlag = true;
-                }
-                else {
-                    //карта играется на стол
-                    if (table.contains(mousepos)) {
-                        //добавляется новое свойство
-                        if (table.creatureSelected()) {
-                            if (table.addAbility(c.getAbility1(), selectedCard)) forRemoval = i;
-                            else c.putInDeck();
-                        }
-                        //добавляется новое существо
-                        else {
-                            if (table.addCreature(selectedCard)) forRemoval = i;
-                            else c.putInDeck();
-                        }
-                    }
-                    //карта попадает обратно в колоду
-                    else {
-                        c.putInDeck();
-                    }
-                    selectionFlag = false;
-                    selectedCard = -1;
-                }
-            } else {
-                //если карта в колоде
-                c.updateDeckPosition(i, activeCards.size);
-                //если на карту навели мышкой
-                if (c.contains(mousepos)) {
-                    //если карта не выбрана, выбираем эту
-                    if (selectedCard == -1) {
-                        c.setSizeMod(1.1f);
-                        selectedCard = i;
-                        selectionFlag = true;
-                    } else if (selectedCard == i) { //если это и есть выбранная карта, то ничего не меняется
-                        selectionFlag = true;
-                        //если на карту нажали, достаём её из колоды
-                        if (Gdx.input.isTouched()) {
-                            c.takeFromDeck();
-                        }
-                    }
-                //если на карту не навели мышкой, то она рисуется обычного размера
-                } else {
-                    c.setSizeMod(1);
-                }
-            }
-            i++;
-        }
-        //ни одна карта не выбрана
-        if (!selectionFlag) selectedCard = -1;
-        //удаляем карту
-        removeCard(forRemoval);*/
+    public int getCardIndex(CardView card) {
+        return activeCards.indexOf(card, true);
     }
 }

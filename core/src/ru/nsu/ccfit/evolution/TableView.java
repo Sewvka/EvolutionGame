@@ -1,13 +1,12 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
@@ -15,14 +14,27 @@ public class TableView extends Group {
     static final float CREATURE_W = 100;
     static final float CREATURE_H = 140;
     private final Array<CreatureView> activeCreatures;
-    private int selectedCreature;
-
+    private CreatureView selectedCreature;
+    private boolean tableSelected;
     private final Pool<CreatureView> creaturePool;
     private final EvolutionGame game;
     final TextureRegion tableTexture;
 
+    public void setSelectedCreature(CreatureView selectedCreature) {
+        this.selectedCreature = selectedCreature;
+    }
+
+    public int getSelectedCreatureIndex() {
+        return activeCreatures.indexOf(selectedCreature, true);
+    }
+
+    public boolean isCreatureSelected() {
+        return (selectedCreature != null);
+    }
+
     public TableView(final EvolutionGame game, float x, float y, float tableW, float tableH) {
         super();
+        tableSelected = false;
         this.game = game;
         setPosition(x, y);
         setSize(tableW, tableH);
@@ -36,7 +48,21 @@ public class TableView extends Group {
                 return new CreatureView(CREATURE_W, CREATURE_H, game);
             }
         };
-        selectedCreature = -1;
+        addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                tableSelected = true;
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                tableSelected = false;
+            }
+        });
+    }
+
+    public boolean isSelected() {
+        return tableSelected;
     }
 
     public boolean addCreature(int selectedCard) {
@@ -49,9 +75,9 @@ public class TableView extends Group {
         return false;
     }
 
-    public boolean addAbility(String ability, int selectedCard) {
-        if (game.getCommunicationManager().requestAbilityPlacement(ability, selectedCard, selectedCreature)) {
-            activeCreatures.get(selectedCreature).addAbility(ability);
+    public boolean addAbility(String ability, int selectedCard, int selectedCreatureIndex) {
+        if (game.getCommunicationManager().requestAbilityPlacement(ability, selectedCard, selectedCreatureIndex)) {
+            activeCreatures.get(selectedCreatureIndex).addAbility(ability);
             return true;
         }
         return false;
@@ -63,28 +89,12 @@ public class TableView extends Group {
         super.draw(batch, parentAlpha);
     }
 
-    public boolean creatureSelected() {
-        return (selectedCreature != -1);
-    }
-
     public void act(float delta) {
+        int i = 0;
+        for (CreatureView c : activeCreatures) {
+            c.updateTablePosition(i, activeCreatures.size);
+            i++;
+        }
         super.act(delta);
-
-        Vector2 mousepos = parentToLocalCoordinates(game.getMouseCoords());
-
-
-        Actor hit = hit(mousepos.x, mousepos.y, true);
-        if (hit instanceof CreatureView) {
-            CreatureView c = (CreatureView) hit;
-            if (selectedCreature != activeCreatures.indexOf(c, true)) {
-                c.select();
-                if (selectedCreature != -1) activeCreatures.get(selectedCreature).deselect();
-                selectedCreature = activeCreatures.indexOf(c, true);
-            }
-        }
-        else if (hit == null && selectedCreature != -1) {
-            activeCreatures.get(selectedCreature).deselect();
-            selectedCreature = -1;
-        }
     }
 }

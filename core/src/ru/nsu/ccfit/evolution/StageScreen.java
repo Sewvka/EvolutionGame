@@ -9,14 +9,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class StageScreen implements Screen {
     final EvolutionGame game;
-    private final Viewport viewport;
+    protected final Viewport viewport;
     protected final Stage stage;
 
     public StageScreen(EvolutionGame game) {
         this.game = game;
         viewport = new ExtendViewport(EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y, game.getCamera());
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

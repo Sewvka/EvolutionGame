@@ -24,7 +24,7 @@ public class TableModel {
         activeCreatures.add(c);
     }
 
-    public void addAbility(int selectedCreature, String ability) {
-        activeCreatures.get(selectedCreature).addAbility(ability);
+    public void addAbility(int index, String ability) {
+        activeCreatures.get(index).addAbility(ability);
     }
 }
