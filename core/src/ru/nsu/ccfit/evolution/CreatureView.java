@@ -1,13 +1,9 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import sun.tools.jconsole.Tab;
 
 import java.util.Objects;
 
@@ -41,10 +37,6 @@ public class CreatureView extends GameActor {
         this.abilities = 0;
     }
 
-    public void move(float x, float y, float t) {
-        addAction(moveTo(x, y, t));
-    }
-
     public void addAbility(String ability) {
         //временное условие, до того, как добавлю реализацию особых свойств
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
@@ -59,8 +51,8 @@ public class CreatureView extends GameActor {
     }
 
     public void updateTablePosition(int count, int total) {
-        float x = (count - (float) (total - 1) / 2) * (getWidth()+20) - getWidth() / 2 + getParent().getOriginX();
-        addAction(moveTo( x, getY(), 0.1f));
+        float x = (count - (float) (total - 1) / 2) * (getWidth() + 20) - getWidth() / 2 + getParent().getOriginX();
+        addAction(moveTo(x, getY(), 0.1f));
     }
 
     private class CreatureInputListener extends InputListener {

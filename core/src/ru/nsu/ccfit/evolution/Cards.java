@@ -6,28 +6,29 @@ import java.util.Map;
 
 abstract public class Cards {
     private static final Map<Integer, String> cardIDs;
+
     static {
         HashMap<Integer, String> aMap = new HashMap<>();
         aMap.put(0, "burrowing-fat");
-        aMap.put(1, "piracy");
-        aMap.put(2, "poisonous-predator");
-        aMap.put(3, "grazing-fat");
-        aMap.put(4, "mimicry");
-        aMap.put(5, "scavenger");
-        aMap.put(6, "swimmer");
-        aMap.put(7, "hibernation_ability-predator");
-        aMap.put(8, "running");
-        aMap.put(9, "shed_tail");
-        aMap.put(10, "camouflage-fat");
-        aMap.put(11, "high_body_weight-predator");
-        aMap.put(12, "high_body_weight-fat");
-        aMap.put(13, "parasite-predator");
-        aMap.put(14, "parasite-fat");
-        aMap.put(15, "sharp_vision-fat");
-        aMap.put(16, "symbiosis");
-        aMap.put(17, "communication-predator");
-        aMap.put(18, "cooperation-predator");
-        aMap.put(19, "cooperation-fat");
+        aMap.put(1, "camouflage-fat");
+        aMap.put(3, "cooperation-fat");
+        aMap.put(2, "communication-carnivorous");
+        aMap.put(5, "grazing-fat");
+        aMap.put(4, "cooperation-carnivorous");
+        aMap.put(7, "high_body_weight-fat");
+        aMap.put(6, "hibernation_ability-carnivorous");
+        aMap.put(8, "high_body_weight-carnivorous");
+        aMap.put(9, "mimicry");
+        aMap.put(11, "parasite-carnivorous");
+        aMap.put(10, "parasite-fat");
+        aMap.put(12, "piracy");
+        aMap.put(13, "poisonous-carnivorous");
+        aMap.put(14, "running");
+        aMap.put(15, "scavenger");
+        aMap.put(16, "sharp_vision-fat");
+        aMap.put(17, "shed_tail");
+        aMap.put(18, "swimmer");
+        aMap.put(19, "symbiosis");
         cardIDs = Collections.unmodifiableMap(aMap);
     }
 

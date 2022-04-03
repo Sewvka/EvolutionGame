@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -17,6 +16,7 @@ public class CardView extends GameActor {
     private String ability1;
     private String ability2;
     private boolean inDeck;
+    private boolean isDisplayed;
 
     public boolean isInDeck() {
         return inDeck;
@@ -33,6 +33,7 @@ public class CardView extends GameActor {
     public CardView(float w, float h) {
         super(w, h);
         inDeck = false;
+        isDisplayed = false;
         final CardView t = this;
         addListener(new CardInputListener(this));
     }
@@ -43,6 +44,19 @@ public class CardView extends GameActor {
 
     public void deselect() {
         addAction(scaleTo(1, 1, 0.2f));
+    }
+
+    public void display() {
+        toFront();
+        addAction(parallel(scaleTo(3, 3, 0.2f), moveTo(-getWidth()/2, getStage().getHeight()/2 - getParent().getY() - getHeight()/2, 0.2f), rotateTo(0, 0.2f)));
+        isDisplayed = true;
+    }
+
+    public void undisplay() {
+        HandView parentHand = (HandView) getParent();
+        setZIndex(parentHand.getCardIndex(this));
+        addAction(scaleTo(1, 1, 0.2f));
+        isDisplayed = false;
     }
 
     public void init(EvolutionGame game, Integer id) {
@@ -79,9 +93,11 @@ public class CardView extends GameActor {
     }
 
     public void updateDeckPosition(int count, int total) {
-        float x = (count - (float) (total - 1) / 2) * getWidth() / 2 - getWidth() / 2;
-        float y = -Math.abs(count - (float) (total - 1) / 2) * getHeight() / 8;
-        addAction(parallel(moveTo(x, y, 0.1f), rotateTo(-(count - (float) (total - 1) / 2) * 8, 0.1f)));
+        if (!isDisplayed) {
+            float x = (count - (float) (total - 1) / 2) * getWidth() / 2 - getWidth() / 2;
+            float y = -Math.abs(count - (float) (total - 1) / 2) * getHeight() / 8;
+            addAction(parallel(moveTo(x, y, 0.1f), rotateTo(-(count - (float) (total - 1) / 2) * 8, 0.1f)));
+        }
     }
 
     private void playAbility(String ability, int selectedCreature) {
@@ -122,9 +138,9 @@ public class CardView extends GameActor {
         dialog.button(ability1, 1);
         dialog.button(ability2, 2);
         dialog.button("Cancel", 3);
+        dialog.show(getParent().getStage(), null);
+        dialog.setPosition((getStage().getWidth() - dialog.getWidth()) / 2, (getStage().getHeight() - dialog.getHeight()) / 2);
         dialog.setMovable(false);
-        dialog.setPosition((getParent().getWidth() - dialog.getWidth()) / 2, (getParent().getHeight() - dialog.getHeight()) / 2);
-        dialog.show(getParent().getStage());
     }
 
     private class CardInputListener extends InputListener {
@@ -136,12 +152,12 @@ public class CardView extends GameActor {
 
         @Override
         public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            if (inDeck) select();
+            if (inDeck && !isDisplayed) select();
         }
 
         @Override
         public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-            if (inDeck) deselect();
+            if (inDeck && !isDisplayed) deselect();
         }
 
         @Override
@@ -153,13 +169,21 @@ public class CardView extends GameActor {
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             if (button == Input.Buttons.LEFT) {
+                if (isDisplayed) return false;
                 takeFromDeck();
                 return true;
-            } else return false;
+            } else if (button == Input.Buttons.RIGHT) {
+                if (inDeck && !isDisplayed) display();
+                else if (isDisplayed) undisplay();
+                return false;
+            }
+            else return false;
         }
 
         @Override
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            if (button == Input.Buttons.RIGHT) return;
+
             HandView parentHand = (HandView) getParent();
             int selectedCreature = parentHand.getTable().getSelectedCreatureIndex();
             if (parentHand.getTable().isCreatureSelected()) {
@@ -167,8 +191,7 @@ public class CardView extends GameActor {
                 else playAbility(ability1, selectedCreature);
             } else if (parentHand.getTable().isSelected()) {
                 playCreature();
-            }
-            else {
+            } else {
                 putInDeck();
             }
         }

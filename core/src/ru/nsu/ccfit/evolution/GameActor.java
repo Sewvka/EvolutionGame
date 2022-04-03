@@ -10,7 +10,7 @@ public class GameActor extends Actor implements Pool.Poolable {
 
     public GameActor(float w, float h) {
         setSize(w, h);
-        setOrigin(w/2, h/2);
+        setOrigin(w / 2, h / 2);
         setPosition(0, 0);
         updateBounds();
         this.texture = null;
@@ -18,7 +18,7 @@ public class GameActor extends Actor implements Pool.Poolable {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(texture, getX(), getY(), getWidth()/2,getHeight()/2, getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        batch.draw(texture, getX(), getY(), getWidth() / 2, getHeight() / 2, getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     @Override

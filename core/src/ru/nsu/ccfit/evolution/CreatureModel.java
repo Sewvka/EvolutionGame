@@ -16,6 +16,14 @@ public class CreatureModel implements Pool.Poolable {
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
     }
 
+    public int foodRequired() {
+        int res = 1;
+        if (hasAbility("high_body_weight")) res+=1;
+        if (hasAbility("parasite")) res+=2;
+        if (hasAbility("carnivorous")) res+=1;
+        return res;
+    }
+
     public boolean hasAbility(String ability) {
         return (abilities & Abilities.get(ability)) == 0;
     }

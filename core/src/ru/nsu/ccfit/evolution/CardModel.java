@@ -1,6 +1,5 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Pool;
 
 public class CardModel implements Pool.Poolable {
