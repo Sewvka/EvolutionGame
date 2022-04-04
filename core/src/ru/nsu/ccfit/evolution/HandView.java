@@ -2,6 +2,7 @@ package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
@@ -14,8 +15,10 @@ public class HandView extends Group {
     private final Pool<CardView> cardPool;
     private final EvolutionGame game;
     private final TableView table;
+    private CardView queuedCard;
+    private CreatureView queuedCreature;
 
-    public HandView(EvolutionGame game, float x, float y, TableView table) {
+    public HandView(final EvolutionGame game, float x, float y, TableView table) {
         setPosition(x, y);
         this.game = game;
         this.table = table;
@@ -23,7 +26,7 @@ public class HandView extends Group {
         cardPool = new Pool<CardView>() {
             @Override
             protected CardView newObject() {
-                return new CardView(CARD_W, CARD_H);
+                return new CardView(game, CARD_W, CARD_H);
             }
         };
     }
@@ -31,7 +34,7 @@ public class HandView extends Group {
     public void addCard(int id) {
         if (game.getCommunicationManager().requestCardAddition(id)) {
             CardView c = cardPool.obtain();
-            c.init(game, id);
+            c.init(id);
             activeCards.add(c);
             addActor(c);
         }
@@ -68,5 +71,17 @@ public class HandView extends Group {
 
     public int getCardIndex(CardView card) {
         return activeCards.indexOf(card, true);
+    }
+
+    public void queueCard(CardView queuedCard, CreatureView queuedCreature) {
+        this.queuedCard = queuedCard;
+        this.queuedCreature = queuedCreature;
+    }
+
+    public void resumeCoopCardPlay(CreatureView targetCreature) {
+        if (queuedCard != null && !queuedCreature.equals(targetCreature)) {
+            setTouchable(Touchable.enabled);
+            queuedCard.resumeCoopCardPlay(targetCreature, queuedCreature);
+        }
     }
 }

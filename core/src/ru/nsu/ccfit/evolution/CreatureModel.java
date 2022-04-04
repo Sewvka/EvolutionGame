@@ -1,19 +1,41 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
+import java.security.InvalidParameterException;
 import java.util.Objects;
 
 public class CreatureModel implements Pool.Poolable {
     private short abilities;
+    private final Array<Integer> cooperation;
+    private final Array<Integer> symbiosis;
+    private final Array<Integer> communication;
+    private int fat;
 
     public CreatureModel() {
-        this.abilities = 0;
+        abilities = 0;
+        fat = 0;
+        communication = new Array<>();
+        symbiosis = new Array<>();
+        cooperation = new Array<>();
     }
 
     public void addAbility(String ability) {
         //временное условие, до того, как добавлю реализацию особых свойств
+        if (Abilities.isCooperative(ability)) {
+            throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
+        }
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
+    }
+
+    public void addCoopAbility(String ability, int partherID) {
+        if (!Abilities.isCooperative(ability)) {
+            throw new InvalidParameterException("Use addAbility method to add non-coop abilities!");
+        }
+        if (!Objects.equals(ability, "cooperation")) cooperation.add(partherID);
+        else if(!Objects.equals(ability, "communication")) communication.add(partherID);
+        else if(!Objects.equals(ability, "symbiosis")) symbiosis.add(partherID);
     }
 
     public int foodRequired() {
@@ -34,6 +56,10 @@ public class CreatureModel implements Pool.Poolable {
 
     @Override
     public void reset() {
-        this.abilities = 0;
+        abilities = 0;
+        fat = 0;
+        communication.clear();
+        symbiosis.clear();
+        cooperation.clear();
     }
 }

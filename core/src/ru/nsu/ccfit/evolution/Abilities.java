@@ -46,4 +46,8 @@ abstract public class Abilities {
     public static short get(String ability) {
         return abilityMap.get(ability);
     }
+
+    public static boolean isCooperative(String ability) {
+        return ability.equals("communication") || ability.equals("cooperation") || ability.equals("symbiosis");
+    }
 }

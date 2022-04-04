@@ -5,7 +5,7 @@ public class CommunicationManager {
     private final HandModel hand;
 
     public CommunicationManager(EvolutionGame game) {
-        table = new TableModel(game);
+        table = new TableModel();
         hand = new HandModel(game);
     }
 
@@ -18,6 +18,11 @@ public class CommunicationManager {
         return false;
     }
 
+    public boolean requestCardAddition(int id) {
+        hand.addCard(id);
+        return true;
+    }
+
     public boolean requestAbilityPlacement(String ability, int selectedCard, int selectedCreature) {
         if (hand.containsAbility(ability, selectedCard)) {
             hand.removeCard(selectedCard);
@@ -27,8 +32,12 @@ public class CommunicationManager {
         return false;
     }
 
-    public boolean requestCardAddition(int id) {
-        hand.addCard(id);
-        return true;
+    public boolean requestCoopAbilityPlacement(String ability, int selectedCard, int selectedCreatureIndex1, int selectedCreatureIndex2) {
+        if (hand.containsAbility(ability, selectedCard)) {
+            hand.removeCard(selectedCard);
+            table.addCoopAbility(selectedCreatureIndex1, selectedCreatureIndex2, ability);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,7 +1,5 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -44,7 +42,7 @@ public class CreatureView extends Group implements Pool.Poolable {
     public void addAbility(int cardID, boolean firstAbility) {
         String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         //временное условие, до того, как добавлю реализацию особых свойств
-        if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
+        //if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
         addActorBefore(cover, new Ability(game, getWidth(), getHeight(), cardID, firstAbility));
     }
 
@@ -70,7 +68,7 @@ public class CreatureView extends Group implements Pool.Poolable {
         for (Actor a : children) {
             if (i != children.size - 1) {
                 Ability ability = (Ability) a;
-                ability.updatePosition(i, children.size-1);
+                ability.updatePosition(i, children.size - 1);
             }
             i++;
         }

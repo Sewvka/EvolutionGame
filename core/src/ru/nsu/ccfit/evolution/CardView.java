@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -18,6 +20,8 @@ public class CardView extends GameActor {
     private boolean inDeck;
     private boolean isDisplayed;
     private int id;
+    private boolean queuedAbility;
+    private final EvolutionGame game;
 
     public boolean isInDeck() {
         return inDeck;
@@ -31,8 +35,9 @@ public class CardView extends GameActor {
         this.inDeck = false;
     }
 
-    public CardView(float w, float h) {
+    public CardView(EvolutionGame game, float w, float h) {
         super(w, h);
+        this.game = game;
         inDeck = false;
         isDisplayed = false;
         final CardView t = this;
@@ -49,7 +54,7 @@ public class CardView extends GameActor {
 
     private void display() {
         toFront();
-        addAction(parallel(scaleTo(3, 3, 0.2f), moveTo(-getWidth()/2, getStage().getHeight()/2 - getParent().getY() - getHeight()/2, 0.2f), rotateTo(0, 0.2f)));
+        addAction(parallel(scaleTo(3, 3, 0.2f), moveTo(-getWidth() / 2, getStage().getHeight() / 2 - getParent().getY() - getHeight() / 2, 0.2f), rotateTo(0, 0.2f)));
         isDisplayed = true;
     }
 
@@ -60,7 +65,7 @@ public class CardView extends GameActor {
         isDisplayed = false;
     }
 
-    public void init(EvolutionGame game, Integer id) {
+    public void init(Integer id) {
         String cardname = Cards.getName(id);
         texture = new TextureRegion(game.getLoader().getCardTexture(cardname));
         inDeck = true;
@@ -100,7 +105,30 @@ public class CardView extends GameActor {
 
     private void playAbility(boolean firstAbility, int selectedCreature) {
         HandView parentHand = (HandView) getParent();
+
+        String ability = firstAbility ? ability1 : ability2;
+        if (Abilities.isCooperative(ability)) {
+            if (parentHand.getTable().creatureCount() > 1) {
+                parentHand.setTouchable(Touchable.disabled);
+                queuedAbility = firstAbility;
+                parentHand.queueCard(this, parentHand.getTable().get(selectedCreature));
+                return;
+            } else {
+                putInDeck();
+                return;
+            }
+        }
+
         if (parentHand.getTable().addAbility(id, firstAbility, parentHand.getCardIndex(this), selectedCreature)) {
+            parentHand.removeCard(this);
+        } else putInDeck();
+    }
+
+    public void resumeCoopCardPlay(CreatureView targetCreature1, CreatureView targetCreature2) {
+        HandView parentHand = (HandView) getParent();
+        int selectedCreature1 = parentHand.getTable().getCreatureIndex(targetCreature1);
+        int selectedCreature2 = parentHand.getTable().getCreatureIndex(targetCreature2);
+        if (parentHand.getTable().addCoopAbility(id, queuedAbility, parentHand.getCardIndex(this), selectedCreature1, selectedCreature2)) {
             parentHand.removeCard(this);
         } else putInDeck();
     }
@@ -132,11 +160,13 @@ public class CardView extends GameActor {
                 }
             }
         };
+        GameScreen screen = (GameScreen) game.getScreen();
+
         dialog.text("Select which ability to play");
         dialog.button(ability1, 1);
         dialog.button(ability2, 2);
         dialog.button("Cancel", 3);
-        dialog.show(getParent().getStage(), null);
+        dialog.show(screen.getUiStage(), null);
         dialog.setPosition((getStage().getWidth() - dialog.getWidth()) / 2, (getStage().getHeight() - dialog.getHeight()) / 2);
         dialog.setMovable(false);
     }
@@ -174,8 +204,7 @@ public class CardView extends GameActor {
                 if (inDeck && !isDisplayed) display();
                 else if (isDisplayed) undisplay();
                 return false;
-            }
-            else return false;
+            } else return false;
         }
 
         @Override

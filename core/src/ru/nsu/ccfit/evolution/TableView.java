@@ -20,16 +20,32 @@ public class TableView extends Group {
     private final EvolutionGame game;
     final TextureRegion tableTexture;
 
+    public CreatureView getSelectedCreature() {
+        return selectedCreature;
+    }
+
     public void setSelectedCreature(CreatureView selectedCreature) {
         this.selectedCreature = selectedCreature;
+    }
+
+    public CreatureView get(int index) {
+        return activeCreatures.get(index);
     }
 
     public int getSelectedCreatureIndex() {
         return activeCreatures.indexOf(selectedCreature, true);
     }
 
+    public int getCreatureIndex(CreatureView c) {
+        return activeCreatures.indexOf(c, true);
+    }
+
     public boolean isCreatureSelected() {
         return (selectedCreature != null);
+    }
+
+    public int creatureCount() {
+        return activeCreatures.size;
     }
 
     public TableView(final EvolutionGame game, float x, float y, float tableW, float tableH) {
@@ -79,6 +95,16 @@ public class TableView extends Group {
         String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         if (game.getCommunicationManager().requestAbilityPlacement(ability, selectedCard, selectedCreatureIndex)) {
             activeCreatures.get(selectedCreatureIndex).addAbility(cardID, firstAbility);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addCoopAbility(int cardID, boolean firstAbility, int selectedCard, int selectedCreatureIndex1, int selectedCreatureIndex2) {
+        String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
+        if (game.getCommunicationManager().requestCoopAbilityPlacement(ability, selectedCard, selectedCreatureIndex1, selectedCreatureIndex2)) {
+            activeCreatures.get(selectedCreatureIndex1).addAbility(cardID, firstAbility);
+            activeCreatures.get(selectedCreatureIndex2).addAbility(cardID, firstAbility);
             return true;
         }
         return false;
