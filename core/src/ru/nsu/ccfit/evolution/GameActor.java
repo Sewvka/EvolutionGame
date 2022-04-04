@@ -5,8 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool;
 
-public class GameActor extends Actor implements Pool.Poolable {
+public abstract class GameActor extends Actor implements Pool.Poolable {
     protected TextureRegion texture;
+
+    public GameActor() {
+        this.texture = null;
+    }
 
     public GameActor(float w, float h) {
         setSize(w, h);

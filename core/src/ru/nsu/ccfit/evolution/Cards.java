@@ -26,13 +26,25 @@ abstract public class Cards {
         aMap.put(14, "running");
         aMap.put(15, "scavenger");
         aMap.put(16, "sharp_vision-fat");
-        aMap.put(17, "shed_tail");
-        aMap.put(18, "swimmer");
-        aMap.put(19, "symbiosis");
+        aMap.put(17, "swimmer");
+        aMap.put(18, "symbiosis");
+        aMap.put(19, "tail_loss");
         cardIDs = Collections.unmodifiableMap(aMap);
     }
 
     public static String getName(Integer id) {
         return cardIDs.get(id);
+    }
+
+    public static String getAbilityFromName(String cardname, boolean firstAbility) {
+        String ability1, ability2;
+        int i = cardname.indexOf('-');
+        if (i >= 0) {
+            ability1 = cardname.substring(0, cardname.indexOf('-'));
+        } else ability1 = cardname;
+        ability2 = cardname.substring(cardname.indexOf('-') + 1);
+
+        if (firstAbility) return ability1;
+        else return ability2;
     }
 }

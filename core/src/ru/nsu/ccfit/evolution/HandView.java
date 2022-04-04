@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Pool;
 import java.security.InvalidParameterException;
 
 public class HandView extends Group {
-    final float CARD_W = 150;
-    final float CARD_H = 210;
+    final float CARD_W = 120;
+    final float CARD_H = 168;
     private final Array<CardView> activeCards;
     private final Pool<CardView> cardPool;
     private final EvolutionGame game;

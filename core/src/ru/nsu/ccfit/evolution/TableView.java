@@ -75,9 +75,10 @@ public class TableView extends Group {
         return false;
     }
 
-    public boolean addAbility(String ability, int selectedCard, int selectedCreatureIndex) {
+    public boolean addAbility(int cardID, boolean firstAbility, int selectedCard, int selectedCreatureIndex) {
+        String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         if (game.getCommunicationManager().requestAbilityPlacement(ability, selectedCard, selectedCreatureIndex)) {
-            activeCreatures.get(selectedCreatureIndex).addAbility(ability);
+            activeCreatures.get(selectedCreatureIndex).addAbility(cardID, firstAbility);
             return true;
         }
         return false;

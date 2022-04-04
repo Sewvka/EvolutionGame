@@ -1,45 +1,51 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.SnapshotArray;
 
 import java.util.Objects;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-public class CreatureView extends GameActor {
+public class CreatureView extends Group implements Pool.Poolable {
     private short abilities;
+    private final EvolutionGame game;
+    private final Cover cover;
 
     public CreatureView(float w, float h, EvolutionGame game) {
-        super(w, h);
+        setSize(w, h);
+        this.game = game;
+        setOrigin(w / 2, h / 2);
+        setPosition(0, 0);
+        updateBounds();
         this.abilities = 0;
-        this.texture = new TextureRegion(game.getLoader().getTexture("cards/cover.png"));
+        cover = new Cover(game, w, h);
+        addActor(cover);
         addListener(new CreatureInputListener(this));
+        //addCaptureListener(new CreatureInputListener(this));
     }
 
     public void select() {
-        addAction(scaleTo(1.1f, 1.1f, 0.2f));
         TableView parent = (TableView) getParent();
         parent.setSelectedCreature(this);
     }
 
     public void deselect() {
-        addAction(scaleTo(1, 1, 0.2f));
         TableView parent = (TableView) getParent();
         parent.setSelectedCreature(null);
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        this.abilities = 0;
-    }
-
-    public void addAbility(String ability) {
+    public void addAbility(int cardID, boolean firstAbility) {
+        String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         //временное условие, до того, как добавлю реализацию особых свойств
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
+        addActorBefore(cover, new Ability(game, getWidth(), getHeight(), cardID, firstAbility));
     }
 
     public boolean hasAbility(String ability) {
@@ -53,6 +59,32 @@ public class CreatureView extends GameActor {
     public void updateTablePosition(int count, int total) {
         float x = (count - (float) (total - 1) / 2) * (getWidth() + 20) - getWidth() / 2 + getParent().getOriginX();
         addAction(moveTo(x, getY(), 0.1f));
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        updateBounds();
+        SnapshotArray<Actor> children = getChildren();
+        int i = 0;
+        for (Actor a : children) {
+            if (i != children.size - 1) {
+                Ability ability = (Ability) a;
+                ability.updatePosition(i, children.size-1);
+            }
+            i++;
+        }
+    }
+
+    @Override
+    public void reset() {
+        setScale(1);
+        setRotation(0);
+        this.abilities = 0;
+    }
+
+    private void updateBounds() {
+        setBounds(getX(), getY(), getWidth(), getHeight());
     }
 
     private class CreatureInputListener extends InputListener {

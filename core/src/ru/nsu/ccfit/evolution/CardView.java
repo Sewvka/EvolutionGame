@@ -17,6 +17,7 @@ public class CardView extends GameActor {
     private String ability2;
     private boolean inDeck;
     private boolean isDisplayed;
+    private int id;
 
     public boolean isInDeck() {
         return inDeck;
@@ -38,21 +39,21 @@ public class CardView extends GameActor {
         addListener(new CardInputListener(this));
     }
 
-    public void select() {
+    private void select() {
         addAction(scaleTo(1.1f, 1.1f, 0.2f));
     }
 
-    public void deselect() {
+    private void deselect() {
         addAction(scaleTo(1, 1, 0.2f));
     }
 
-    public void display() {
+    private void display() {
         toFront();
         addAction(parallel(scaleTo(3, 3, 0.2f), moveTo(-getWidth()/2, getStage().getHeight()/2 - getParent().getY() - getHeight()/2, 0.2f), rotateTo(0, 0.2f)));
         isDisplayed = true;
     }
 
-    public void undisplay() {
+    private void undisplay() {
         HandView parentHand = (HandView) getParent();
         setZIndex(parentHand.getCardIndex(this));
         addAction(scaleTo(1, 1, 0.2f));
@@ -61,15 +62,12 @@ public class CardView extends GameActor {
 
     public void init(EvolutionGame game, Integer id) {
         String cardname = Cards.getName(id);
-        this.texture = new TextureRegion(game.getLoader().getCardTexture(cardname));
-        this.inDeck = true;
+        texture = new TextureRegion(game.getLoader().getCardTexture(cardname));
+        inDeck = true;
+        this.id = id;
 
-        //несколько костыльно, но делим название ф1айла на название свойств
-        int i = cardname.indexOf('-');
-        if (i >= 0) {
-            ability1 = cardname.substring(0, cardname.indexOf('-'));
-        } else ability1 = cardname;
-        this.ability2 = cardname.substring(cardname.indexOf('-') + 1);
+        ability1 = Cards.getAbilityFromName(cardname, true);
+        ability2 = Cards.getAbilityFromName(cardname, false);
     }
 
     public void move(float x, float y, float t) {
@@ -100,9 +98,9 @@ public class CardView extends GameActor {
         }
     }
 
-    private void playAbility(String ability, int selectedCreature) {
+    private void playAbility(boolean firstAbility, int selectedCreature) {
         HandView parentHand = (HandView) getParent();
-        if (parentHand.getTable().addAbility(ability, parentHand.getCardIndex(this), selectedCreature)) {
+        if (parentHand.getTable().addAbility(id, firstAbility, parentHand.getCardIndex(this), selectedCreature)) {
             parentHand.removeCard(this);
         } else putInDeck();
     }
@@ -121,11 +119,11 @@ public class CardView extends GameActor {
             protected void result(Object object) {
                 switch ((Integer) object) {
                     case 1:
-                        playAbility(ability1, selectedCreature);
+                        playAbility(true, selectedCreature);
                         getParent().removeActor(this);
                         break;
                     case 2:
-                        playAbility(ability2, selectedCreature);
+                        playAbility(false, selectedCreature);
                         getParent().removeActor(this);
                         break;
                     case 3:
@@ -188,7 +186,7 @@ public class CardView extends GameActor {
             int selectedCreature = parentHand.getTable().getSelectedCreatureIndex();
             if (parentHand.getTable().isCreatureSelected()) {
                 if (!ability1.equals(ability2)) showAbilityDialog(selectedCreature);
-                else playAbility(ability1, selectedCreature);
+                else playAbility(true, selectedCreature);
             } else if (parentHand.getTable().isSelected()) {
                 playCreature();
             } else {
