@@ -27,6 +27,9 @@ public class CreatureModel implements Pool.Poolable {
             throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
         }
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
+        else {
+            fat++;
+        }
     }
 
     public void addCoopAbility(String ability, int partherID) {

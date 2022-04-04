@@ -103,8 +103,10 @@ public class TableView extends Group {
     public boolean addCoopAbility(int cardID, boolean firstAbility, int selectedCard, int selectedCreatureIndex1, int selectedCreatureIndex2) {
         String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         if (game.getCommunicationManager().requestCoopAbilityPlacement(ability, selectedCard, selectedCreatureIndex1, selectedCreatureIndex2)) {
-            activeCreatures.get(selectedCreatureIndex1).addAbility(cardID, firstAbility);
-            activeCreatures.get(selectedCreatureIndex2).addAbility(cardID, firstAbility);
+            Ability ab1 = activeCreatures.get(selectedCreatureIndex1).addAbility(cardID, firstAbility);
+            Ability ab2 = activeCreatures.get(selectedCreatureIndex2).addAbility(cardID, firstAbility);
+            ab1.setBuddy(ab2);
+            ab2.setBuddy(ab1);
             return true;
         }
         return false;

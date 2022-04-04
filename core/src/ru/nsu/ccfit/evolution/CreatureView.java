@@ -39,11 +39,14 @@ public class CreatureView extends Group implements Pool.Poolable {
         parent.setSelectedCreature(null);
     }
 
-    public void addAbility(int cardID, boolean firstAbility) {
-        String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
-        //временное условие, до того, как добавлю реализацию особых свойств
-        //if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
-        addActorBefore(cover, new Ability(game, getWidth(), getHeight(), cardID, firstAbility));
+    public Ability addAbility(int cardID, boolean firstAbility) {
+        Ability ability = new Ability(game, getWidth(), getHeight(), cardID, firstAbility, null);
+        addActorBefore(cover, ability);
+        return ability;
+    }
+
+    public void addAbility(Ability ability) {
+        addActorBefore(cover, ability);
     }
 
     public boolean hasAbility(String ability) {

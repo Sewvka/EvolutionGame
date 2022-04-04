@@ -9,19 +9,27 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 
 public class Ability extends GameActor {
-    public Ability(EvolutionGame game, float w, float h, int cardID, boolean firstAbility) {
+    private Ability buddy;
+    public Ability(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, Ability buddy) {
         super(w, h);
+        this.buddy = buddy;
         texture = new TextureRegion(game.getLoader().getTexture("cards/"+Cards.getName(cardID)+".png"));
         if (!firstAbility) texture.flip(true, true);
         addListener(new AbilityInputListener());
     }
 
+    public void setBuddy(Ability buddy) {
+        this.buddy = buddy;
+    }
+
     public void select() {
         addAction(scaleTo(1.1f, 1.1f, 0.2f));
+        if (buddy != null) buddy.addAction(scaleTo(1.1f, 1.1f, 0.2f));
     }
 
     public void deselect() {
         addAction(scaleTo(1, 1, 0.2f));
+        if (buddy != null) buddy.addAction(scaleTo(1, 1, 0.2f));
     }
 
     public void updatePosition(int index, int total) {
