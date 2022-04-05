@@ -34,13 +34,12 @@ public class Ability extends GameActor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+
         super.draw(batch, parentAlpha);
         Color color = getColor();
         if (chosen){
-        batch.enableBlending();
-        batch.setColor(0, 0, 255, color.a * parentAlpha);
+            batch.setColor(Color.BLUE);
         } else {
-            batch.disableBlending();
             batch.setColor(color.r, color.g, color.b, parentAlpha);
         }
     }
