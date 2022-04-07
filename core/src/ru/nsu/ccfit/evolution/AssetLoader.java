@@ -1,14 +1,19 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class AssetLoader {
     private final AssetManager assets;
     private final BitmapFont font;
+    private final Skin skin;
 
     public AssetLoader() {
+        skin = new Skin(Gdx.files.internal("styles/uiskin.json"), new TextureAtlas(Gdx.files.internal("styles/uiskin.atlas")));
         assets = new AssetManager();
         font = new BitmapFont();
     }
@@ -19,6 +24,9 @@ public class AssetLoader {
         }
         assets.load("cards/cover.png", Texture.class);
         assets.load("table.png", Texture.class);
+        assets.load("food/food_red.png", Texture.class);
+        assets.load("food/food_yellow.png", Texture.class);
+        assets.load("food/food_blue.png", Texture.class);
     }
 
     public BitmapFont getFont() {
@@ -44,5 +52,9 @@ public class AssetLoader {
 
     public float progress() {
         return assets.getProgress();
+    }
+
+    public Skin getSkin() {
+        return skin;
     }
 }

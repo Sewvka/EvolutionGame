@@ -12,17 +12,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class EvolutionGame extends Game {
     private AssetLoader loader;
     private OrthographicCamera camera;
-    private Skin skin;
-    private CommunicationManager communicationManager;
+    private ServerEmulator serverEmulator;
     public static final float WORLD_SIZE_X = 1360;
     public static final float WORLD_SIZE_Y = 720;
 
+    //в конечной версии у программы пользователя не будет доступа к своему номеру пользователя.
+    private int playerID;
+
     @Override
     public void create() {
-        skin = new Skin(Gdx.files.internal("styles/uiskin.json"), new TextureAtlas(Gdx.files.internal("styles/uiskin.atlas")));
+        //опять же, временно
+        playerID = 0;
         loader = new AssetLoader();
         loader.loadAll();
-        communicationManager = new CommunicationManager(this);
+        serverEmulator = new ServerEmulator();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, EvolutionGame.WORLD_SIZE_X, EvolutionGame.WORLD_SIZE_Y);
         this.setScreen(new LoadingScreen(this));
@@ -42,8 +45,8 @@ public class EvolutionGame extends Game {
         return loader;
     }
 
-    public CommunicationManager getCommunicationManager() {
-        return communicationManager;
+    public ServerEmulator getServerEmulator() {
+        return serverEmulator;
     }
 
     public Camera getCamera() {
@@ -57,7 +60,8 @@ public class EvolutionGame extends Game {
         return (new Vector2(mousePos.x, mousePos.y));
     }
 
-    public Skin getSkin() {
-        return skin;
+    //в конечной версии у программы пользователя не будет доступа к своему номеру пользователя.
+    public int getPlayerID() {
+        return playerID;
     }
 }

@@ -6,10 +6,8 @@ import com.badlogic.gdx.utils.Pool;
 public class HandModel {
     private final Array<CardModel> activeCards;
     private final Pool<CardModel> cardPool;
-    private final EvolutionGame game;
 
-    public HandModel(EvolutionGame game) {
-        this.game = game;
+    public HandModel() {
         activeCards = new Array<>(6);
         cardPool = new Pool<CardModel>() {
             @Override

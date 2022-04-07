@@ -11,6 +11,7 @@ public class CreatureModel implements Pool.Poolable {
     private final Array<Integer> cooperation;
     private final Array<Integer> symbiosis;
     private final Array<Integer> communication;
+    private int food;
     private int fat;
 
     public CreatureModel() {
@@ -19,6 +20,22 @@ public class CreatureModel implements Pool.Poolable {
         communication = new Array<>();
         symbiosis = new Array<>();
         cooperation = new Array<>();
+    }
+
+    public void addFood() {
+        food++;
+    }
+
+    public void resetFood() {
+        food = 0;
+    }
+
+    public int getFood() {
+        return food;
+    }
+
+    public int getFat() {
+        return fat;
     }
 
     public void addAbility(String ability) {
@@ -37,20 +54,24 @@ public class CreatureModel implements Pool.Poolable {
             throw new InvalidParameterException("Use addAbility method to add non-coop abilities!");
         }
         if (!Objects.equals(ability, "cooperation")) cooperation.add(partherID);
-        else if(!Objects.equals(ability, "communication")) communication.add(partherID);
-        else if(!Objects.equals(ability, "symbiosis")) symbiosis.add(partherID);
+        else if (!Objects.equals(ability, "communication")) communication.add(partherID);
+        else if (!Objects.equals(ability, "symbiosis")) symbiosis.add(partherID);
     }
 
     public int foodRequired() {
         int res = 1;
-        if (hasAbility("high_body_weight")) res+=1;
-        if (hasAbility("parasite")) res+=2;
-        if (hasAbility("carnivorous")) res+=1;
+        if (hasAbility("high_body_weight")) res += 1;
+        if (hasAbility("parasite")) res += 2;
+        if (hasAbility("carnivorous")) res += 1;
         return res;
     }
 
     public boolean hasAbility(String ability) {
-        return (abilities & Abilities.get(ability)) == 0;
+        if (ability.equals("fat")) return (fat > 0);
+        if (ability.equals("cooperation")) return cooperation.size > 0;
+        if (ability.equals("communication")) return communication.size > 0;
+        if (ability.equals("symbiosis")) return symbiosis.size > 0;
+        return (abilities & Abilities.get(ability)) != 0;
     }
 
     public void removeAbility(String ability) {

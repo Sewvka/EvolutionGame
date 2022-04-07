@@ -8,7 +8,7 @@ public class LoadingScreen extends StageScreen {
 
     public LoadingScreen(final EvolutionGame game) {
         super(game);
-        bar = new ProgressBar(0, 100, 1, false, game.getSkin(), "default-horizontal");
+        bar = new ProgressBar(0, 100, 1, false, game.getLoader().getSkin(), "default-horizontal");
         bar.setPosition(EvolutionGame.WORLD_SIZE_X/2 - 200, 150);
         bar.setSize(400, 20);
         bar.setAnimateDuration(0.5f);

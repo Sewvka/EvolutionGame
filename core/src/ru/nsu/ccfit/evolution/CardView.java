@@ -1,7 +1,5 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -10,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import sun.tools.jconsole.Tab;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -22,9 +20,14 @@ public class CardView extends GameActor {
     private int id;
     private boolean queuedAbility;
     private final EvolutionGame game;
+    private final TableView userTable;
 
     public boolean isInDeck() {
         return inDeck;
+    }
+
+    public boolean isDisplayed() {
+        return isDisplayed;
     }
 
     public void putInDeck() {
@@ -35,8 +38,9 @@ public class CardView extends GameActor {
         this.inDeck = false;
     }
 
-    public CardView(EvolutionGame game, float w, float h) {
+    public CardView(EvolutionGame game, TableView userTable, float w, float h) {
         super(w, h);
+        this.userTable = userTable;
         this.game = game;
         inDeck = false;
         isDisplayed = false;
@@ -95,23 +99,15 @@ public class CardView extends GameActor {
         this.ability2 = null;
     }
 
-    public void updateDeckPosition(int count, int total) {
-        if (!isDisplayed) {
-            float x = (count - (float) (total - 1) / 2) * getWidth() / 2 - getWidth() / 2;
-            float y = -Math.abs(count - (float) (total - 1) / 2) * getHeight() / 8;
-            addAction(parallel(moveTo(x, y, 0.1f), rotateTo(-(count - (float) (total - 1) / 2) * 8, 0.1f)));
-        }
-    }
-
-    private void playAbility(boolean firstAbility, int selectedCreature) {
+    private void playAbility(TableView targetTable, boolean firstAbility, int selectedCreature) {
         HandView parentHand = (HandView) getParent();
 
         String ability = firstAbility ? ability1 : ability2;
         if (Abilities.isCooperative(ability)) {
-            if (parentHand.getTable().creatureCount() > 1) {
+            if (targetTable.creatureCount() > 1) {
                 parentHand.setTouchable(Touchable.disabled);
                 queuedAbility = firstAbility;
-                parentHand.queueCard(this, parentHand.getTable().get(selectedCreature));
+                parentHand.queueCard(this, targetTable.get(selectedCreature));
                 return;
             } else {
                 putInDeck();
@@ -119,39 +115,38 @@ public class CardView extends GameActor {
             }
         }
 
-        if (parentHand.getTable().addAbility(id, firstAbility, parentHand.getCardIndex(this), selectedCreature)) {
+        if (targetTable.addAbility(id, firstAbility, parentHand.getCardIndex(this), selectedCreature)) {
             parentHand.removeCard(this);
         } else putInDeck();
     }
 
     public void resumeCoopCardPlay(CreatureView targetCreature1, CreatureView targetCreature2) {
         HandView parentHand = (HandView) getParent();
-        int selectedCreature1 = parentHand.getTable().getCreatureIndex(targetCreature1);
-        int selectedCreature2 = parentHand.getTable().getCreatureIndex(targetCreature2);
-        if (parentHand.getTable().addCoopAbility(id, queuedAbility, parentHand.getCardIndex(this), selectedCreature1, selectedCreature2)) {
+        int selectedCreature1 = userTable.getCreatureIndex(targetCreature1);
+        int selectedCreature2 = userTable.getCreatureIndex(targetCreature2);
+        if (userTable.addCoopAbility(id, queuedAbility, parentHand.getCardIndex(this), selectedCreature1, selectedCreature2)) {
             parentHand.removeCard(this);
         } else putInDeck();
     }
 
     private void playCreature() {
         HandView parentHand = (HandView) getParent();
-        if (parentHand.getTable().addCreature(parentHand.getCardIndex(this))) {
+        if (userTable.addCreature(parentHand.getCardIndex(this))) {
             parentHand.removeCard(this);
         } else putInDeck();
     }
 
     private void showAbilityDialog(final int selectedCreature) {
-        Skin skin = new Skin(Gdx.files.internal("styles/uiskin.json"));
-        Dialog dialog = new Dialog("Ability Selection", skin) {
+        Dialog dialog = new Dialog("Ability Selection", game.getLoader().getSkin()) {
             @Override
             protected void result(Object object) {
                 switch ((Integer) object) {
                     case 1:
-                        playAbility(true, selectedCreature);
+                        playAbility(userTable, true, selectedCreature);
                         getParent().removeActor(this);
                         break;
                     case 2:
-                        playAbility(false, selectedCreature);
+                        playAbility(userTable, false, selectedCreature);
                         getParent().removeActor(this);
                         break;
                     case 3:
@@ -212,11 +207,16 @@ public class CardView extends GameActor {
             if (button == Input.Buttons.RIGHT) return;
 
             HandView parentHand = (HandView) getParent();
-            int selectedCreature = parentHand.getTable().getSelectedCreatureIndex();
-            if (parentHand.getTable().isCreatureSelected()) {
-                if (!ability1.equals(ability2)) showAbilityDialog(selectedCreature);
-                else playAbility(true, selectedCreature);
-            } else if (parentHand.getTable().isSelected()) {
+            int selectedCreature = parentHand.getTables().getSelectedCreatureIndex();
+            TableView selectedTable = parentHand.getTables().getSelectedTable();
+
+            if (parentHand.getTables().isCreatureSelected()) {
+                if (!ability1.equals(ability2)) {
+                    if (!userTable.isCreatureSelected()) putInDeck();
+                    showAbilityDialog(selectedCreature);
+                }
+                else playAbility(selectedTable, true, selectedCreature);
+            } else if (parentHand.getTables().getSelectedTable() == userTable) {
                 playCreature();
             } else {
                 putInDeck();

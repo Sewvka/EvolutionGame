@@ -3,9 +3,10 @@ package ru.nsu.ccfit.evolution;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Pool;
 
-public abstract class GameActor extends Actor implements Pool.Poolable {
+public abstract class GameActor extends Group implements Pool.Poolable {
     protected TextureRegion texture;
 
     public GameActor() {
@@ -23,6 +24,7 @@ public abstract class GameActor extends Actor implements Pool.Poolable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.draw(texture, getX(), getY(), getWidth() / 2, getHeight() / 2, getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        super.draw(batch, parentAlpha);
     }
 
     @Override

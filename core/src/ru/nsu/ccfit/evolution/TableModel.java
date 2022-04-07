@@ -22,6 +22,14 @@ public class TableModel {
         activeCreatures.add(c);
     }
 
+    public int getCreatureCount() {
+        return activeCreatures.size;
+    }
+
+    public CreatureModel getCreature(int index) {
+        return activeCreatures.get(index);
+    }
+
     public void addAbility(int index, String ability) {
         activeCreatures.get(index).addAbility(ability);
     }
@@ -31,4 +39,9 @@ public class TableModel {
         activeCreatures.get(index2).addCoopAbility(ability, index1);
     }
 
+    public void clearAllFood() {
+        for (CreatureModel c : activeCreatures) {
+            c.resetFood();
+        }
+    }
 }
