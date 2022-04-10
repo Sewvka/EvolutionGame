@@ -9,7 +9,7 @@ import java.security.InvalidParameterException;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
 public class FoodTray extends Group {
-    private static final int TOKEN_SIZE = 30;
+    public static final int TOKEN_SIZE = 30;
     private static final int PADDING = 10;
     private final Array<FoodToken> food;
     private final EvolutionGame game;

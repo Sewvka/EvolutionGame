@@ -36,7 +36,8 @@ public class CreatureView extends Group implements Pool.Poolable {
 
     public void deselect() {
         TableView parent = (TableView) getParent();
-        parent.setSelectedCreature(null);
+        if (parent != null)
+            parent.setSelectedCreature(null);
     }
 
     public Ability addAbility(int cardID, boolean firstAbility) {
@@ -46,8 +47,6 @@ public class CreatureView extends Group implements Pool.Poolable {
         return ability;
     }
 
-
-    //очень некрасиво имхо
     public void addFood(FoodToken f) {
         int hbwIndex = getAbilityIndex("high_body_weight");
         int parasiteIndex = getAbilityIndex("parasite");
@@ -61,20 +60,24 @@ public class CreatureView extends Group implements Pool.Poolable {
         if (foodCount == 0) {
             cover.addActor(f);
             f.setPosition(10, getHeight() - f.getHeight() - 10);
+            foodCount++;
         } else if (hbwIndex != -1 && !abilityArray.get(hbwIndex).hasChildren()) {
-            moveToAbility(f, hbwIndex, 0);
+            addFoodToAbility(f, hbwIndex, 0);
+            foodCount++;
         } else if (carnivorousIndex != -1 && !abilityArray.get(carnivorousIndex).hasChildren()) {
-            moveToAbility(f, carnivorousIndex, 0);
+            addFoodToAbility(f, carnivorousIndex, 0);
+            foodCount++;
         } else if (parasiteIndex != -1 && parasiteCount < 2) {
-            moveToAbility(f, carnivorousIndex, parasiteCount);
+            addFoodToAbility(f, carnivorousIndex, parasiteCount);
+            foodCount++;
         } else if (nextFat != -1) {
-            moveToAbility(f, nextFat, 0);
+            addFoodToAbility(f, nextFat, 0);
             f.addAction(color(Color.YELLOW));
+            foodCount++;
         }
-        foodCount++;
     }
 
-    private void moveToAbility(FoodToken f, int abilityIndex, int shift) {
+    private void addFoodToAbility(FoodToken f, int abilityIndex, int shift) {
         Ability a = abilityArray.get(abilityIndex);
         a.addActor(f);
         f.addAction(moveTo(10 + shift * (f.getWidth() + 10), a.getHeight() - f.getHeight() - 5, 0.1f));
@@ -142,12 +145,12 @@ public class CreatureView extends Group implements Pool.Poolable {
 
         @Override
         public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            select();
+            if (pointer == -1) select();
         }
 
         @Override
         public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-            deselect();
+            if (pointer == -1) deselect();
         }
     }
 }

@@ -93,6 +93,18 @@ public class TableView extends Group {
         return false;
     }
 
+    public void removeCreature(CreatureView c) {
+        int index = activeCreatures.indexOf(c, true);
+        removeCreature(index);
+    }
+
+    public void removeCreature(int index) {
+        CreatureView c = activeCreatures.get(index);
+        activeCreatures.removeIndex(index);
+        creaturePool.free(c);
+        removeActor(c);
+    }
+
     public boolean addAbility(int cardID, boolean firstAbility, int selectedCard, int selectedCreatureIndex) {
         String ability = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
         if (game.getServerEmulator().requestAbilityPlacement(ability, selectedCard, selectedCreatureIndex, game.getPlayerID())) {

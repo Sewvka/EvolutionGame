@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -61,6 +60,7 @@ public class GameScreen extends StageScreen {
 
     public void creatureClicked(CreatureView targetCreature) {
         playerHand.resumeCoopCardPlay(targetCreature);
+        tables.resumeAbilityActivation(targetCreature);
     }
 
     public Stage getUiStage() {
@@ -84,5 +84,9 @@ public class GameScreen extends StageScreen {
         passButton.setVisible(false);
         food.init();
         stage.addActor(food);
+    }
+
+    public TableManager getTables() {
+        return tables;
     }
 }

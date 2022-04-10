@@ -61,6 +61,9 @@ public class ServerEmulator {
 
         if (gameStage == DEVELOPMENT) {
             gameStage = FEEDING;
+            for (PlayerState p : players) {
+                p.getTable().resetActivations();
+            }
             foodTotal = new Random().nextInt(6) + 3;
             foodLeft = foodTotal;
         } else if (gameStage == FEEDING) {
@@ -87,6 +90,32 @@ public class ServerEmulator {
             }
         }
         return false;
+    }
+
+    public boolean requestPredation(int predatorIndex, int preyIndex, int playerID, int targetID) {
+        if (preyIndex < 0 || predatorIndex < 0 || predatorIndex >= players[playerID].getTable().getCreatureCount() || preyIndex >= players[targetID].getTable().getCreatureCount())
+            return false;
+
+        CreatureModel predator = players[playerID].getTable().getCreature(predatorIndex);
+        CreatureModel prey = players[targetID].getTable().getCreature(preyIndex);
+
+        if (checkPredationConditions(predator, prey)) {
+            players[targetID].getTable().removeCreature(preyIndex);
+            predator.addFood();
+            predator.addFood();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkPredationConditions(CreatureModel predator, CreatureModel prey) {
+        if (predator.preyedThisRound || predator.getFood() >= predator.foodRequired() + predator.getFat()) return false;
+        if (prey.hasAbility("burrowing") && prey.isFed()) return false;
+        if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
+        if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
+        if (prey.hasAbility("swimmer") != predator.hasAbility("swimmer"));
+
+        return true;
     }
 
     private boolean allPlayersPassed() {

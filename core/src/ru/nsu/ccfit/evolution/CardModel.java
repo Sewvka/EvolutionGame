@@ -1,16 +1,10 @@
 package ru.nsu.ccfit.evolution;
 
-import com.badlogic.gdx.utils.Pool;
+public class CardModel {
+    private final String ability1;
+    private final String ability2;
 
-public class CardModel implements Pool.Poolable {
-    private String ability1;
-    private String ability2;
-
-    public CardModel() {
-
-    }
-
-    public void init(Integer id) {
+    public CardModel(Integer id) {
         String cardname = Cards.getName(id);
 
         int i = cardname.indexOf('-');
@@ -27,11 +21,5 @@ public class CardModel implements Pool.Poolable {
 
     public String getAbility2() {
         return ability2;
-    }
-
-    @Override
-    public void reset() {
-        this.ability1 = null;
-        this.ability2 = null;
     }
 }

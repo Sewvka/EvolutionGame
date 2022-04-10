@@ -1,18 +1,18 @@
 package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
 
-public class CreatureModel implements Pool.Poolable {
+public class CreatureModel {
     private short abilities;
     private final Array<Integer> cooperation;
     private final Array<Integer> symbiosis;
     private final Array<Integer> communication;
     private int food;
     private int fat;
+    public boolean preyedThisRound;
 
     public CreatureModel() {
         abilities = 0;
@@ -23,7 +23,8 @@ public class CreatureModel implements Pool.Poolable {
     }
 
     public void addFood() {
-        food++;
+        if (food < foodRequired())
+            food++;
     }
 
     public void resetFood() {
@@ -34,8 +35,20 @@ public class CreatureModel implements Pool.Poolable {
         return food;
     }
 
+    public boolean isFed() {
+        return food >= foodRequired();
+    }
+
     public int getFat() {
         return fat;
+    }
+
+    public int foodRequired() {
+        int res = 1;
+        if (hasAbility("high_body_weight")) res += 1;
+        if (hasAbility("parasite")) res += 2;
+        if (hasAbility("carnivorous")) res += 1;
+        return res;
     }
 
     public void addAbility(String ability) {
@@ -58,14 +71,6 @@ public class CreatureModel implements Pool.Poolable {
         else if (!Objects.equals(ability, "symbiosis")) symbiosis.add(partherID);
     }
 
-    public int foodRequired() {
-        int res = 1;
-        if (hasAbility("high_body_weight")) res += 1;
-        if (hasAbility("parasite")) res += 2;
-        if (hasAbility("carnivorous")) res += 1;
-        return res;
-    }
-
     public boolean hasAbility(String ability) {
         if (ability.equals("fat")) return (fat > 0);
         if (ability.equals("cooperation")) return cooperation.size > 0;
@@ -76,14 +81,5 @@ public class CreatureModel implements Pool.Poolable {
 
     public void removeAbility(String ability) {
         abilities -= Abilities.get(ability);
-    }
-
-    @Override
-    public void reset() {
-        abilities = 0;
-        fat = 0;
-        communication.clear();
-        symbiosis.clear();
-        cooperation.clear();
     }
 }

@@ -3,18 +3,13 @@ package ru.nsu.ccfit.evolution;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
+import javax.smartcardio.Card;
+
 public class HandModel {
     private final Array<CardModel> activeCards;
-    private final Pool<CardModel> cardPool;
 
     public HandModel() {
         activeCards = new Array<>(6);
-        cardPool = new Pool<CardModel>() {
-            @Override
-            protected CardModel newObject() {
-                return new CardModel();
-            }
-        };
     }
 
     public int getCardCount() {
@@ -27,13 +22,11 @@ public class HandModel {
     }
 
     public void addCard(int id) {
-        CardModel c = cardPool.obtain();
-        c.init(id);
+        CardModel c = new CardModel(id);
         activeCards.add(c);
     }
 
     public void removeCard(int i) {
-        cardPool.free(activeCards.get(i));
         activeCards.removeIndex(i);
     }
 
