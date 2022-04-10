@@ -90,4 +90,11 @@ public class HandView extends Group {
             queuedCard = null;
         }
     }
+
+    public boolean isCardDisplayed() {
+        for (CardView c : activeCards) {
+            if (c.isDisplayed()) return true;
+        }
+        return false;
+    }
 }

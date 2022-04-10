@@ -191,12 +191,14 @@ public class CardView extends GameActor {
 
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            HandView parentHand = (HandView) getParent();
+
             if (button == Input.Buttons.LEFT) {
                 if (isDisplayed) return false;
                 takeFromDeck();
                 return true;
             } else if (button == Input.Buttons.RIGHT) {
-                if (inDeck && !isDisplayed) display();
+                if (inDeck && !parentHand.isCardDisplayed()) display();
                 else if (isDisplayed) undisplay();
                 return false;
             } else return false;

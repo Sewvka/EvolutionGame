@@ -67,6 +67,7 @@ public class FoodToken extends GameActor {
 
             if (parentTray.getUserTable().isCreatureSelected()) {
                 parentTray.feed(parentToken);
+                parentTray.updatePositions();
             }
             else {
                 placeInTray();

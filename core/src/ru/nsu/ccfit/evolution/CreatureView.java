@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -68,6 +69,7 @@ public class CreatureView extends Group implements Pool.Poolable {
             moveToAbility(f, carnivorousIndex, parasiteCount);
         } else if (nextFat != -1) {
             moveToAbility(f, nextFat, 0);
+            f.addAction(color(Color.YELLOW));
         }
         foodCount++;
     }
