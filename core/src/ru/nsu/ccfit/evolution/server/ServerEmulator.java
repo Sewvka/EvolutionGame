@@ -6,8 +6,11 @@ import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.server.Deck;
 import ru.nsu.ccfit.evolution.server.PlayerModel;
 
+import java.util.Random;
+
 //на данный момент этот класс симулирует работу удалённого сервера.
 public class ServerEmulator {
+    private final static int GAME_START = 0;
     private final static int DEVELOPMENT = 1;
     private final static int FEEDING = 2;
     private final static int EXTINCTION = 3;
@@ -26,7 +29,8 @@ public class ServerEmulator {
         for (int i = 0; i < playerCount; i++) {
             players[i] = new PlayerModel(i);
         }
-        initDevelopment();
+        gameStage = GAME_START;
+        advanceStage();
     }
 
     private void initDevelopment() {
@@ -44,15 +48,30 @@ public class ServerEmulator {
         activePlayerIndex = 0;
     }
 
-    public void passTurn() {
-        activePlayerIndex++;
-        if (activePlayerIndex >= 4) activePlayerIndex = 0;
+    private void initFeeding() {
+        gameStage = FEEDING;
+        for (PlayerModel p : players) {
+            p.getTable().resetActivations();
+            p.passedTurn = false;
+        }
+        foodTotal = new Random().nextInt(6) + 3;
+        foodLeft = foodTotal;
+    }
+
+    public void nextTurn() {
+        if (allPlayersPassed()) {
+            advanceStage();
+        }
+        else {
+            activePlayerIndex++;
+            if (activePlayerIndex >= playerCount) activePlayerIndex = 0;
+            if (players[activePlayerIndex].passedTurn) nextTurn();
+        }
     }
 
     public Array<Integer> requestDrawnCards(int playerID) {
         PlayerModel player = getPlayer(playerID);
         if (player == null) return null;
-
         Array<Integer> drawn = new Array<>();
         drawn.addAll(player.getHand().getDrawnCards());
         player.getHand().commitDrawnCards();
@@ -76,19 +95,21 @@ public class ServerEmulator {
 
     public boolean requestCreaturePlacement(int selectedCard, int playerID) {
         if (gameStage != DEVELOPMENT) return false;
-        if (falseID(playerID)) return false;
+        if (falseID(playerID) || isInactive(playerID)) return false;
         if (falseCardIndex(selectedCard, playerID)) return false;
         PlayerModel player = getPlayer(playerID);
         if (player.getHand().getCardCount() < 1) return false;
+
         player.getHand().removeCard(selectedCard);
         player.getTable().addCreature();
+        nextTurn();
         return true;
     }
 
     public boolean requestAbilityPlacement(String ability, int selectedCard, int selectedCreature, int playerID, int targetID) {
         if (gameStage != DEVELOPMENT) return false;
         if (Abilities.isCooperative(ability)) return false;
-        if (falseID(playerID) || falseID(targetID)) return false;
+        if (falseID(playerID) || falseID(targetID) || isInactive(playerID)) return false;
         if (falseCardIndex(selectedCard, playerID)) return false;
         if (falseCreatureIndex(selectedCreature, targetID)) return false;
         PlayerModel player = getPlayer(playerID);
@@ -97,13 +118,37 @@ public class ServerEmulator {
         if (!player.getHand().containsAbility(ability, selectedCard)) return false;
         if (target.getTable().getCreatureCount() < 1) return false;
         if (target.getTable().getCreature(selectedCreature).hasAbility(ability) && !ability.equals("fat")) return false;
+
         player.getHand().removeCard(selectedCard);
         target.getTable().addAbility(selectedCreature, ability);
+        nextTurn();
+        return true;
+    }
+
+    public boolean requestCoopAbilityPlacement(String ability, int selectedCard, int selectedCreatureIndex1, int selectedCreatureIndex2, int playerID) {
+        if (gameStage != DEVELOPMENT) return false;
+        if (!Abilities.isCooperative(ability)) return false;
+        if (falseID(playerID) || isInactive(playerID)) return false;
+        if (falseCardIndex(selectedCard, playerID) || falseCreatureIndex(selectedCreatureIndex1, playerID) || falseCreatureIndex(selectedCreatureIndex2, playerID))
+            return false;
+        PlayerModel player = getPlayer(playerID);
+        if (!player.getHand().containsAbility(ability, selectedCard) || player.getTable().getCreatureCount() < 2)
+            return false;
+        if (player.getTable().getCreature(selectedCreatureIndex1).hasCoopAbility(ability, selectedCreatureIndex2) || player.getTable().getCreature(selectedCreatureIndex2).hasCoopAbility(ability, selectedCreatureIndex1))
+            return false;
+
+        player.getHand().removeCard(selectedCard);
+        player.getTable().addCoopAbility(selectedCreatureIndex1, selectedCreatureIndex2, ability);
+        nextTurn();
         return true;
     }
 
     private boolean falseID(int playerID) {
-        return players[activePlayerIndex].getID() != playerID || playerID >= playerCount || playerID < 0;
+        return playerID >= playerCount || playerID < 0;
+    }
+
+    private boolean isInactive(int playerID) {
+        return players[activePlayerIndex].getID() != playerID;
     }
 
     private boolean falseCreatureIndex(int creatureIndex, int playerID) {
@@ -114,23 +159,9 @@ public class ServerEmulator {
         return (cardIndex >= getPlayer(playerID).getHand().getCardCount() || cardIndex < 0);
     }
 
-    public boolean requestCoopAbilityPlacement(String ability, int selectedCard, int selectedCreatureIndex1, int selectedCreatureIndex2, int playerID) {
-        if (gameStage != DEVELOPMENT) return false;
-        if (!Abilities.isCooperative(ability)) return false;
-        if (falseID(playerID)) return false;
-        if (falseCardIndex(selectedCard, playerID) || falseCreatureIndex(selectedCreatureIndex1, playerID) || falseCreatureIndex(selectedCreatureIndex2, playerID))
-            return false;
-        PlayerModel player = getPlayer(playerID);
-        if (!player.getHand().containsAbility(ability, selectedCard) || player.getTable().getCreatureCount() < 2)
-            return false;
-        player.getHand().removeCard(selectedCard);
-        player.getTable().addCoopAbility(selectedCreatureIndex1, selectedCreatureIndex2, ability);
-        return true;
-    }
-
     public boolean requestPredation(int predatorIndex, int preyIndex, int playerID, int targetID) {
         if (falseCreatureIndex(predatorIndex, playerID) || falseCreatureIndex(preyIndex, targetID)) return false;
-        if (falseID(playerID) || falseID(targetID)) return false;
+        if (falseID(playerID) || falseID(targetID) || isInactive(playerID)) return false;
         if (gameStage != FEEDING) return false;
         PlayerModel player = getPlayer(playerID);
         PlayerModel target = getPlayer(targetID);
@@ -141,6 +172,7 @@ public class ServerEmulator {
             target.getTable().removeCreature(preyIndex);
             predator.addFood();
             predator.addFood();
+            nextTurn();
             return true;
         }
         return false;
@@ -163,50 +195,48 @@ public class ServerEmulator {
 
     public boolean requestFeed(int selectedCreature, int playerID) {
         if (falseCreatureIndex(selectedCreature, playerID)) return false;
+        if (falseID(playerID) || isInactive(playerID)) return false;
         CreatureModel c = getPlayer(playerID).getTable().getCreature(selectedCreature);
 
         if (foodLeft > 0) {
             if (c.getFood() < c.foodRequired() + c.getFat()) {
                 c.addFood();
                 foodLeft--;
+                nextTurn();
                 return true;
             }
         }
         return false;
     }
-    /*
+
     public boolean requestPassTurn(int playerID) {
-        players[playerID].setPassedTurn(true);
+        if (falseID(playerID) || isInactive(playerID)) return false;
+        PlayerModel player = getPlayer(playerID);
+        player.passedTurn = true;
+        nextTurn();
         return true;
     }
 
-    public int requestAdvanceStage() {
-        if (!allPlayersPassed()) return -1;
-        for (PlayerModel p : players) p.setPassedTurn(false);
-
-        if (gameStage == DEVELOPMENT) {
-            gameStage = FEEDING;
-            for (PlayerModel p : players) {
-                p.getTable().resetActivations();
-            }
-            foodTotal = new Random().nextInt(6) + 3;
-            foodLeft = foodTotal;
-        } else if (gameStage == FEEDING) {
-            gameStage = EXTINCTION;
-        } else if (gameStage == EXTINCTION) {
-            gameStage = DEVELOPMENT;
-        }
-
+    public int getStage() {
         return gameStage;
     }
 
+    private void advanceStage() {
+        activePlayerIndex = 0;
 
-
+        if (gameStage == DEVELOPMENT) {
+            initFeeding();
+        } else if (gameStage == FEEDING) {
+            gameStage = EXTINCTION;
+        } else if (gameStage == EXTINCTION || gameStage == GAME_START) {
+            initDevelopment();
+        }
+    }
 
     private boolean allPlayersPassed() {
         for (PlayerModel player : players) {
-            if (!player.hasPassed()) return false;
+            if (!player.passedTurn) return false;
         }
         return true;
-    }*/
+    }
 }

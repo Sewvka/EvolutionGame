@@ -3,14 +3,12 @@ package ru.nsu.ccfit.evolution.user.framework;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
-import ru.nsu.ccfit.evolution.user.actors.PlayerView;
-import ru.nsu.ccfit.evolution.user.actors.CreatureView;
-import ru.nsu.ccfit.evolution.user.actors.FoodToken;
-import ru.nsu.ccfit.evolution.user.actors.FoodTray;
-import ru.nsu.ccfit.evolution.user.actors.TableView;
+import ru.nsu.ccfit.evolution.user.actors.*;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
 public class SessionStage extends Stage {
     public final ArrayList<PlayerView> players;
@@ -36,9 +34,7 @@ public class SessionStage extends Stage {
             players.add(new PlayerView(game, sessionScreen.getViewport(), false, i));
             addActor(players.get(i));
         }
-
         alignPlayers();
-        initDevelopment();
     }
 
     public void feed(FoodToken f) {
@@ -50,7 +46,7 @@ public class SessionStage extends Stage {
         return sessionScreen;
     }
 
-    private void initDevelopment() {
+    public void initDevelopment() {
         //всем игрокам даются карты
         for (PlayerView p : players) {
             Array<Integer> drawn = game.getServerEmulator().requestDrawnCards(p.getPlayerID());
@@ -58,6 +54,16 @@ public class SessionStage extends Stage {
                 p.getHand().addAll(drawn);
             }
         }
+    }
+
+    public void initFeeding(int foodTotal) {
+        for (PlayerView p : players) {
+            HandView h = p.getHand();
+            h.addAction(moveTo(h.getX(), h.getY()-sessionScreen.getViewport().getWorldHeight()/9, 0.3f));
+            h.setTouchable(Touchable.disabled);
+        }
+        food.init(foodTotal);
+        addActor(food);
     }
 
     public void setHandTouchable(Touchable touchable) {

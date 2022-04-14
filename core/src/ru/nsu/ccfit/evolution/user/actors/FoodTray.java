@@ -37,8 +37,7 @@ public class FoodTray extends Group {
         removeActor(f);
     }
 
-    public void init() {
-        int foodTotal = game.getServerEmulator().getFoodTotal();
+    public void init(int foodTotal) {
         for (int i = 0; i < foodTotal; i++) addFood();
         updatePositions();
     }

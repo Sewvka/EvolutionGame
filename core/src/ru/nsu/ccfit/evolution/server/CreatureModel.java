@@ -79,6 +79,19 @@ public class CreatureModel {
         return (abilities & Abilities.get(ability)) != 0;
     }
 
+    public boolean hasCoopAbility(String ability, int partnerID) {
+        if (!Abilities.isCooperative(ability)) return false;
+        switch (ability) {
+            case "cooperation":
+                return cooperation.contains(partnerID, false);
+            case "communication":
+                return communication.contains(partnerID, false);
+            case "symbiosis":
+                return symbiosis.contains(partnerID, false);
+        }
+        return false;
+    }
+
     public void removeAbility(String ability) {
         abilities -= Abilities.get(ability);
     }

@@ -1,10 +1,12 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
@@ -32,7 +34,25 @@ public class SessionScreen extends GameScreen {
         addStage(uiStage);
 
         passButton = new TextButton("Pass turn", game.getAssets().getSkin());
-        //initUI();
+        initDevelopment();
+    }
+
+    private void initDevelopment() {
+        sessionStage.initDevelopment();
+        passButton.setPosition(getViewport().getWorldWidth()/32, getViewport().getWorldHeight()/18);
+        passButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.getServerEmulator().requestPassTurn(game.getPlayerID());
+                sessionStage.setHandTouchable(Touchable.disabled);
+            }
+        });
+        uiStage.addActor(passButton);
+    }
+
+    private void initFeeding() {
+        sessionStage.initFeeding(server.getFoodTotal());
+        passButton.setVisible(false);
     }
 
     public void playCard(CardView card) {
@@ -124,9 +144,7 @@ public class SessionScreen extends GameScreen {
 
     public void moveCardToFront(CardView card) {
         Vector2 coords = new Vector2(card.getX(), card.getY());
-        System.out.println("old coords: " + coords.x + "; " + coords.y);
         coords = card.localToStageCoordinates(coords);
-        System.out.println("new coords: " + coords.x + "; " + coords.y);
         card.clearActions();
         card.remove();
         overlayStage.addActor(card);
@@ -135,9 +153,7 @@ public class SessionScreen extends GameScreen {
 
     public void moveCardToBack(CardView card) {
         Vector2 coords = new Vector2(card.getX(), card.getY());
-        System.out.println("old coords: " + coords.x + "; " + coords.y);
         coords = card.getParentHand().stageToLocalCoordinates(coords);
-        System.out.println("new coords: " + coords.x + "; " + coords.y);
         card.clearActions();
         card.remove();
         card.getParentHand().addActor(card);
@@ -208,34 +224,4 @@ public class SessionScreen extends GameScreen {
             sessionStage.feed(token);
         } else token.placeInTray();
     }
-/*
-    private void initUI() {
-        passButton.setPosition(getViewport().getWorldWidth()/32, getViewport().getWorldHeight()/18);
-        passButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.getServerEmulator().passTurn();
-            }
-        });
-        uiStage.addActor(passButton);
-    }
-
-
-
-    public Stage getUiStage() {
-        return uiStage;
-    }
-
-
-    private void initFeedingPhase() {
-        playerHand.addAction(moveTo(playerHand.getX(), playerHand.getY()-150, 0.3f));
-        playerHand.setTouchable(Touchable.disabled);
-        passButton.setVisible(false);
-        food.init();
-        stage.addActor(food);
-    }
-
-    public TableManager getTables() {
-        return tables;
-    }*/
 }
