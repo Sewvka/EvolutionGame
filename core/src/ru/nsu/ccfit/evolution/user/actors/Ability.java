@@ -1,10 +1,13 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import ru.nsu.ccfit.evolution.common.Cards;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
+import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -14,12 +17,14 @@ public class Ability extends GameActor {
     private final EvolutionGame game;
 
     public Ability(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, Ability buddy) {
-        super(w, h);
+        super(null, w, h);
+        TextureRegion texture = new TextureRegion(game.getAssets().getTexture("cards/" + Cards.getName(cardID) + ".png"));
+        if (!firstAbility) texture.flip(true, true);
+        setTexture(texture);
         this.game = game;
         this.buddy = buddy;
-        texture = new TextureRegion(game.getLoader().getTexture("cards/" + Cards.getName(cardID) + ".png"));
+
         name = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
-        if (!firstAbility) texture.flip(true, true);
         addListener(new AbilityInputListener());
     }
 
@@ -32,8 +37,8 @@ public class Ability extends GameActor {
     }
 
     public void select() {
-        addAction(scaleTo(1.1f, 1.1f, 0.2f));
-        if (buddy != null) buddy.addAction(scaleTo(1.1f, 1.1f, 0.2f));
+        addAction(scaleTo(1.05f, 1.05f, 0.2f));
+        if (buddy != null) buddy.addAction(scaleTo(1.05f, 1.05f, 0.2f));
     }
 
     public void deselect() {
@@ -41,28 +46,26 @@ public class Ability extends GameActor {
         if (buddy != null) buddy.addAction(scaleTo(1, 1, 0.2f));
     }
 
-    private void activate() {
-        GameScreen screen = (GameScreen) game.getScreen();
+    private boolean activate() {
+        SessionScreen screen = (SessionScreen) game.getScreen();
         CreatureView parentCreature = (CreatureView) getParent();
 
         if (name.equals("carnivorous")) {
-            screen.getTables().queueAbility(this, parentCreature);
+            screen.queueAbility(this, parentCreature);
+            return true;
         }
+        return false;
     }
 
-    public void resumeActivation(CreatureView targetCreature, CreatureView queuedCreature) {
-        GameScreen screen = (GameScreen) game.getScreen();
-        TableManager tableManager = screen.getTables();
+    public void resumeActivation(CreatureView targetCreature) {
+        SessionScreen screen = (SessionScreen) game.getScreen();
         TableView targetTable = (TableView) targetCreature.getParent();
-        TableView parentTable = (TableView) queuedCreature.getParent();
+        CreatureView parentCreature = (CreatureView) getParent();
         if (name.equals("carnivorous")) {
-            if (game.getServerEmulator().requestPredation(parentTable.getCreatureIndex(queuedCreature), targetTable.getCreatureIndex(targetCreature), tableManager.indexOf(parentTable), tableManager.indexOf(targetTable))) {
-                targetTable.removeCreature(targetCreature);
-                queuedCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
-                queuedCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
-            } else {
-                screen.getTables().cancelAbilityUsage();
-            }
+            targetTable.removeCreature(targetCreature);
+            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
+            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
+            screen.cancelAbilityUsage();
         }
     }
 
@@ -79,13 +82,12 @@ public class Ability extends GameActor {
 
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            GameScreen screen = (GameScreen) game.getScreen();
-            if (button == Input.Buttons.LEFT && !screen.getTables().isAbilityQueued()) {
-                activate();
-                return true;
+            SessionScreen screen = (SessionScreen) game.getScreen();
+            if (button == Input.Buttons.LEFT && !screen.isAbilityQueued()) {
+                return activate();
             }
-            if (button == Input.Buttons.RIGHT && screen.getTables().isAbilityQueued()) {
-                screen.getTables().cancelAbilityUsage();
+            if (button == Input.Buttons.RIGHT && screen.isAbilityQueued()) {
+                screen.cancelAbilityUsage();
                 return true;
             }
             return false;

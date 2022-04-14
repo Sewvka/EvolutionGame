@@ -2,7 +2,7 @@ package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ru.nsu.ccfit.evolution.EvolutionGame;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {

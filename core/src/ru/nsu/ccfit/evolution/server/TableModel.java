@@ -1,6 +1,7 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.server.CreatureModel;
 
 public class TableModel {
     private final Array<CreatureModel> activeCreatures;
@@ -36,7 +37,7 @@ public class TableModel {
 
     public void resetActivations() {
         for (CreatureModel c : activeCreatures) {
-            c.preyedThisRound = false;
+            c.resetAbilities();
         }
     }
 

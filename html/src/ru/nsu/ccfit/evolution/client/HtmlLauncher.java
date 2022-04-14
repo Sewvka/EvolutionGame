@@ -3,7 +3,7 @@ package ru.nsu.ccfit.evolution.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import ru.nsu.ccfit.evolution.EvolutionGame;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 public class HtmlLauncher extends GwtApplication {
 

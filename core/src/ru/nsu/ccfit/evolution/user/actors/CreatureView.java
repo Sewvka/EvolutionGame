@@ -1,43 +1,45 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
+import ru.nsu.ccfit.evolution.user.actors.listeners.Hoverable;
+import ru.nsu.ccfit.evolution.user.actors.listeners.HoverableListener;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-public class CreatureView extends Group implements Pool.Poolable {
+public class CreatureView extends GameActor implements Hoverable {
     private final EvolutionGame game;
     private final Cover cover;
     private final Array<Ability> abilityArray;
     private int foodCount;
 
-    public CreatureView(float w, float h, EvolutionGame game) {
-        setSize(w, h);
+    public CreatureView(EvolutionGame game, float w, float h) {
+        super(null, w, h);
         this.game = game;
         abilityArray = new Array<>();
-        setOrigin(w / 2, h / 2);
-        setPosition(0, 0);
-        updateBounds();
         cover = new Cover(game, w, h);
         addActor(cover);
-        addListener(new CreatureInputListener(this));
+        addListener(new HoverableListener(this));
         foodCount = 0;
     }
 
-    public void select() {
+    @Override
+    public void hover() {
         TableView parent = (TableView) getParent();
         parent.setSelectedCreature(this);
     }
 
-    public void deselect() {
+    @Override
+    public void unhover() {
         TableView parent = (TableView) getParent();
         if (parent != null)
             parent.setSelectedCreature(null);
+    }
+
+    @Override
+    public boolean isHoverable() {
+        return true;
     }
 
     public Ability addAbility(int cardID, boolean firstAbility) {
@@ -111,7 +113,6 @@ public class CreatureView extends Group implements Pool.Poolable {
     @Override
     public void act(float delta) {
         super.act(delta);
-        updateBounds();
         updateAbilityPositions();
     }
 
@@ -130,27 +131,5 @@ public class CreatureView extends Group implements Pool.Poolable {
         setRotation(0);
         abilityArray.clear();
         foodCount = 0;
-    }
-
-    private void updateBounds() {
-        setBounds(getX(), getY(), getWidth(), getHeight());
-    }
-
-    private class CreatureInputListener extends InputListener {
-        CreatureView parentCreature;
-
-        private CreatureInputListener(CreatureView parent) {
-            this.parentCreature = parent;
-        }
-
-        @Override
-        public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            if (pointer == -1) select();
-        }
-
-        @Override
-        public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-            if (pointer == -1) deselect();
-        }
     }
 }

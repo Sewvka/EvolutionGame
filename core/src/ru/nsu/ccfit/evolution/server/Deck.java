@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
 

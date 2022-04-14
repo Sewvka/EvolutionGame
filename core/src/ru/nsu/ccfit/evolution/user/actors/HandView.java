@@ -1,9 +1,11 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.user.actors;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.SnapshotArray;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import java.security.InvalidParameterException;
 
@@ -14,30 +16,29 @@ public class HandView extends Group {
     final float CARD_H = 168;
     private final Array<CardView> activeCards;
     private final Pool<CardView> cardPool;
-    private final EvolutionGame game;
-    private final TableManager tables;
-    private CardView queuedCard;
-    private CreatureView queuedCreature;
 
-    public HandView(final EvolutionGame game, float x, float y, final TableManager tables) {
+    public HandView(final EvolutionGame game, final boolean isUser, float x, float y) {
         setPosition(x, y);
-        this.game = game;
-        this.tables = tables;
         activeCards = new Array<>(6);
+        final HandView t = this;
         cardPool = new Pool<CardView>() {
             @Override
             protected CardView newObject() {
-                return new CardView(game, tables.getUserTable(), CARD_W, CARD_H);
+                return new CardView(game, t, CARD_W, CARD_H, isUser);
             }
         };
     }
 
     public void addCard(int id) {
-        if (game.getServerEmulator().requestCardAddition(id, game.getPlayerID())) {
-            CardView c = cardPool.obtain();
-            c.init(id);
-            activeCards.add(c);
-            addActor(c);
+        CardView c = cardPool.obtain();
+        c.init(id);
+        activeCards.add(c);
+        addActor(c);
+    }
+
+    public void addAll(Array<Integer> ids) {
+        for (Integer id : ids) {
+            addCard(id);
         }
     }
 
@@ -50,16 +51,19 @@ public class HandView extends Group {
     }
 
     public void removeCard(CardView c) {
-        if (!activeCards.contains(c, true)) throw new InvalidParameterException("Cannot remove card that isn't contained in hand!");
+        if (!activeCards.contains(c, true))
+            throw new InvalidParameterException("Cannot remove card that isn't contained in hand!");
         cardPool.free(c);
         activeCards.removeIndex(activeCards.indexOf(c, true));
-        removeActor(c);
+        c.remove();
     }
 
     @Override
     public void act(float delta) {
         int i = 0;
-        for (CardView c : activeCards) {
+        SnapshotArray<Actor> children = getChildren();
+        for (Actor a : children) {
+            CardView c = (CardView) a;
             if (c.isInDeck() && !c.isDisplayed()) {
                 float x = (i - (float) (activeCards.size - 1) / 2) * c.getWidth() / 2 - c.getWidth() / 2;
                 float y = -Math.abs(i - (float) (activeCards.size - 1) / 2) * c.getHeight() / 8;
@@ -70,25 +74,8 @@ public class HandView extends Group {
         super.act(delta);
     }
 
-    public TableManager getTables() {
-        return tables;
-    }
-
     public int getCardIndex(CardView card) {
         return activeCards.indexOf(card, true);
-    }
-
-    public void queueCard(CardView queuedCard, CreatureView queuedCreature) {
-        this.queuedCard = queuedCard;
-        this.queuedCreature = queuedCreature;
-    }
-
-    public void resumeCoopCardPlay(CreatureView targetCreature) {
-        if (queuedCard != null && !queuedCreature.equals(targetCreature)) {
-            setTouchable(Touchable.enabled);
-            queuedCard.resumeCoopCardPlay(targetCreature, queuedCreature);
-            queuedCard = null;
-        }
     }
 
     public boolean isCardDisplayed() {

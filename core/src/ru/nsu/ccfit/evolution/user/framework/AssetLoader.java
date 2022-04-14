@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import ru.nsu.ccfit.evolution.common.Cards;
 
 public class AssetLoader {
     private final AssetManager assets;
@@ -33,8 +34,8 @@ public class AssetLoader {
         return font;
     }
 
-    public Texture getCardTexture(String cName) {
-        return assets.get("cards/" + cName + ".png", Texture.class);
+    public Texture getCardTexture(String cardName) {
+        return assets.get("cards/" + cardName + ".png", Texture.class);
     }
 
     public Texture getTexture(String filename) {

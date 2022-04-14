@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.common;
 
 import java.util.Collections;
 import java.util.HashMap;

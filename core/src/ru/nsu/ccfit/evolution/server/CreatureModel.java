@@ -1,6 +1,7 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.common.Abilities;
 
 import java.security.InvalidParameterException;
 import java.util.Objects;
@@ -52,7 +53,6 @@ public class CreatureModel {
     }
 
     public void addAbility(String ability) {
-        //временное условие, до того, как добавлю реализацию особых свойств
         if (Abilities.isCooperative(ability)) {
             throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
         }
@@ -81,5 +81,9 @@ public class CreatureModel {
 
     public void removeAbility(String ability) {
         abilities -= Abilities.get(ability);
+    }
+
+    public void resetAbilities() {
+        preyedThisRound = false;
     }
 }

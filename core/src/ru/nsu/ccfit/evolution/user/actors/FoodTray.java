@@ -1,8 +1,10 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.user.actors.FoodToken;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import java.security.InvalidParameterException;
 
@@ -13,35 +15,26 @@ public class FoodTray extends Group {
     private static final int PADDING = 10;
     private final Array<FoodToken> food;
     private final EvolutionGame game;
-    private final TableView userTable;
 
-    public FoodTray(EvolutionGame game, TableView userTable) {
+    public FoodTray(EvolutionGame game) {
         super();
-        this.userTable = userTable;
-        setSize((TOKEN_SIZE+PADDING)*5+PADDING, (TOKEN_SIZE+PADDING)*3+PADDING);
+        setSize((TOKEN_SIZE + PADDING) * 5 + PADDING, (TOKEN_SIZE + PADDING) * 3 + PADDING);
         food = new Array<>();
         this.game = game;
-    }
-
-    public TableView getUserTable() {
-        return userTable;
-    }
-
-    public void feed(FoodToken f) {
-        if (!food.contains(f, true)) throw new InvalidParameterException("Cannot remove food that isn't contained in tray!");
-        if (game.getServerEmulator().requestFeed(userTable.getSelectedCreatureIndex(), game.getPlayerID())) {
-            food.removeIndex(food.indexOf(f, true));
-            f.setTouchable(Touchable.disabled);
-            userTable.getSelectedCreature().addFood(f);
-            removeActor(f);
-        }
-        else f.placeInTray();
     }
 
     public void addFood() {
         FoodToken f = new FoodToken(game, TOKEN_SIZE);
         addActor(f);
         food.add(f);
+    }
+
+    public void removeToken(FoodToken f) {
+        if (!food.contains(f, true))
+            throw new InvalidParameterException("Cannot remove food that isn't contained in tray!");
+        food.removeIndex(food.indexOf(f, true));
+        f.setTouchable(Touchable.disabled);
+        removeActor(f);
     }
 
     public void init() {
@@ -59,7 +52,7 @@ public class FoodTray extends Group {
                 row++;
             }
             col++;
-            f.addAction(moveTo(PADDING+col*(TOKEN_SIZE+PADDING), PADDING+(3-row)*(TOKEN_SIZE+PADDING)));
+            f.addAction(moveTo(PADDING + col * (TOKEN_SIZE + PADDING), PADDING + (3 - row) * (TOKEN_SIZE + PADDING)));
         }
     }
 }

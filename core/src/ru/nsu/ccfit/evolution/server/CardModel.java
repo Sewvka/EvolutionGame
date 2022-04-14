@@ -1,4 +1,6 @@
-package ru.nsu.ccfit.evolution;
+package ru.nsu.ccfit.evolution.server;
+
+import ru.nsu.ccfit.evolution.common.Cards;
 
 public class CardModel {
     private final String ability1;
