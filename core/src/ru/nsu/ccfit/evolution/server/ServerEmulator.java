@@ -2,9 +2,7 @@ package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.common.Abilities;
-import ru.nsu.ccfit.evolution.server.CreatureModel;
-import ru.nsu.ccfit.evolution.server.Deck;
-import ru.nsu.ccfit.evolution.server.PlayerModel;
+import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
 import java.util.Random;
 
@@ -21,9 +19,10 @@ public class ServerEmulator {
     private int activePlayerIndex;
     private int playerCount;
     private final Deck deck;
+    private SessionScreen gameScreen;
 
     public ServerEmulator() {
-        playerCount = 4;
+        playerCount = 1;
         deck = new Deck();
         players = new PlayerModel[playerCount];
         for (int i = 0; i < playerCount; i++) {
@@ -31,6 +30,10 @@ public class ServerEmulator {
         }
         gameStage = GAME_START;
         advanceStage();
+    }
+
+    public void setGameScreen(SessionScreen gameScreen) {
+        this.gameScreen = gameScreen;
     }
 
     private void initDevelopment() {
@@ -56,6 +59,7 @@ public class ServerEmulator {
         }
         foodTotal = new Random().nextInt(6) + 3;
         foodLeft = foodTotal;
+        gameScreen.initFeeding();
     }
 
     public void nextTurn() {

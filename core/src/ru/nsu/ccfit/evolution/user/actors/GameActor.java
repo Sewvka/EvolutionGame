@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Pool;
 
-public abstract class GameActor extends Group implements Pool.Poolable {
+public class GameActor extends Group implements Pool.Poolable {
     private TextureRegion texture;
+    private Group trueParent;
 
     public GameActor() {
         this.texture = null;
@@ -18,6 +19,14 @@ public abstract class GameActor extends Group implements Pool.Poolable {
         setOrigin(w / 2, h / 2);
         setPosition(0, 0);
         updateBounds();
+    }
+
+    public void setTrueParent(Group trueParent) {
+        this.trueParent = trueParent;
+    }
+
+    public Group getTrueParent() {
+        return trueParent;
     }
 
     @Override

@@ -29,6 +29,7 @@ public class SessionScreen extends GameScreen {
         overlayStage = new Stage(getViewport());
         uiStage = new Stage(getViewport());
         server = game.getServerEmulator();
+        server.setGameScreen(this);
         addStage(sessionStage);
         addStage(overlayStage);
         addStage(uiStage);
@@ -37,20 +38,20 @@ public class SessionScreen extends GameScreen {
         initDevelopment();
     }
 
-    private void initDevelopment() {
+    public void initDevelopment() {
         sessionStage.initDevelopment();
-        passButton.setPosition(getViewport().getWorldWidth()/32, getViewport().getWorldHeight()/18);
+        passButton.setPosition(getViewport().getWorldWidth() / 32, getViewport().getWorldHeight() / 18);
         passButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.getServerEmulator().requestPassTurn(game.getPlayerID());
-                sessionStage.setHandTouchable(Touchable.disabled);
+                if (game.getServerEmulator().requestPassTurn(game.getPlayerID()))
+                    sessionStage.setHandTouchable(Touchable.disabled);
             }
         });
         uiStage.addActor(passButton);
     }
 
-    private void initFeeding() {
+    public void initFeeding() {
         sessionStage.initFeeding(server.getFoodTotal());
         passButton.setVisible(false);
     }
@@ -64,7 +65,6 @@ public class SessionScreen extends GameScreen {
             playCreature(card);
         } else {
             card.putInDeck();
-            ;
         }
     }
 
@@ -100,7 +100,8 @@ public class SessionScreen extends GameScreen {
     public void playAbility(CardView card, CreatureView selectedCreature, boolean firstAbility) {
         String ability = firstAbility ? card.getAbility1() : card.getAbility2();
         TableView selectedTable = (TableView) selectedCreature.getParent();
-        PlayerView player = (PlayerView) card.getParentHand().getParent();
+        HandView parentHand = (HandView) card.getTrueParent();
+        PlayerView player = (PlayerView) parentHand.getParent();
         PlayerView target = (PlayerView) selectedTable.getParent();
         if (Abilities.isCooperative(ability)) {
             if (selectedTable.creatureCount() > 1) {
@@ -115,8 +116,8 @@ public class SessionScreen extends GameScreen {
                 return;
             }
         }
-        if (server.requestAbilityPlacement(ability, card.getParentHand().getCardIndex(card), selectedTable.getCreatureIndex(selectedCreature), player.getPlayerID(), target.getPlayerID())) {
-            card.getParentHand().removeCard(card);
+        if (server.requestAbilityPlacement(ability, parentHand.getCardIndex(card), selectedTable.getCreatureIndex(selectedCreature), player.getPlayerID(), target.getPlayerID())) {
+            parentHand.removeCard(card);
             card.remove();
             selectedCreature.addAbility(card.getId(), firstAbility);
         } else card.putInDeck();
@@ -130,34 +131,35 @@ public class SessionScreen extends GameScreen {
     public void playCreature(CardView card) {
         TableView selectedTable = sessionStage.getSelectedTable();
         PlayerView target = (PlayerView) selectedTable.getParent();
-        PlayerView player = (PlayerView) card.getParentHand().getParent();
+        HandView parentHand = (HandView) card.getTrueParent();
+        PlayerView player = (PlayerView) parentHand.getParent();
         if (player.getPlayerID() != target.getPlayerID()) {
             card.putInDeck();
             return;
         }
-        if (server.requestCreaturePlacement(card.getParentHand().getCardIndex(card), player.getPlayerID())) {
+        if (server.requestCreaturePlacement(parentHand.getCardIndex(card), player.getPlayerID())) {
             selectedTable.addCreature();
-            card.getParentHand().removeCard(card);
+            parentHand.removeCard(card);
             card.remove();
         } else card.putInDeck();
     }
 
-    public void moveCardToFront(CardView card) {
-        Vector2 coords = new Vector2(card.getX(), card.getY());
-        coords = card.localToStageCoordinates(coords);
-        card.clearActions();
-        card.remove();
-        overlayStage.addActor(card);
-        card.setPosition(coords.x, coords.y);
+    public void moveActorToFront(GameActor actor) {
+        Vector2 coords = new Vector2(actor.getX(), actor.getY());
+        coords = actor.localToStageCoordinates(coords);
+        actor.clearActions();
+        actor.remove();
+        overlayStage.addActor(actor);
+        actor.setPosition(coords.x, coords.y);
     }
 
-    public void moveCardToBack(CardView card) {
-        Vector2 coords = new Vector2(card.getX(), card.getY());
-        coords = card.getParentHand().stageToLocalCoordinates(coords);
-        card.clearActions();
-        card.remove();
-        card.getParentHand().addActor(card);
-        card.setPosition(coords.x, coords.y);
+    public void moveActorToBack(GameActor actor) {
+        Vector2 coords = new Vector2(actor.getX(), actor.getY());
+        coords = actor.getTrueParent().stageToLocalCoordinates(coords);
+        actor.clearActions();
+        actor.remove();
+        actor.getTrueParent().addActor(actor);
+        actor.setPosition(coords.x, coords.y);
     }
 
     public void creatureClicked(CreatureView targetCreature) {
@@ -183,7 +185,8 @@ public class SessionScreen extends GameScreen {
     private void resumeCoopCardPlay(CreatureView targetCreature1, CreatureView targetCreature2) {
         TableView selectedTable = sessionStage.getSelectedTable();
         PlayerView target = (PlayerView) selectedTable.getParent();
-        PlayerView player = (PlayerView) queuedCard.getParentHand().getParent();
+        HandView parentHand = (HandView) queuedCard.getTrueParent();
+        PlayerView player = (PlayerView) parentHand.getParent();
         if (player.getPlayerID() != target.getPlayerID()) {
             queuedCard.putInDeck();
             return;
@@ -192,12 +195,12 @@ public class SessionScreen extends GameScreen {
         int selectedCreature1 = selectedTable.getCreatureIndex(targetCreature1);
         int selectedCreature2 = selectedTable.getCreatureIndex(targetCreature2);
         String ability = queuedAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
-        if (server.requestCoopAbilityPlacement(ability, queuedCard.getParentHand().getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getPlayerID())) {
+        if (server.requestCoopAbilityPlacement(ability, parentHand.getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getPlayerID())) {
             Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedAbilityBoolean);
             Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedAbilityBoolean);
             ab1.setBuddy(ab2);
             ab2.setBuddy(ab1);
-            queuedCard.getParentHand().removeCard(queuedCard);
+            parentHand.removeCard(queuedCard);
             queuedCard.remove();
             queuedCard = null;
         } else queuedCard.putInDeck();
@@ -217,11 +220,16 @@ public class SessionScreen extends GameScreen {
         queuedAbilityActivation = null;
     }
 
-    public void feedToken(FoodToken token) {
-        TableView selectedTable = sessionStage.getSelectedTable();
-        PlayerView player = (PlayerView) selectedTable.getParent();
-        if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getPlayerID())) {
-            sessionStage.feed(token);
-        } else token.placeInTray();
+    public void feedToken(FoodToken f) {
+        if (sessionStage.isTableSelected()) {
+            if (sessionStage.getSelectedTable().isCreatureSelected()) {
+                PlayerView player = (PlayerView) sessionStage.getSelectedTable().getParent();
+                if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getPlayerID())) {
+                    sessionStage.feed(f);
+                }
+            }
+        }
+        moveActorToBack(f);
+        f.setPosition(0, 0);
     }
 }

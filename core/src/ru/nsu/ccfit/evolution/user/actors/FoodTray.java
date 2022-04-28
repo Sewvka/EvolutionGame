@@ -1,57 +1,49 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.utils.Array;
-import ru.nsu.ccfit.evolution.user.actors.FoodToken;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
-import java.security.InvalidParameterException;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
 public class FoodTray extends Group {
     public static final int TOKEN_SIZE = 30;
     private static final int PADDING = 10;
-    private final Array<FoodToken> food;
+    private int foodTotal;
+    private int foodCurrent;
     private final EvolutionGame game;
+    private final Label label;
 
     public FoodTray(EvolutionGame game) {
         super();
-        setSize((TOKEN_SIZE + PADDING) * 5 + PADDING, (TOKEN_SIZE + PADDING) * 3 + PADDING);
-        food = new Array<>();
+        setSize(TOKEN_SIZE + PADDING * 2, TOKEN_SIZE + PADDING * 2);
+        label = new Label("", game.getAssets().getSkin());
+        label.setPosition(0, TOKEN_SIZE + PADDING * 2);
+        label.setColor(Color.GREEN);
+        addActor(label);
         this.game = game;
-    }
-
-    public void addFood() {
-        FoodToken f = new FoodToken(game, TOKEN_SIZE);
+        FoodToken f = new FoodToken(game, TOKEN_SIZE, true);
+        f.setTrueParent(this);
         addActor(f);
-        food.add(f);
-    }
-
-    public void removeToken(FoodToken f) {
-        if (!food.contains(f, true))
-            throw new InvalidParameterException("Cannot remove food that isn't contained in tray!");
-        food.removeIndex(food.indexOf(f, true));
-        f.setTouchable(Touchable.disabled);
-        removeActor(f);
     }
 
     public void init(int foodTotal) {
-        for (int i = 0; i < foodTotal; i++) addFood();
-        updatePositions();
+        this.foodTotal = foodTotal;
+        foodCurrent = foodTotal;
+        updateText();
     }
 
-    public void updatePositions() {
-        int col = 0;
-        int row = 0;
-        for (FoodToken f : food) {
-            if (col == 5) {
-                col = 0;
-                row++;
-            }
-            col++;
-            f.addAction(moveTo(PADDING + col * (TOKEN_SIZE + PADDING), PADDING + (3 - row) * (TOKEN_SIZE + PADDING)));
+    public void removeFood() {
+        if (foodCurrent <= 0) return;
+        foodCurrent--;
+        if (foodCurrent > 0) {
+            addActor(new FoodToken(game, TOKEN_SIZE, true));
         }
+        updateText();
+        if (foodCurrent <= 0) label.setColor(Color.RED);
+    }
+
+    private void updateText() {
+        label.setText(foodCurrent + "/" + foodTotal);
     }
 }

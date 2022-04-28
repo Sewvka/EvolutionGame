@@ -20,11 +20,10 @@ public class HandView extends Group {
     public HandView(final EvolutionGame game, final boolean isUser, float x, float y) {
         setPosition(x, y);
         activeCards = new Array<>(6);
-        final HandView t = this;
         cardPool = new Pool<CardView>() {
             @Override
             protected CardView newObject() {
-                return new CardView(game, t, CARD_W, CARD_H, isUser);
+                return new CardView(game, CARD_W, CARD_H, isUser);
             }
         };
     }
@@ -34,6 +33,7 @@ public class HandView extends Group {
         c.init(id);
         activeCards.add(c);
         addActor(c);
+        c.setTrueParent(this);
     }
 
     public void addAll(Array<Integer> ids) {

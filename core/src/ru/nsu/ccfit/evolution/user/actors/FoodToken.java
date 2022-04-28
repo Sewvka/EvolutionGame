@@ -1,78 +1,63 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import ru.nsu.ccfit.evolution.user.actors.listeners.Draggable;
+import ru.nsu.ccfit.evolution.user.actors.listeners.DraggableListener;
+import ru.nsu.ccfit.evolution.user.actors.listeners.Hoverable;
+import ru.nsu.ccfit.evolution.user.actors.listeners.HoverableListener;
 import ru.nsu.ccfit.evolution.user.framework.SessionStage;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 
-public class FoodToken extends GameActor {
+public class FoodToken extends GameActor implements Hoverable, Draggable {
+    private final boolean isActive;
 
-    public FoodToken(EvolutionGame game, int size) {
+    public FoodToken(EvolutionGame game, int size, boolean isActive) {
         super(new TextureRegion(game.getAssets().getTexture("food/food_red.png")), size, size);
-        addListener(new FoodEventListener(this));
+        addListener(new HoverableListener(this));
+        addListener(new DraggableListener(this, Input.Buttons.LEFT));
+        this.isActive = isActive;
     }
 
-    public void select() {
+    @Override
+    public boolean isDraggable() {
+        return isActive;
+    }
+
+    @Override
+    public void startDragging() {
+        SessionStage sessionStage = (SessionStage) getStage();
+        sessionStage.getSessionScreen().moveActorToFront(this);
+    }
+
+    @Override
+    public void drag(float x, float y) {
+        Vector2 v = localToParentCoordinates(new Vector2(x, y));
+        addAction(moveTo(v.x - getWidth() / 2, v.y - getHeight() / 2, 0.1f));
+    }
+
+    @Override
+    public void release() {
+        SessionStage sessionStage = (SessionStage) getTrueParent().getStage();
+        sessionStage.getSessionScreen().feedToken(this);
+    }
+
+    @Override
+    public boolean isHoverable() {
+        return isActive;
+    }
+
+    @Override
+    public void hover() {
         addAction(scaleTo(1.1f, 1.1f, 0.2f));
     }
 
-    public void deselect() {
+    @Override
+    public void unhover() {
         addAction(scaleTo(1, 1, 0.2f));
-    }
-
-    public void placeInTray() {
-        FoodTray parentTray = (FoodTray) getParent();
-        clearActions();
-        if (parentTray != null) {
-            parentTray.updatePositions();
-        }
-    }
-
-    private class FoodEventListener extends InputListener {
-        private final FoodToken parentToken;
-
-        public FoodEventListener(FoodToken parentToken) {
-            this.parentToken = parentToken;
-        }
-
-        @Override
-        public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            select();
-        }
-
-        @Override
-        public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-            deselect();
-        }
-
-        @Override
-        public void touchDragged(InputEvent event, float x, float y, int pointer) {
-            Vector2 v = localToParentCoordinates(new Vector2(x, y));
-            addAction(moveTo(v.x - getWidth() / 2, v.y - getHeight() / 2, 0.1f));
-        }
-
-        @Override
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            return true;
-        }
-
-        @Override
-        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-            SessionStage sessionStage = (SessionStage) parentToken.getStage();
-
-            if (sessionStage.isTableSelected()) {
-                if (sessionStage.getSelectedTable().isCreatureSelected()) {
-                    sessionStage.getSessionScreen().feedToken(parentToken);
-                } else placeInTray();
-            } else {
-                placeInTray();
-            }
-        }
     }
 }

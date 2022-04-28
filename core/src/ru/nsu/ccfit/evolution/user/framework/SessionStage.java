@@ -19,13 +19,14 @@ public class SessionStage extends Stage {
 
     public SessionStage(EvolutionGame game, int playerCount, SessionScreen sessionScreen) {
         if (playerCount > 4) throw new InvalidParameterException("Game does not support more than 4 players!");
-        if (playerCount < 2) throw new InvalidParameterException("Game requires at least two players!");
+        //if (playerCount < 2) throw new InvalidParameterException("Game requires at least two players!");
+        if (playerCount < 1) throw new InvalidParameterException("Game requires at least one player!");
         this.game = game;
         this.playerCount = playerCount;
         this.sessionScreen = sessionScreen;
         players = new ArrayList<>(playerCount);
         food = new FoodTray(game);
-        food.setPosition(sessionScreen.getViewport().getWorldWidth() / 16, 0);
+        food.setPosition(sessionScreen.getViewport().getWorldWidth() / 16, sessionScreen.getViewport().getWorldHeight()/8);
 
         //в конечном итоге номера ID игроков должен будет предоставлять сервер
         players.add(new PlayerView(game, sessionScreen.getViewport(), true, 0));
@@ -38,8 +39,9 @@ public class SessionStage extends Stage {
     }
 
     public void feed(FoodToken f) {
-        food.removeToken(f);
-        getSelectedCreature().addFood(f);
+        f.remove();
+        food.removeFood();
+        getSelectedCreature().addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
     }
 
     public SessionScreen getSessionScreen() {

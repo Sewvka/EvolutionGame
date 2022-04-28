@@ -17,15 +17,13 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     private boolean isDisplayed;
     private int id;
     private final EvolutionGame game;
-    private final HandView parentHand;
     private final boolean isUser;
 
 
-    public CardView(EvolutionGame game, HandView parentHand, float w, float h, boolean isUser) {
+    public CardView(EvolutionGame game, float w, float h, boolean isUser) {
         super(null, w, h);
         this.isUser = isUser;
         this.game = game;
-        this.parentHand = parentHand;
         inDeck = false;
         isDisplayed = false;
         addListener(new DraggableListener(this, Input.Buttons.LEFT));
@@ -43,6 +41,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
 
     @Override
     public boolean isDisplayable() {
+        HandView parentHand = (HandView) getTrueParent();
         return (isUser && inDeck && !parentHand.isCardDisplayed() && !isDisplayed);
     }
 
@@ -55,7 +54,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     public void display() {
         isDisplayed = true;
         SessionStage sessionStage = (SessionStage) getStage();
-        sessionStage.getSessionScreen().moveCardToFront(this);
+        sessionStage.getSessionScreen().moveActorToFront(this);
         addAction(parallel(scaleTo(3, 3, 0.2f), moveTo((getStage().getWidth() - getWidth()) / 2, (getStage().getHeight() - getHeight()) / 2, 0.2f), rotateTo(0, 0.2f)));
     }
 
@@ -83,6 +82,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
 
     @Override
     public boolean isDraggable() {
+        HandView parentHand = (HandView) getTrueParent();
         return (!isDisplayed && isUser && inDeck && !parentHand.isCardDisplayed());
     }
 
@@ -90,7 +90,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     public void startDragging() {
         inDeck = false;
         SessionStage sessionStage = (SessionStage) getStage();
-        sessionStage.getSessionScreen().moveCardToFront(this);
+        sessionStage.getSessionScreen().moveActorToFront(this);
     }
 
     @Override
@@ -101,18 +101,14 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
 
     @Override
     public void release() {
-        SessionStage sessionStage = (SessionStage) getParentHand().getStage();
+        SessionStage sessionStage = (SessionStage) getTrueParent().getStage();
         sessionStage.getSessionScreen().playCard(this);
     }
 
     public void putInDeck() {
         inDeck = true;
-        SessionStage sessionStage = (SessionStage) parentHand.getStage();
-        sessionStage.getSessionScreen().moveCardToBack(this);
-    }
-
-    public HandView getParentHand() {
-        return parentHand;
+        SessionStage sessionStage = (SessionStage) getTrueParent().getStage();
+        sessionStage.getSessionScreen().moveActorToBack(this);
     }
 
     public void init(int id) {

@@ -12,7 +12,6 @@ public class Deck {
 
     static {
         HashMap<Integer, Integer> aMap = new HashMap<>();
-        aMap.put(0, 4);
         aMap.put(1, 4);
         aMap.put(2, 4);
         aMap.put(3, 4);
@@ -30,8 +29,9 @@ public class Deck {
         aMap.put(15, 4);
         aMap.put(16, 4);
         aMap.put(17, 4);
-        aMap.put(18, 8);
-        aMap.put(19, 4);
+        aMap.put(18, 4);
+        aMap.put(19, 8);
+        aMap.put(20, 4);
         cardAmountMap = Collections.unmodifiableMap(aMap);
     }
 
@@ -40,7 +40,7 @@ public class Deck {
     public Deck() {
         cards = new Array<>(DECK_SIZE);
 
-        for (int i = 0; i <= 19; i++) {
+        for (int i = 1; i <= 20; i++) {
             for (int j = 0; j < cardAmountMap.get(i); j++) cards.add(i);
         }
 

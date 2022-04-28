@@ -63,8 +63,8 @@ public class Ability extends GameActor {
         CreatureView parentCreature = (CreatureView) getParent();
         if (name.equals("carnivorous")) {
             targetTable.removeCreature(targetCreature);
-            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
-            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE));
+            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
+            parentCreature.addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
             screen.cancelAbilityUsage();
         }
     }
