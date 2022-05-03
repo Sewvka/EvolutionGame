@@ -13,9 +13,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class Ability extends GameActor {
     private Ability buddy;
+
     private final String name;
     private final EvolutionGame game;
-
     public Ability(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, Ability buddy) {
         super(null, w, h);
         TextureRegion texture = new TextureRegion(game.getAssets().getTexture("cards/" + Cards.getName(cardID) + ".png"));
@@ -34,6 +34,10 @@ public class Ability extends GameActor {
 
     public void setBuddy(Ability buddy) {
         this.buddy = buddy;
+    }
+
+    public Ability getBuddy() {
+        return buddy;
     }
 
     public void select() {

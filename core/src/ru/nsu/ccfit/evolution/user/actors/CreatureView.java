@@ -2,6 +2,7 @@ package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.user.actors.listeners.Hoverable;
 import ru.nsu.ccfit.evolution.user.actors.listeners.HoverableListener;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
@@ -11,13 +12,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class CreatureView extends GameActor implements Hoverable {
     private final EvolutionGame game;
     private final Cover cover;
-    private final Array<Ability> abilityArray;
+    private final Array<Ability> abilities;
     private int foodCount;
 
     public CreatureView(EvolutionGame game, float w, float h) {
         super(null, w, h);
         this.game = game;
-        abilityArray = new Array<>();
+        abilities = new Array<>();
         cover = new Cover(game, w, h);
         addActor(cover);
         addListener(new HoverableListener(this));
@@ -42,10 +43,23 @@ public class CreatureView extends GameActor implements Hoverable {
         return true;
     }
 
+    public void removeBuddies() {
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+            if (Abilities.isCooperative(a.getName())) {
+                CreatureView c = (CreatureView) a.getBuddy().getParent();
+                c.removeAbility(a);
+            }
+        }
+    }
+
+    public void removeAbility(Ability a) {
+        abilities.removeValue(a, true);
+    }
+
     public Ability addAbility(int cardID, boolean firstAbility) {
         Ability ability = new Ability(game, getWidth(), getHeight(), cardID, firstAbility, null);
         addActorBefore(cover, ability);
-        abilityArray.add(ability);
+        abilities.add(ability);
         return ability;
     }
 
@@ -55,7 +69,7 @@ public class CreatureView extends GameActor implements Hoverable {
         int carnivorousIndex = getAbilityIndex("carnivorous");
         int parasiteCount = -1;
         if (parasiteIndex != -1) {
-            parasiteCount = abilityArray.get(parasiteIndex).getChildren().size;
+            parasiteCount = abilities.get(parasiteIndex).getChildren().size;
         }
         int nextFat = getNextFat();
 
@@ -63,10 +77,10 @@ public class CreatureView extends GameActor implements Hoverable {
             cover.addActor(f);
             f.setPosition(10, getHeight() - f.getHeight() - 10);
             foodCount++;
-        } else if (hbwIndex != -1 && !abilityArray.get(hbwIndex).hasChildren()) {
+        } else if (hbwIndex != -1 && !abilities.get(hbwIndex).hasChildren()) {
             addFoodToAbility(f, hbwIndex, 0);
             foodCount++;
-        } else if (carnivorousIndex != -1 && !abilityArray.get(carnivorousIndex).hasChildren()) {
+        } else if (carnivorousIndex != -1 && !abilities.get(carnivorousIndex).hasChildren()) {
             addFoodToAbility(f, carnivorousIndex, 0);
             foodCount++;
         } else if (parasiteIndex != -1 && parasiteCount < 2) {
@@ -80,21 +94,14 @@ public class CreatureView extends GameActor implements Hoverable {
     }
 
     private void addFoodToAbility(FoodToken f, int abilityIndex, int shift) {
-        Ability a = abilityArray.get(abilityIndex);
+        Ability a = abilities.get(abilityIndex);
         a.addActor(f);
         f.addAction(moveTo(10 + shift * (f.getWidth() + 10), a.getHeight() - f.getHeight() - 5, 0.1f));
     }
 
-    private boolean hasAbility(String ability) {
-        for (Ability a : abilityArray) {
-            if (a.getName().equals(ability)) return true;
-        }
-        return false;
-    }
-
     private int getAbilityIndex(String ability) {
         int i = 0;
-        for (Ability a : abilityArray) {
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
             if (a.getName().equals(ability)) return i;
             i++;
         }
@@ -103,7 +110,7 @@ public class CreatureView extends GameActor implements Hoverable {
 
     private int getNextFat() {
         int i = 0;
-        for (Ability a : abilityArray) {
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
             if (a.getName().equals("fat") && !a.hasChildren()) return i;
             i++;
         }
@@ -118,8 +125,8 @@ public class CreatureView extends GameActor implements Hoverable {
 
     private void updateAbilityPositions() {
         int i = 0;
-        for (Ability a : abilityArray) {
-            float y = (abilityArray.size - i) * a.getHeight() / 5;
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+            float y = (abilities.size - i) * a.getHeight() / 5;
             a.addAction(moveTo(a.getX(), y, 0.1f));
             i++;
         }
@@ -129,7 +136,7 @@ public class CreatureView extends GameActor implements Hoverable {
     public void reset() {
         setScale(1);
         setRotation(0);
-        abilityArray.clear();
+        abilities.clear();
         foodCount = 0;
     }
 }

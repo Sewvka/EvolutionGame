@@ -13,7 +13,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 public class SessionStage extends Stage {
     public final ArrayList<PlayerView> players;
     public final FoodTray food;
-    private int playerCount;
+    private final int playerCount;
     private final EvolutionGame game;
     private final SessionScreen sessionScreen;
 
@@ -38,7 +38,7 @@ public class SessionStage extends Stage {
         alignPlayers();
     }
 
-    public void feed(FoodToken f) {
+    public void feedToken(FoodToken f) {
         f.remove();
         food.removeFood();
         getSelectedCreature().addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
@@ -51,7 +51,7 @@ public class SessionStage extends Stage {
     public void initDevelopment() {
         //всем игрокам даются карты
         for (PlayerView p : players) {
-            Array<Integer> drawn = game.getServerEmulator().requestDrawnCards(p.getPlayerID());
+            Array<Integer> drawn = sessionScreen.getServerEmulator().requestDrawnCards(p.getPlayerID());
             if (drawn != null) {
                 p.getHand().addAll(drawn);
             }
@@ -59,6 +59,7 @@ public class SessionStage extends Stage {
     }
 
     public void initFeeding(int foodTotal) {
+        setHandTouchable(Touchable.disabled);
         for (PlayerView p : players) {
             HandView h = p.getHand();
             h.addAction(moveTo(h.getX(), h.getY()-sessionScreen.getViewport().getWorldHeight()/9, 0.3f));
@@ -66,6 +67,15 @@ public class SessionStage extends Stage {
         }
         food.init(foodTotal);
         addActor(food);
+    }
+
+    public void initExtinction() {
+        for (PlayerView p : players) {
+            Array<Integer> extinct = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getPlayerID());
+            for (int i : new Array.ArrayIterator<>(extinct)) {
+                p.getTable().removeCreature(i);
+            }
+        }
     }
 
     public void setHandTouchable(Touchable touchable) {

@@ -17,23 +17,23 @@ public class ServerEmulator {
     private int foodTotal;
     private int foodLeft;
     private int activePlayerIndex;
-    private int playerCount;
+    private final int playerCount;
     private final Deck deck;
-    private SessionScreen gameScreen;
+    private final SessionScreen gameScreen;
 
-    public ServerEmulator() {
+    public ServerEmulator(SessionScreen gameScreen) {
         playerCount = 1;
+        this.gameScreen = gameScreen;
         deck = new Deck();
         players = new PlayerModel[playerCount];
         for (int i = 0; i < playerCount; i++) {
             players[i] = new PlayerModel(i);
         }
         gameStage = GAME_START;
-        advanceStage();
     }
 
-    public void setGameScreen(SessionScreen gameScreen) {
-        this.gameScreen = gameScreen;
+    public void init() {
+        advanceStage();
     }
 
     private void initDevelopment() {
@@ -49,6 +49,7 @@ public class ServerEmulator {
             }
         }
         activePlayerIndex = 0;
+        gameScreen.initDevelopment();
     }
 
     private void initFeeding() {
@@ -62,6 +63,26 @@ public class ServerEmulator {
         gameScreen.initFeeding();
     }
 
+    private void initExtinction() {
+        gameStage = EXTINCTION;
+        for (PlayerModel p : players) {
+            for (int i = 0; i < p.getTable().getCreatureCount(); i++) {
+                CreatureModel c = p.getTable().getCreature(i);
+                if (!c.isFed()) {
+                    p.addExtinctCreature(c);
+                    p.getTable().removeCreature(i);
+                }
+            }
+        }
+        gameScreen.initExtinction();
+        advanceStage();
+    }
+
+    public Array<Integer> requestExtinctCreatures(int playerID) {
+        if (falseID(playerID)) return null;
+        return (getPlayer(playerID).getExtinctCreatures());
+    }
+
     public void nextTurn() {
         if (allPlayersPassed()) {
             advanceStage();
@@ -73,7 +94,20 @@ public class ServerEmulator {
         }
     }
 
+    private void advanceStage() {
+        activePlayerIndex = 0;
+
+        if (gameStage == DEVELOPMENT) {
+            initFeeding();
+        } else if (gameStage == FEEDING) {
+            initExtinction();
+        } else if (gameStage == EXTINCTION || gameStage == GAME_START) {
+            initDevelopment();
+        }
+    }
+
     public Array<Integer> requestDrawnCards(int playerID) {
+        if (gameStage != DEVELOPMENT) return null;
         PlayerModel player = getPlayer(playerID);
         if (player == null) return null;
         Array<Integer> drawn = new Array<>();
@@ -188,9 +222,7 @@ public class ServerEmulator {
         if (prey.hasAbility("burrowing") && prey.isFed()) return false;
         if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
         if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
-        if (prey.hasAbility("swimmer") != predator.hasAbility("swimmer")) ;
-
-        return true;
+        return prey.hasAbility("swimmer") == predator.hasAbility("swimmer");
     }
 
     public int getFoodTotal() {
@@ -198,6 +230,7 @@ public class ServerEmulator {
     }
 
     public boolean requestFeed(int selectedCreature, int playerID) {
+        if (gameStage != FEEDING) return false;
         if (falseCreatureIndex(selectedCreature, playerID)) return false;
         if (falseID(playerID) || isInactive(playerID)) return false;
         CreatureModel c = getPlayer(playerID).getTable().getCreature(selectedCreature);
@@ -213,28 +246,15 @@ public class ServerEmulator {
         return false;
     }
 
-    public boolean requestPassTurn(int playerID) {
-        if (falseID(playerID) || isInactive(playerID)) return false;
+    public void requestPassTurn(int playerID) {
+        if (falseID(playerID) || isInactive(playerID)) return;
         PlayerModel player = getPlayer(playerID);
         player.passedTurn = true;
         nextTurn();
-        return true;
     }
 
     public int getStage() {
         return gameStage;
-    }
-
-    private void advanceStage() {
-        activePlayerIndex = 0;
-
-        if (gameStage == DEVELOPMENT) {
-            initFeeding();
-        } else if (gameStage == FEEDING) {
-            gameStage = EXTINCTION;
-        } else if (gameStage == EXTINCTION || gameStage == GAME_START) {
-            initDevelopment();
-        }
     }
 
     private boolean allPlayersPassed() {

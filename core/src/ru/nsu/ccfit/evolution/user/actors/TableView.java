@@ -95,6 +95,7 @@ public class TableView extends Group {
 
     public void removeCreature(int index) {
         CreatureView c = activeCreatures.get(index);
+        c.removeBuddies();
         activeCreatures.removeIndex(index);
         creaturePool.free(c);
         removeActor(c);
@@ -108,8 +109,8 @@ public class TableView extends Group {
 
     public void act(float delta) {
         int i = 0;
-        for (CreatureView c : activeCreatures) {
-            float x = (i - (float) (activeCreatures.size - 1) / 2) * (c.getWidth() + 5) - c.getWidth() / 2 + c.getParent().getOriginX();
+        for (CreatureView c : new Array.ArrayIterator<>(activeCreatures)) {
+            float x = (i - (float) (activeCreatures.size - 1) / 2) * (c.getWidth() + 2) - c.getWidth() / 2 + c.getParent().getOriginX();
             c.addAction(moveTo(x, c.getY(), 0.1f));
             i++;
         }

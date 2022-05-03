@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import ru.nsu.ccfit.evolution.server.PlayerModel;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
@@ -16,44 +17,50 @@ public class SessionScreen extends GameScreen {
     private final SessionStage sessionStage;
     private final Stage overlayStage;
     private final Stage uiStage;
-    private final TextButton passButton;
+
     private final ServerEmulator server;
+
     private CardView queuedCard;
     private boolean queuedAbilityBoolean;
     private Ability queuedAbilityActivation;
     private CreatureView queuedCreature;
-
     public SessionScreen(final EvolutionGame game) {
         super(game);
-        sessionStage = new SessionStage(game, game.getServerEmulator().getPlayerCount(), this);
+        server = new ServerEmulator(this);
+        sessionStage = new SessionStage(game, server.getPlayerCount(), this);
         overlayStage = new Stage(getViewport());
         uiStage = new Stage(getViewport());
-        server = game.getServerEmulator();
-        server.setGameScreen(this);
         addStage(sessionStage);
         addStage(overlayStage);
         addStage(uiStage);
 
-        passButton = new TextButton("Pass turn", game.getAssets().getSkin());
-        initDevelopment();
-    }
-
-    public void initDevelopment() {
-        sessionStage.initDevelopment();
+        TextButton passButton = new TextButton("Pass turn", game.getAssets().getSkin());
         passButton.setPosition(getViewport().getWorldWidth() / 32, getViewport().getWorldHeight() / 18);
         passButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (game.getServerEmulator().requestPassTurn(game.getPlayerID()))
-                    sessionStage.setHandTouchable(Touchable.disabled);
+                server.requestPassTurn(game.getPlayerID());
             }
         });
         uiStage.addActor(passButton);
+
+        server.init();
+    }
+
+    public ServerEmulator getServerEmulator() {
+        return server;
+    }
+
+    public void initDevelopment() {
+        sessionStage.initDevelopment();
     }
 
     public void initFeeding() {
         sessionStage.initFeeding(server.getFoodTotal());
-        passButton.setVisible(false);
+    }
+
+    public void initExtinction() {
+        sessionStage.initExtinction();
     }
 
     public void playCard(CardView card) {
@@ -225,7 +232,8 @@ public class SessionScreen extends GameScreen {
             if (sessionStage.getSelectedTable().isCreatureSelected()) {
                 PlayerView player = (PlayerView) sessionStage.getSelectedTable().getParent();
                 if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getPlayerID())) {
-                    sessionStage.feed(f);
+                    sessionStage.feedToken(f);
+                    return;
                 }
             }
         }

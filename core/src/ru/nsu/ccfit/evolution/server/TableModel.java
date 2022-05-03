@@ -15,6 +15,16 @@ public class TableModel {
     }
 
     public void removeCreature(int index) {
+        CreatureModel c = activeCreatures.get(index);
+        for (int id : new Array.ArrayIterator<>(c.getCooperationList())) {
+            activeCreatures.get(id).getCooperationList().removeValue(index, false);
+        }
+        for (int id : new Array.ArrayIterator<>(c.getCommunicationList())) {
+            activeCreatures.get(id).getCommunicationList().removeValue(index, false);
+        }
+        for (int id : new Array.ArrayIterator<>(c.getSymbiosisList())) {
+            activeCreatures.get(id).getSymbiosisList().removeValue(index, false);
+        }
         activeCreatures.removeIndex(index);
     }
 
@@ -24,6 +34,14 @@ public class TableModel {
 
     public CreatureModel getCreature(int index) {
         return activeCreatures.get(index);
+    }
+
+    public int indexOf(CreatureModel c) {
+        return activeCreatures.indexOf(c, true);
+    }
+
+    public Array<CreatureModel> getActiveCreatures() {
+        return activeCreatures;
     }
 
     public void addAbility(int index, String ability) {
@@ -36,13 +54,13 @@ public class TableModel {
     }
 
     public void resetActivations() {
-        for (CreatureModel c : activeCreatures) {
+        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
             c.resetAbilities();
         }
     }
 
     public void clearAllFood() {
-        for (CreatureModel c : activeCreatures) {
+        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
             c.resetFood();
         }
     }

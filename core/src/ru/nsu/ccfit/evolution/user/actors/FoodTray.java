@@ -22,9 +22,7 @@ public class FoodTray extends Group {
         label.setColor(Color.GREEN);
         addActor(label);
         this.game = game;
-        FoodToken f = new FoodToken(game, TOKEN_SIZE, true);
-        f.setTrueParent(this);
-        addActor(f);
+        addToken();
     }
 
     public void init(int foodTotal) {
@@ -33,11 +31,17 @@ public class FoodTray extends Group {
         updateText();
     }
 
+    private void addToken() {
+        FoodToken f = new FoodToken(game, TOKEN_SIZE, true);
+        f.setTrueParent(this);
+        addActor(f);
+    }
+
     public void removeFood() {
         if (foodCurrent <= 0) return;
         foodCurrent--;
         if (foodCurrent > 0) {
-            addActor(new FoodToken(game, TOKEN_SIZE, true));
+            addToken();
         }
         updateText();
         if (foodCurrent <= 0) label.setColor(Color.RED);
