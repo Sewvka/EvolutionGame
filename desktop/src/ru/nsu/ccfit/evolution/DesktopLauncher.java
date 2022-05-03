@@ -2,14 +2,14 @@ package ru.nsu.ccfit.evolution;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
+import ru.nsu.ccfit.evolution.constants.GameConstants;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Evolution");
-		config.setWindowedMode(1280, 720);
+		config.setWindowedMode(GameConstants.SIZE_X, GameConstants.SIZE_Y);
 		config.useVsync(true);
 		config.setForegroundFPS(60);
 		new Lwjgl3Application(new EvolutionGame(), config);

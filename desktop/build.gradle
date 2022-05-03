@@ -2,7 +2,7 @@ sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../assets"]
 
-project.ext.mainClassName = "ru.nsu.ccfit.evolution.DesktopLauncher"
+project.ext.mainClassName = "ru.nsu.ccfit.evolutiongame.DesktopLauncher"
 project.ext.assetsDir = new File("../assets")
 
 import org.gradle.internal.os.OperatingSystem
@@ -43,5 +43,3 @@ task dist(type: Jar) {
 
 
 dist.dependsOn classes
-
-eclipse.project.name = appName + "-desktop"
