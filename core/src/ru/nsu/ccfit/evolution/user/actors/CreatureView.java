@@ -63,6 +63,13 @@ public class CreatureView extends GameActor implements Hoverable {
         return ability;
     }
 
+    public void clearFood() {
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+            if (!a.getName().equals("fat")) a.clearChildren();
+        }
+        cover.clearChildren();
+    }
+
     public void addFood(FoodToken f) {
         int hbwIndex = getAbilityIndex("high_body_weight");
         int parasiteIndex = getAbilityIndex("parasite");
@@ -97,6 +104,20 @@ public class CreatureView extends GameActor implements Hoverable {
         Ability a = abilities.get(abilityIndex);
         a.addActor(f);
         f.addAction(moveTo(10 + shift * (f.getWidth() + 10), a.getHeight() - f.getHeight() - 5, 0.1f));
+    }
+
+    public void consumeFat(int fatConsumed) {
+        int fatRemaining = fatConsumed;
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+            if (a.getName().equals("fat")) {
+                if (a.getChildren().size > 0) {
+                    a.clearChildren();
+                    fatRemaining--;
+                    addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
+                }
+            }
+            if (fatRemaining <= 0) break;
+        }
     }
 
     private int getAbilityIndex(String ability) {

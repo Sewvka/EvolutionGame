@@ -73,7 +73,9 @@ public class ServerEmulator {
                     p.getTable().removeCreature(i);
                 }
             }
+            p.getTable().clearAllFood();
         }
+
         gameScreen.initExtinction();
         advanceStage();
     }
@@ -95,6 +97,7 @@ public class ServerEmulator {
     }
 
     private void advanceStage() {
+        resetPasses();
         activePlayerIndex = 0;
 
         if (gameStage == DEVELOPMENT) {
@@ -197,6 +200,16 @@ public class ServerEmulator {
         return (cardIndex >= getPlayer(playerID).getHand().getCardCount() || cardIndex < 0);
     }
 
+    public int requestFatActivation(int playerID, int creatureIndex) {
+        if (falseID(playerID) || falseCreatureIndex(creatureIndex, playerID) || isInactive(playerID)) return 0;
+        CreatureModel c = getPlayer(playerID).getTable().getCreature(creatureIndex);
+        int foodRemaining = c.foodRequired() - c.getFood();
+        int fatConsumed = Math.min(foodRemaining, c.getFatStored());
+        c.removeFat(fatConsumed);
+        c.addFood(fatConsumed);
+        return fatConsumed;
+    }
+
     public boolean requestPredation(int predatorIndex, int preyIndex, int playerID, int targetID) {
         if (falseCreatureIndex(predatorIndex, playerID) || falseCreatureIndex(preyIndex, targetID)) return false;
         if (falseID(playerID) || falseID(targetID) || isInactive(playerID)) return false;
@@ -208,8 +221,7 @@ public class ServerEmulator {
 
         if (checkPredationConditions(predator, prey)) {
             target.getTable().removeCreature(preyIndex);
-            predator.addFood();
-            predator.addFood();
+            predator.addFood(2);
             nextTurn();
             return true;
         }
@@ -218,7 +230,7 @@ public class ServerEmulator {
 
     private boolean checkPredationConditions(CreatureModel predator, CreatureModel prey) {
         if (predator.equals(prey)) return false;
-        if (predator.preyedThisRound || predator.getFood() >= predator.foodRequired() + predator.getFat()) return false;
+        if (predator.preyedThisRound || !predator.canEatMore()) return false;
         if (prey.hasAbility("burrowing") && prey.isFed()) return false;
         if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
         if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
@@ -236,8 +248,7 @@ public class ServerEmulator {
         CreatureModel c = getPlayer(playerID).getTable().getCreature(selectedCreature);
 
         if (foodLeft > 0) {
-            if (c.getFood() < c.foodRequired() + c.getFat()) {
-                c.addFood();
+            if (c.addFood()) {
                 foodLeft--;
                 nextTurn();
                 return true;
@@ -262,5 +273,11 @@ public class ServerEmulator {
             if (!player.passedTurn) return false;
         }
         return true;
+    }
+
+    private void resetPasses() {
+        for (PlayerModel player : players) {
+            player.passedTurn = false;
+        }
     }
 }

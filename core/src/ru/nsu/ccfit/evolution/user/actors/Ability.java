@@ -55,8 +55,11 @@ public class Ability extends GameActor {
         CreatureView parentCreature = (CreatureView) getParent();
 
         if (name.equals("carnivorous")) {
-            screen.queueAbility(this, parentCreature);
+            screen.queueAbility(this);
             return true;
+        }
+        if (name.equals("fat")) {
+            screen.activateFat(parentCreature);
         }
         return false;
     }

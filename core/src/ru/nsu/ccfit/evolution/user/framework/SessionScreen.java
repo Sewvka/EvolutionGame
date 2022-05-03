@@ -24,6 +24,7 @@ public class SessionScreen extends GameScreen {
     private boolean queuedAbilityBoolean;
     private Ability queuedAbilityActivation;
     private CreatureView queuedCreature;
+
     public SessionScreen(final EvolutionGame game) {
         super(game);
         server = new ServerEmulator(this);
@@ -135,6 +136,12 @@ public class SessionScreen extends GameScreen {
         playAbility(card, selectedCreature, firstAbility);
     }
 
+    public void activateFat(CreatureView creature) {
+        PlayerView player = (PlayerView) creature.getParent().getParent();
+        int fatConsumed = server.requestFatActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
+        creature.consumeFat(fatConsumed);
+    }
+
     public void playCreature(CardView card) {
         TableView selectedTable = sessionStage.getSelectedTable();
         PlayerView target = (PlayerView) selectedTable.getParent();
@@ -213,7 +220,7 @@ public class SessionScreen extends GameScreen {
         } else queuedCard.putInDeck();
     }
 
-    public void queueAbility(Ability ability, CreatureView parentCreature) {
+    public void queueAbility(Ability ability) {
         if (server.getGameStage() == 2) {
             queuedAbilityActivation = ability;
         }

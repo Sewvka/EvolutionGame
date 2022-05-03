@@ -56,6 +56,7 @@ public class SessionStage extends Stage {
                 p.getHand().addAll(drawn);
             }
         }
+        setHandTouchable(Touchable.enabled);
     }
 
     public void initFeeding(int foodTotal) {
@@ -70,11 +71,14 @@ public class SessionStage extends Stage {
     }
 
     public void initExtinction() {
+        food.remove();
         for (PlayerView p : players) {
             Array<Integer> extinct = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getPlayerID());
             for (int i : new Array.ArrayIterator<>(extinct)) {
                 p.getTable().removeCreature(i);
             }
+
+            p.getTable().clearAllFood();
         }
     }
 

@@ -116,4 +116,10 @@ public class TableView extends Group {
         }
         super.act(delta);
     }
+
+    public void clearAllFood() {
+        for (CreatureView c : new Array.ArrayIterator<>(activeCreatures)) {
+            c.clearFood();
+        }
+    }
 }

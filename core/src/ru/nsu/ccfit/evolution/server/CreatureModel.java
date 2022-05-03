@@ -13,19 +13,17 @@ public class CreatureModel {
     private final Array<Integer> symbiosisList;
     private final Array<Integer> communicationList;
     private int food;
-    private int fat;
+    private int fatMax;
+    private int fatStored;
     public boolean preyedThisRound;
+
     public CreatureModel() {
         abilities = 0;
-        fat = 0;
+        fatMax = 0;
+        fatStored = 0;
         communicationList = new Array<>();
         symbiosisList = new Array<>();
         cooperationList = new Array<>();
-    }
-
-    public void addFood() {
-        if (food < foodRequired())
-            food++;
     }
 
     public Array<Integer> getCooperationList() {
@@ -52,8 +50,36 @@ public class CreatureModel {
         return food >= foodRequired();
     }
 
-    public int getFat() {
-        return fat;
+    public void removeFat(int fatCount) {
+        fatStored -= fatCount;
+    }
+
+    public boolean canEatMore() {
+        return food + fatStored < foodRequired() + fatMax;
+    }
+
+    public void addFood(int foodCount) {
+        for (int i = 0; i < foodCount; i++) {
+            addFood();
+        }
+    }
+
+    public boolean addFood() {
+        if (food < foodRequired()) {
+            food++;
+            return true;
+        } else if (canEatMore()) {
+            fatStored++;
+            return true;
+        } else return false;
+    }
+
+    public int getFatMax() {
+        return fatMax;
+    }
+
+    public int getFatStored() {
+        return fatStored;
     }
 
     public int foodRequired() {
@@ -70,7 +96,7 @@ public class CreatureModel {
         }
         if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
         else {
-            fat++;
+            fatMax++;
         }
     }
 
@@ -84,7 +110,7 @@ public class CreatureModel {
     }
 
     public boolean hasAbility(String ability) {
-        if (ability.equals("fat")) return (fat > 0);
+        if (ability.equals("fat")) return (fatMax > 0);
         if (ability.equals("cooperation")) return cooperationList.size > 0;
         if (ability.equals("communication")) return communicationList.size > 0;
         if (ability.equals("symbiosis")) return symbiosisList.size > 0;
