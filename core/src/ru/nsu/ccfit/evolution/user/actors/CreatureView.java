@@ -69,6 +69,7 @@ public class CreatureView extends GameActor implements Hoverable {
             if (!a.getName().equals("fat")) a.clearChildren();
         }
         cover.clearChildren();
+        foodCount = 0;
     }
 
     public void addFood() {
@@ -160,6 +161,8 @@ public class CreatureView extends GameActor implements Hoverable {
         setScale(1);
         setRotation(0);
         abilities.clear();
+        clearChildren();
+        addActor(cover);
         foodCount = 0;
     }
 }

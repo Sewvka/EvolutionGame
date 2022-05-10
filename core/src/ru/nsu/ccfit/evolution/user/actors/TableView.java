@@ -30,7 +30,7 @@ public class TableView extends Group {
         setOrigin(tableW / 2, tableH / 2);
         setBounds(x, y, tableW, tableH);
         tableTexture = new TextureRegion(game.getAssets().getTexture("table.png"));
-        activeCreatures = new Array<>(6);
+        activeCreatures = new Array<>();
         creaturePool = new Pool<CreatureView>() {
             @Override
             protected CreatureView newObject() {

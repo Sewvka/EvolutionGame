@@ -139,7 +139,7 @@ public class SessionScreen extends GameScreen {
     public void activateFat(CreatureView creature) {
         PlayerView player = (PlayerView) creature.getParent().getParent();
         int fatConsumed = server.requestFatActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
-        creature.consumeFat(fatConsumed);
+        if (fatConsumed > 0) creature.consumeFat(fatConsumed);
     }
 
     public void playCreature(CardView card) {

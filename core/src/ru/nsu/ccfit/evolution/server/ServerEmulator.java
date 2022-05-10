@@ -67,16 +67,19 @@ public class ServerEmulator {
     private void initExtinction() {
         gameStage = EXTINCTION;
         for (PlayerModel p : players) {
+            p.getExtinctCreatures().clear();
+            int j = 0;
             for (int i = 0; i < p.getTable().getCreatureCount(); i++) {
                 CreatureModel c = p.getTable().getCreature(i);
                 if (!c.isFed()) {
-                    p.addExtinctCreature(c);
+                    p.addExtinctCreature(j);
                     p.getTable().removeCreature(i);
+                    i--;
                 }
+                j++;
             }
             p.getTable().clearAllFood();
         }
-
         sessionScreen.initExtinction();
         advanceStage();
     }
@@ -206,13 +209,14 @@ public class ServerEmulator {
     }
 
     public int requestFatActivation(int playerID, int creatureIndex) {
-        if (falseID(playerID) || falseCreatureIndex(creatureIndex, playerID) || isInactive(playerID)) return 0;
+        if (falseID(playerID) || falseCreatureIndex(creatureIndex, playerID) || isInactive(playerID)) return -1;
         CreatureModel c = getPlayer(playerID).getTable().getCreature(creatureIndex);
         int foodRemaining = c.foodRequired() - c.getFood();
         int fatConsumed = Math.min(foodRemaining, c.getFatStored());
         c.removeFat(fatConsumed);
         c.addFood(fatConsumed);
         if (fatConsumed > 0) checkCooperation(c, playerID);
+        nextTurn();
         return fatConsumed;
     }
 

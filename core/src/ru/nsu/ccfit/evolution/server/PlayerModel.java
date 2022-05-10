@@ -18,8 +18,8 @@ public class PlayerModel {
         hand = new HandModel();
     }
 
-    public void addExtinctCreature(CreatureModel c) {
-        extinctCreatures.add(table.indexOf(c));
+    public void addExtinctCreature(int index) {
+        extinctCreatures.add(index);
     }
 
     public Array<Integer> getExtinctCreatures() {

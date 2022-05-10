@@ -80,9 +80,13 @@ public class SessionStage extends Stage {
     public void initExtinction() {
         food.remove();
         for (PlayerView p : players) {
-            Array<Integer> extinct = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getPlayerID());
-            for (int i : new Array.ArrayIterator<>(extinct)) {
-                p.getTable().removeCreature(i);
+            Array<Integer> extinctIDs = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getPlayerID());
+            Array<CreatureView> extinct = new Array<>();
+            for (int i : new Array.ArrayIterator<>(extinctIDs)) {
+                extinct.add(p.getTable().get(i));
+            }
+            for (CreatureView c : new Array.ArrayIterator<>(extinct)) {
+                p.getTable().removeCreature(c);
             }
 
             p.getTable().clearAllFood();
