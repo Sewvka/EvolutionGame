@@ -248,7 +248,7 @@ public class SessionScreen extends GameScreen {
         f.setPosition(0, 0);
     }
 
-    public void feedCreatureExternal(int creatureIndex, int playerID) {
-        sessionStage.feedCreature(creatureIndex, playerID);
+    public void feedCreatureExternal(int creatureIndex, int playerID, boolean isRed) {
+        sessionStage.feedCreature(creatureIndex, playerID, isRed);
     }
 }

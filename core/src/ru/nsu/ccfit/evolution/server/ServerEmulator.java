@@ -212,6 +212,7 @@ public class ServerEmulator {
         int fatConsumed = Math.min(foodRemaining, c.getFatStored());
         c.removeFat(fatConsumed);
         c.addFood(fatConsumed);
+        if (fatConsumed > 0) checkCooperation(c, playerID);
         return fatConsumed;
     }
 
@@ -227,6 +228,7 @@ public class ServerEmulator {
         if (checkPredationConditions(predator, prey)) {
             target.getTable().removeCreature(preyIndex);
             predator.addFood(2);
+            checkCooperation(predator, playerID);
             nextTurn();
             return true;
         }
@@ -262,26 +264,43 @@ public class ServerEmulator {
         if (foodLeft > 0) {
             if (c.addFood()) {
                 foodLeft--;
-                //iterate over creature partners.
-                for (CreatureModel partner : new Array.ArrayIterator<>(c.getCommunicationList())) {
-                    int partnerIndex = c.getCommunicationList().indexOf(partner, true);
-                    int creatureIndex = partner.getCommunicationList().indexOf(c, true);
-                    //if ability hasn't been used yet.
-                    if (!c.getCommunicationUsed().get(partnerIndex)) {
-                        //set ability as used both ways..
-                        c.getCommunicationUsed().set(partnerIndex, true);
-                        partner.getCommunicationUsed().set(creatureIndex, true);
-
-                        //feed partner recursively
-                        int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
-                        feedCreature(partnedIndexInTable, playerID);
-                        sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID);
-                    }
-                }
+                checkCommunication(c, playerID);
+                checkCooperation(c, playerID);
                 return true;
             }
         }
         return false;
+    }
+
+    private void checkCommunication(CreatureModel c, int playerID) {
+        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCommunicationList())) {
+            int partnerIndex = c.getCommunicationList().indexOf(partner, true);
+            int creatureIndex = partner.getCommunicationList().indexOf(c, true);
+            if (!c.getCommunicationUsed().get(partnerIndex)) {
+                c.getCommunicationUsed().set(partnerIndex, true);
+                partner.getCommunicationUsed().set(creatureIndex, true);
+
+                int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
+                feedCreature(partnedIndexInTable, playerID);
+                sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, true);
+            }
+        }
+    }
+
+    private void checkCooperation(CreatureModel c, int playerID) {
+        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCooperationList())) {
+            int partnerIndex = c.getCooperationList().indexOf(partner, true);
+            int creatureIndex = partner.getCooperationList().indexOf(c, true);
+            if (!c.getCooperationUsed().get(partnerIndex)) {
+                c.getCooperationUsed().set(partnerIndex, true);
+                partner.getCooperationUsed().set(creatureIndex, true);
+
+                int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
+                partner.addFood();
+                checkCooperation(partner, playerID);
+                sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, false);
+            }
+        }
     }
 
     public void requestPassTurn(int playerID) {

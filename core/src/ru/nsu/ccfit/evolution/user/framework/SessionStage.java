@@ -43,6 +43,13 @@ public class SessionStage extends Stage {
         getSelectedCreature().addFood();
     }
 
+    public void feedCreature(int creatureIndex, int playerID, boolean isRed) {
+        if (isRed) {
+            food.removeFood();
+        }
+        players.get(playerID).getTable().get(creatureIndex).addFood();
+    }
+
     public SessionScreen getSessionScreen() {
         return sessionScreen;
     }
@@ -50,6 +57,7 @@ public class SessionStage extends Stage {
     public void initDevelopment() {
         //всем игрокам даются карты
         for (PlayerView p : players) {
+            p.getHand().addAction(moveTo(p.getHand().getX(), 0, 0.3f));
             Array<Integer> drawn = sessionScreen.getServerEmulator().requestDrawnCards(p.getPlayerID());
             if (drawn != null) {
                 p.getHand().addAll(drawn);
@@ -62,7 +70,7 @@ public class SessionStage extends Stage {
         setHandTouchable(Touchable.disabled);
         for (PlayerView p : players) {
             HandView h = p.getHand();
-            h.addAction(moveTo(h.getX(), h.getY()-sessionScreen.getViewport().getWorldHeight()/9, 0.3f));
+            h.addAction(moveTo(h.getX(), -sessionScreen.getViewport().getWorldHeight()/9, 0.3f));
             h.setTouchable(Touchable.disabled);
         }
         food.init(foodTotal);
@@ -129,9 +137,5 @@ public class SessionStage extends Stage {
             if (p.getTable().isCreatureSelected()) return p.getTable().getSelectedCreature();
         }
         return null;
-    }
-
-    public void feedCreature(int creatureIndex, int playerID) {
-        players.get(playerID).getTable().get(creatureIndex).addFood();
     }
 }

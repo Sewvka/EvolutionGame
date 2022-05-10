@@ -19,7 +19,7 @@ public class HandView extends Group {
 
     public HandView(final EvolutionGame game, final boolean isUser, float x, float y) {
         setPosition(x, y);
-        activeCards = new Array<>(6);
+        activeCards = new Array<>();
         cardPool = new Pool<CardView>() {
             @Override
             protected CardView newObject() {
@@ -37,7 +37,7 @@ public class HandView extends Group {
     }
 
     public void addAll(Array<Integer> ids) {
-        for (Integer id : ids) {
+        for (Integer id : new Array.ArrayIterator<>(ids)) {
             addCard(id);
         }
     }
@@ -78,10 +78,10 @@ public class HandView extends Group {
         return activeCards.indexOf(card, true);
     }
 
-    public boolean isCardDisplayed() {
-        for (CardView c : activeCards) {
-            if (c.isDisplayed()) return true;
+    public boolean noCardDisplayed() {
+        for (CardView c : new Array.ArrayIterator<>(activeCards)) {
+            if (c.isDisplayed()) return false;
         }
-        return false;
+        return true;
     }
 }
