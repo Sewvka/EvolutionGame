@@ -42,7 +42,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     @Override
     public boolean isDisplayable() {
         HandView parentHand = (HandView) getTrueParent();
-        return (isUser && inDeck && !parentHand.isCardDisplayed() && !isDisplayed);
+        return (isUser && inDeck && parentHand.noCardDisplayed() && !isDisplayed);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     @Override
     public boolean isDraggable() {
         HandView parentHand = (HandView) getTrueParent();
-        return (!isDisplayed && isUser && inDeck && !parentHand.isCardDisplayed());
+        return (!isDisplayed && isUser && inDeck && parentHand.noCardDisplayed());
     }
 
     @Override
