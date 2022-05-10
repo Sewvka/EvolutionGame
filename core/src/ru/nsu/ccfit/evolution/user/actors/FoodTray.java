@@ -13,6 +13,7 @@ public class FoodTray extends Group {
     private int foodCurrent;
     private final EvolutionGame game;
     private final Label label;
+    private FoodToken token;
 
     public FoodTray(EvolutionGame game) {
         super();
@@ -32,14 +33,15 @@ public class FoodTray extends Group {
     }
 
     private void addToken() {
-        FoodToken f = new FoodToken(game, TOKEN_SIZE, true);
-        f.setTrueParent(this);
-        addActor(f);
+        token = new FoodToken(game, TOKEN_SIZE, true);
+        token.setTrueParent(this);
+        addActor(token);
     }
 
     public void removeFood() {
         if (foodCurrent <= 0) return;
         foodCurrent--;
+        token.remove();
         if (foodCurrent > 0) {
             addToken();
         }

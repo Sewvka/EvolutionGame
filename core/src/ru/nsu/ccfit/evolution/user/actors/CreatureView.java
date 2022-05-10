@@ -47,13 +47,14 @@ public class CreatureView extends GameActor implements Hoverable {
         for (Ability a : new Array.ArrayIterator<>(abilities)) {
             if (Abilities.isCooperative(a.getName())) {
                 CreatureView c = (CreatureView) a.getBuddy().getParent();
-                c.removeAbility(a);
+                c.removeAbility(a.getBuddy());
             }
         }
     }
 
     public void removeAbility(Ability a) {
         abilities.removeValue(a, true);
+        removeActor(a);
     }
 
     public Ability addAbility(int cardID, boolean firstAbility) {
@@ -70,7 +71,8 @@ public class CreatureView extends GameActor implements Hoverable {
         cover.clearChildren();
     }
 
-    public void addFood(FoodToken f) {
+    public void addFood() {
+        FoodToken f = new FoodToken(game, FoodTray.TOKEN_SIZE, false);
         int hbwIndex = getAbilityIndex("high_body_weight");
         int parasiteIndex = getAbilityIndex("parasite");
         int carnivorousIndex = getAbilityIndex("carnivorous");
@@ -113,7 +115,7 @@ public class CreatureView extends GameActor implements Hoverable {
                 if (a.getChildren().size > 0) {
                     a.clearChildren();
                     fatRemaining--;
-                    addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
+                    addFood();
                 }
             }
             if (fatRemaining <= 0) break;

@@ -38,10 +38,9 @@ public class SessionStage extends Stage {
         alignPlayers();
     }
 
-    public void feedToken(FoodToken f) {
-        f.remove();
+    public void feedToken() {
         food.removeFood();
-        getSelectedCreature().addFood(new FoodToken(game, FoodTray.TOKEN_SIZE, false));
+        getSelectedCreature().addFood();
     }
 
     public SessionScreen getSessionScreen() {
@@ -130,5 +129,9 @@ public class SessionStage extends Stage {
             if (p.getTable().isCreatureSelected()) return p.getTable().getSelectedCreature();
         }
         return null;
+    }
+
+    public void feedCreature(int creatureIndex, int playerID) {
+        players.get(playerID).getTable().get(creatureIndex).addFood();
     }
 }

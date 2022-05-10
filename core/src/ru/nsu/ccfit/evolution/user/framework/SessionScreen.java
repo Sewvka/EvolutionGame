@@ -239,12 +239,16 @@ public class SessionScreen extends GameScreen {
             if (sessionStage.getSelectedTable().isCreatureSelected()) {
                 PlayerView player = (PlayerView) sessionStage.getSelectedTable().getParent();
                 if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getPlayerID())) {
-                    sessionStage.feedToken(f);
+                    sessionStage.feedToken();
                     return;
                 }
             }
         }
         moveActorToBack(f);
         f.setPosition(0, 0);
+    }
+
+    public void feedCreatureExternal(int creatureIndex, int playerID) {
+        sessionStage.feedCreature(creatureIndex, playerID);
     }
 }

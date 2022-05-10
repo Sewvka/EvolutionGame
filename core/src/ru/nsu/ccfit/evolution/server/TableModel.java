@@ -1,7 +1,6 @@
 package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
-import ru.nsu.ccfit.evolution.server.CreatureModel;
 
 public class TableModel {
     private final Array<CreatureModel> activeCreatures;
@@ -16,14 +15,18 @@ public class TableModel {
 
     public void removeCreature(int index) {
         CreatureModel c = activeCreatures.get(index);
-        for (int id : new Array.ArrayIterator<>(c.getCooperationList())) {
-            activeCreatures.get(id).getCooperationList().removeValue(index, false);
+        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCooperationList())) {
+            int i = partner.getCooperationList().indexOf(c, true);
+            partner.getCooperationList().removeValue(c, true);
+            partner.getCooperationUsed().removeIndex(i);
         }
-        for (int id : new Array.ArrayIterator<>(c.getCommunicationList())) {
-            activeCreatures.get(id).getCommunicationList().removeValue(index, false);
+        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCommunicationList())) {
+            int i = partner.getCommunicationList().indexOf(c, true);
+            partner.getCommunicationList().removeValue(c, true);
+            partner.getCommunicationUsed().removeIndex(i);
         }
-        for (int id : new Array.ArrayIterator<>(c.getSymbiosisList())) {
-            activeCreatures.get(id).getSymbiosisList().removeValue(index, false);
+        for (CreatureModel partner : new Array.ArrayIterator<>(c.getSymbiosisList())) {
+            partner.getSymbiosisList().removeValue(c, true);
         }
         activeCreatures.removeIndex(index);
     }
@@ -49,13 +52,13 @@ public class TableModel {
     }
 
     public void addCoopAbility(int index1, int index2, String ability) {
-        activeCreatures.get(index1).addCoopAbility(ability, index2);
-        activeCreatures.get(index2).addCoopAbility(ability, index1);
+        activeCreatures.get(index1).addCoopAbility(ability, activeCreatures.get(index2));
+        activeCreatures.get(index2).addCoopAbility(ability, activeCreatures.get(index1));
     }
 
-    public void resetActivations() {
+    public void resetPerRoundAbilities() {
         for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
-            c.resetAbilities();
+            c.resetPerRoundAbilities();
         }
     }
 

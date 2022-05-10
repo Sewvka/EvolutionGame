@@ -9,32 +9,37 @@ import java.util.Objects;
 public class CreatureModel {
     private short abilities;
 
-    private final Array<Integer> cooperationList;
-    private final Array<Integer> symbiosisList;
-    private final Array<Integer> communicationList;
+    private final Array<CreatureModel> cooperationList;
+    private final Array<Boolean> cooperationUsed;
+    private final Array<CreatureModel> symbiosisList;
+    private final Array<CreatureModel> communicationList;
+    private final Array<Boolean> communicationUsed;
     private int food;
     private int fatMax;
     private int fatStored;
-    public boolean preyedThisRound;
+    private boolean preyedThisRound;
 
     public CreatureModel() {
         abilities = 0;
         fatMax = 0;
         fatStored = 0;
         communicationList = new Array<>();
+        communicationUsed = new Array<>();
         symbiosisList = new Array<>();
         cooperationList = new Array<>();
+        cooperationUsed = new Array<>();
+        preyedThisRound = false;
     }
 
-    public Array<Integer> getCooperationList() {
+    public Array<CreatureModel> getCooperationList() {
         return cooperationList;
     }
 
-    public Array<Integer> getSymbiosisList() {
+    public Array<CreatureModel> getSymbiosisList() {
         return symbiosisList;
     }
 
-    public Array<Integer> getCommunicationList() {
+    public Array<CreatureModel> getCommunicationList() {
         return communicationList;
     }
 
@@ -100,13 +105,23 @@ public class CreatureModel {
         }
     }
 
-    public void addCoopAbility(String ability, int partherID) {
+    public void addCoopAbility(String ability, CreatureModel partner) {
         if (!Abilities.isCooperative(ability)) {
             throw new InvalidParameterException("Use addAbility method to add non-coop abilities!");
         }
-        if (!Objects.equals(ability, "cooperation")) cooperationList.add(partherID);
-        else if (!Objects.equals(ability, "communication")) communicationList.add(partherID);
-        else if (!Objects.equals(ability, "symbiosis")) symbiosisList.add(partherID);
+        switch (ability) {
+            case "cooperation":
+                cooperationList.add(partner);
+                cooperationUsed.add(Boolean.FALSE);
+                break;
+            case "communication":
+                communicationList.add(partner);
+                communicationUsed.add(Boolean.FALSE);
+                break;
+            case "symbiosis":
+                symbiosisList.add(partner);
+                break;
+        }
     }
 
     public boolean hasAbility(String ability) {
@@ -117,15 +132,15 @@ public class CreatureModel {
         return (abilities & Abilities.get(ability)) != 0;
     }
 
-    public boolean hasCoopAbility(String ability, int partnerID) {
+    public boolean hasCoopAbilityLink(String ability, CreatureModel partner) {
         if (!Abilities.isCooperative(ability)) return false;
         switch (ability) {
             case "cooperation":
-                return cooperationList.contains(partnerID, false);
+                return cooperationList.contains(partner, true);
             case "communication":
-                return communicationList.contains(partnerID, false);
+                return communicationList.contains(partner, true);
             case "symbiosis":
-                return symbiosisList.contains(partnerID, false);
+                return symbiosisList.contains(partner, true);
         }
         return false;
     }
@@ -134,7 +149,25 @@ public class CreatureModel {
         abilities -= Abilities.get(ability);
     }
 
-    public void resetAbilities() {
+    public Array<Boolean> getCooperationUsed() {
+        return cooperationUsed;
+    }
+
+    public Array<Boolean> getCommunicationUsed() {
+        return communicationUsed;
+    }
+
+    public void resetPerRoundAbilities() {
         preyedThisRound = false;
+        for (int i = 0; i < communicationUsed.size; i++) {
+            communicationUsed.set(i, false);
+        }
+        for (int i = 0; i < cooperationUsed.size; i++) {
+            cooperationUsed.set(i, false);
+        }
+    }
+
+    public boolean hasPreyedThisRound() {
+        return preyedThisRound;
     }
 }
