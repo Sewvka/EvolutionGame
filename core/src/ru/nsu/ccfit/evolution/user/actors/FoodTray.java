@@ -23,13 +23,13 @@ public class FoodTray extends Group {
         label.setColor(Color.GREEN);
         addActor(label);
         this.game = game;
-        addToken();
     }
 
     public void init(int foodTotal) {
         this.foodTotal = foodTotal;
         foodCurrent = foodTotal;
         updateText();
+        addToken();
     }
 
     private void addToken() {
@@ -46,10 +46,11 @@ public class FoodTray extends Group {
             addToken();
         }
         updateText();
-        if (foodCurrent <= 0) label.setColor(Color.RED);
     }
 
     private void updateText() {
         label.setText(foodCurrent + "/" + foodTotal);
+        if (foodCurrent <= 0) label.setColor(Color.RED);
+        else label.setColor(Color.GREEN);
     }
 }
