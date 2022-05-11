@@ -25,6 +25,8 @@ public class Client {
     private final Json json = new Json();
     private final JsonReader jsonReader = new JsonReader();
 
+    // нужен класс Game(?), который хранит в себе состояние игры, все видимое игроком окружение
+    // ResponseListener'ы должны обращаться к классу Game и менять состояние после получения запроса с сервера
     public Client() {
         json.setTypeName(null);
         json.setOutputType(JsonWriter.OutputType.json);
