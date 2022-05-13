@@ -71,7 +71,7 @@ public class ServerEmulator {
             int j = 0;
             for (int i = 0; i < p.getTable().getCreatureCount(); i++) {
                 CreatureModel c = p.getTable().getCreature(i);
-                if (!c.isFed()) {
+                if (!c.isFed() || c.isPoisoned) {
                     p.addExtinctCreature(j);
                     p.getTable().removeCreature(i);
                     i--;
@@ -230,6 +230,7 @@ public class ServerEmulator {
         CreatureModel prey = target.getTable().getCreature(preyIndex);
 
         if (checkPredationConditions(predator, prey)) {
+            if (prey.hasAbility("poisonous")) predator.isPoisoned = true;
             target.getTable().removeCreature(preyIndex);
             predator.addFood(2);
             checkCooperation(predator, playerID);

@@ -19,6 +19,7 @@ public class CreatureModel {
     private int fatStored;
     public boolean preyedThisRound;
     public boolean grazedThisRound;
+    public boolean isPoisoned;
 
     public CreatureModel() {
         abilities = 0;
@@ -31,6 +32,7 @@ public class CreatureModel {
         cooperationUsed = new Array<>();
         preyedThisRound = false;
         grazedThisRound = false;
+        isPoisoned = false;
     }
 
     public Array<CreatureModel> getCooperationList() {
