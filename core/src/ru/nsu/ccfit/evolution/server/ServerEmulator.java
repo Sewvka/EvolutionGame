@@ -246,7 +246,12 @@ public class ServerEmulator {
         if (prey.hasAbility("burrowing") && prey.isFed()) return false;
         if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
         if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
-        return prey.hasAbility("swimmer") == predator.hasAbility("swimmer");
+        if (prey.hasAbility("swimmer") != predator.hasAbility("swimmer")) return false;
+        if (prey.hasAbility("running")) {
+            Random die = new Random();
+            return die.nextInt(2) != 0;
+        }
+        return true;
     }
 
     public int getFoodTotal() {
