@@ -62,6 +62,12 @@ public class TableModel {
         }
     }
 
+    public void resetPerTurnAbilities() {
+        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
+            c.resetPerTurnAbilities();
+        }
+    }
+
     public void clearAllFood() {
         for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
             c.resetFood();

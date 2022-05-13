@@ -19,6 +19,7 @@ public class CreatureModel {
     private int fatStored;
     public boolean preyedThisRound;
     public boolean grazedThisRound;
+    public boolean piracyUsed;
     public boolean isPoisoned;
 
     public CreatureModel() {
@@ -33,6 +34,7 @@ public class CreatureModel {
         preyedThisRound = false;
         grazedThisRound = false;
         isPoisoned = false;
+        piracyUsed = false;
     }
 
     public Array<CreatureModel> getCooperationList() {
@@ -81,6 +83,10 @@ public class CreatureModel {
             fatStored++;
             return true;
         } else return false;
+    }
+
+    public void removeFood() {
+        if (food > 0) food--;
     }
 
     public int getFatMax() {
@@ -170,5 +176,10 @@ public class CreatureModel {
         for (int i = 0; i < cooperationUsed.size; i++) {
             cooperationUsed.set(i, false);
         }
+    }
+
+    public void resetPerTurnAbilities() {
+        resetPerRoundAbilities();
+        piracyUsed = false;
     }
 }

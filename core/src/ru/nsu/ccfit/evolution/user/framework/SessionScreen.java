@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import ru.nsu.ccfit.evolution.server.PlayerModel;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
@@ -21,7 +20,7 @@ public class SessionScreen extends GameScreen {
     private final ServerEmulator server;
 
     private CardView queuedCard;
-    private boolean queuedAbilityBoolean;
+    private boolean queuedCoopAbilityBoolean;
     private Ability queuedAbilityActivation;
     private CreatureView queuedCreature;
 
@@ -116,7 +115,7 @@ public class SessionScreen extends GameScreen {
                 card.setTouchable(Touchable.disabled);
                 sessionStage.setHandTouchable(Touchable.disabled);
                 queuedCard = card;
-                queuedAbilityBoolean = firstAbility;
+                queuedCoopAbilityBoolean = firstAbility;
                 queuedCreature = selectedCreature;
                 return;
             } else {
@@ -139,6 +138,7 @@ public class SessionScreen extends GameScreen {
     public boolean activateAbility(Ability ability) {
         switch (ability.getName()) {
             case "carnivorous":
+            case "piracy":
                 queueAbility(ability);
                 return true;
             case "fat":
@@ -209,6 +209,7 @@ public class SessionScreen extends GameScreen {
             queuedCard.setTouchable(Touchable.enabled);
             sessionStage.setHandTouchable(Touchable.enabled);
             resumeCoopCardPlay(queuedCreature, targetCreature);
+            return;
         }
         if (queuedAbilityActivation != null) {
             TableView targetTable = (TableView) targetCreature.getParent();
@@ -216,10 +217,17 @@ public class SessionScreen extends GameScreen {
             PlayerView target = (PlayerView) targetTable.getParent();
             PlayerView player = (PlayerView) parentTable.getParent();
             CreatureView parentCreature = (CreatureView) queuedAbilityActivation.getParent();
-            if (queuedAbilityActivation.getName().equals("carnivorous")) {
-                if (server.requestPredation(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getPlayerID(), target.getPlayerID())) {
-                    queuedAbilityActivation.resumeActivation(targetCreature);
-                }
+            switch (queuedAbilityActivation.getName()) {
+                case "carnivorous":
+                    if (server.requestPredation(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getPlayerID(), target.getPlayerID())) {
+                        queuedAbilityActivation.resumeActivation(targetCreature);
+                    }
+                    break;
+                case "piracy":
+                    if (server.requestPiracy(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getPlayerID(), target.getPlayerID())) {
+                        queuedAbilityActivation.resumeActivation(targetCreature);
+                    }
+                    break;
             }
         }
     }
@@ -236,10 +244,10 @@ public class SessionScreen extends GameScreen {
 
         int selectedCreature1 = selectedTable.getCreatureIndex(targetCreature1);
         int selectedCreature2 = selectedTable.getCreatureIndex(targetCreature2);
-        String ability = queuedAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
+        String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
         if (server.requestCoopAbilityPlacement(ability, parentHand.getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getPlayerID())) {
-            Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedAbilityBoolean);
-            Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedAbilityBoolean);
+            Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
+            Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
             ab1.setBuddy(ab2);
             ab2.setBuddy(ab1);
             parentHand.removeCard(queuedCard);

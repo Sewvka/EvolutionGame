@@ -59,11 +59,16 @@ public class Ability extends GameActor {
         SessionScreen screen = (SessionScreen) game.getScreen();
         TableView targetTable = (TableView) targetCreature.getParent();
         CreatureView parentCreature = (CreatureView) getParent();
-        if (name.equals("carnivorous")) {
-            targetTable.removeCreature(targetCreature);
-            parentCreature.addFood();
-            parentCreature.addFood();
-            screen.cancelAbilityUsage();
+        switch (name) {
+            case "carnivorous":
+                targetTable.removeCreature(targetCreature);
+                parentCreature.addFood();
+                parentCreature.addFood();
+                screen.cancelAbilityUsage();
+                break;
+            case "piracy":
+                parentCreature.addFood();
+                targetCreature.removeFood();
         }
     }
 

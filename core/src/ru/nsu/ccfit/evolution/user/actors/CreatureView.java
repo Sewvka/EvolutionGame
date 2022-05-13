@@ -72,6 +72,19 @@ public class CreatureView extends GameActor implements Hoverable {
         foodCount = 0;
     }
 
+    public void removeFood() {
+        if (cover.hasChildren()) {
+            cover.clearChildren();
+            return;
+        }
+        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+            if (a.hasChildren()) {
+                a.clearChildren();
+                return;
+            }
+        }
+    }
+
     public void addFood() {
         FoodToken f = new FoodToken(game, FoodTray.TOKEN_SIZE, false);
         int hbwIndex = getAbilityIndex("high_body_weight");

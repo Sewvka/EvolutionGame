@@ -24,7 +24,7 @@ public class Deck {
         aMap.put(10, 4);
         aMap.put(11, 4);
         aMap.put(12, 4);
-        aMap.put(13, 4);
+        aMap.put(13, 20);
         aMap.put(14, 4);
         aMap.put(15, 4);
         aMap.put(16, 4);

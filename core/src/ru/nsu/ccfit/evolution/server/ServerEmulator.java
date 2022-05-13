@@ -56,7 +56,7 @@ public class ServerEmulator {
     private void initFeeding() {
         gameStage = FEEDING;
         for (PlayerModel p : players) {
-            p.getTable().resetPerRoundAbilities();
+            p.getTable().resetPerTurnAbilities();
             p.passedTurn = false;
         }
         foodTotal = new Random().nextInt(6) + 3;
@@ -218,6 +218,26 @@ public class ServerEmulator {
         if (fatConsumed > 0) checkCooperation(c, playerID);
         nextTurn();
         return fatConsumed;
+    }
+
+    public boolean requestPiracy(int pirateIndex, int targetIndex, int playerID, int targetPlayerID) {
+        if (falseCreatureIndex(pirateIndex, playerID) || falseCreatureIndex(targetIndex, targetPlayerID)) return false;
+        if (falseID(playerID) || falseID(targetPlayerID) || isInactive(playerID)) return false;
+        if (gameStage != FEEDING) return false;
+        PlayerModel player = getPlayer(playerID);
+        PlayerModel targetPlayer = getPlayer(targetPlayerID);
+        CreatureModel pirate = player.getTable().getCreature(pirateIndex);
+        CreatureModel target = targetPlayer.getTable().getCreature(targetIndex);
+
+        if (pirate.equals(target)) return false;
+        if (pirate.piracyUsed || !pirate.canEatMore()) return false;
+        if (target.isFed() || target.getFood() < 1) return false;
+
+        target.removeFood();
+        pirate.piracyUsed = true;
+        pirate.addFood();
+        checkCooperation(pirate, playerID);
+        return true;
     }
 
     public boolean requestPredation(int predatorIndex, int preyIndex, int playerID, int targetID) {
