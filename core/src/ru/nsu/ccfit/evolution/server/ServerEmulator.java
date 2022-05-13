@@ -14,6 +14,7 @@ public class ServerEmulator {
     private final static int FEEDING = 2;
     private final static int EXTINCTION = 3;
     private final PlayerModel[] players;
+    private final Client client;
     private int gameStage;
     private int foodTotal;
     private int foodLeft;
@@ -30,6 +31,7 @@ public class ServerEmulator {
         for (int i = 0; i < playerCount; i++) {
             players[i] = new PlayerModel(i);
         }
+        this.client = new Client();
         gameStage = GAME_START;
     }
 
@@ -41,6 +43,7 @@ public class ServerEmulator {
         gameStage = DEVELOPMENT;
         //игроки получают необходимое кол-во карт
         for (PlayerModel p : players) {
+            // TODO: card allocation request
             if (p.getHand().getCardCount() == 0 && p.getTable().getCreatureCount() == 0) {
                 for (int i = 0; i < 6; i++) p.getHand().drawCard(deck.draw());
             } else {
