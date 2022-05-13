@@ -52,16 +52,7 @@ public class Ability extends GameActor {
 
     private boolean activate() {
         SessionScreen screen = (SessionScreen) game.getScreen();
-        CreatureView parentCreature = (CreatureView) getParent();
-
-        if (name.equals("carnivorous")) {
-            screen.queueAbility(this);
-            return true;
-        }
-        if (name.equals("fat")) {
-            screen.activateFat(parentCreature);
-        }
-        return false;
+        return screen.activateAbility(this);
     }
 
     public void resumeActivation(CreatureView targetCreature) {

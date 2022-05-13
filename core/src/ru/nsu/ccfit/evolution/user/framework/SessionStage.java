@@ -14,14 +14,11 @@ public class SessionStage extends Stage {
     public final ArrayList<PlayerView> players;
     public final FoodTray food;
     private final int playerCount;
-    private final EvolutionGame game;
     private final SessionScreen sessionScreen;
-
     public SessionStage(EvolutionGame game, int playerCount, SessionScreen sessionScreen) {
         if (playerCount > 4) throw new InvalidParameterException("Game does not support more than 4 players!");
         //if (playerCount < 2) throw new InvalidParameterException("Game requires at least two players!");
         if (playerCount < 1) throw new InvalidParameterException("Game requires at least one player!");
-        this.game = game;
         this.playerCount = playerCount;
         this.sessionScreen = sessionScreen;
         players = new ArrayList<>(playerCount);
@@ -52,6 +49,10 @@ public class SessionStage extends Stage {
 
     public SessionScreen getSessionScreen() {
         return sessionScreen;
+    }
+
+    public FoodTray getFood() {
+        return food;
     }
 
     public void initDevelopment() {

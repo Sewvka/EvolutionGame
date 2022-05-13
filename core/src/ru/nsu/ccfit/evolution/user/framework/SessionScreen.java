@@ -136,10 +136,38 @@ public class SessionScreen extends GameScreen {
         playAbility(card, selectedCreature, firstAbility);
     }
 
-    public void activateFat(CreatureView creature) {
+    public boolean activateAbility(Ability ability) {
+        switch (ability.getName()) {
+            case "carnivorous":
+                queueAbility(ability);
+                return true;
+            case "fat":
+                activateFat((CreatureView) ability.getParent());
+                return true;
+            case "grazing":
+                activateGrazer((CreatureView) ability.getParent());
+                return true;
+        }
+        return false;
+    }
+
+    private void queueAbility(Ability ability) {
+        if (server.getGameStage() == 2) {
+            queuedAbilityActivation = ability;
+        }
+    }
+
+    private void activateFat(CreatureView creature) {
         PlayerView player = (PlayerView) creature.getParent().getParent();
         int fatConsumed = server.requestFatActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
         if (fatConsumed > 0) creature.consumeFat(fatConsumed);
+    }
+
+    private void activateGrazer(CreatureView creature) {
+        PlayerView player = (PlayerView) creature.getParent().getParent();
+        if (server.requestGrazerActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature))) {
+            sessionStage.getFood().removeFood();
+        }
     }
 
     public void playCreature(CardView card) {
@@ -218,12 +246,6 @@ public class SessionScreen extends GameScreen {
             queuedCard.remove();
             queuedCard = null;
         } else queuedCard.putInDeck();
-    }
-
-    public void queueAbility(Ability ability) {
-        if (server.getGameStage() == 2) {
-            queuedAbilityActivation = ability;
-        }
     }
 
     public boolean isAbilityQueued() {

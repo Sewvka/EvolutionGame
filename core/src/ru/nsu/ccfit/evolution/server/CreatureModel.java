@@ -17,7 +17,8 @@ public class CreatureModel {
     private int food;
     private int fatMax;
     private int fatStored;
-    private boolean preyedThisRound;
+    public boolean preyedThisRound;
+    public boolean grazedThisRound;
 
     public CreatureModel() {
         abilities = 0;
@@ -29,6 +30,7 @@ public class CreatureModel {
         cooperationList = new Array<>();
         cooperationUsed = new Array<>();
         preyedThisRound = false;
+        grazedThisRound = false;
     }
 
     public Array<CreatureModel> getCooperationList() {
@@ -159,15 +161,12 @@ public class CreatureModel {
 
     public void resetPerRoundAbilities() {
         preyedThisRound = false;
+        grazedThisRound = false;
         for (int i = 0; i < communicationUsed.size; i++) {
             communicationUsed.set(i, false);
         }
         for (int i = 0; i < cooperationUsed.size; i++) {
             cooperationUsed.set(i, false);
         }
-    }
-
-    public boolean hasPreyedThisRound() {
-        return preyedThisRound;
     }
 }

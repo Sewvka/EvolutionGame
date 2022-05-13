@@ -233,6 +233,7 @@ public class ServerEmulator {
             target.getTable().removeCreature(preyIndex);
             predator.addFood(2);
             checkCooperation(predator, playerID);
+            predator.preyedThisRound = true;
             nextTurn();
             return true;
         }
@@ -241,7 +242,7 @@ public class ServerEmulator {
 
     private boolean checkPredationConditions(CreatureModel predator, CreatureModel prey) {
         if (predator.equals(prey)) return false;
-        if (predator.hasPreyedThisRound() || !predator.canEatMore()) return false;
+        if (predator.preyedThisRound || !predator.canEatMore()) return false;
         if (prey.hasAbility("burrowing") && prey.isFed()) return false;
         if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
         if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
@@ -329,5 +330,17 @@ public class ServerEmulator {
         for (PlayerModel player : players) {
             player.passedTurn = false;
         }
+    }
+
+    public boolean requestGrazerActivation(int playerID, int creatureIndex) {
+        if (falseID(playerID) || isInactive(playerID)) return false;
+        if (falseCreatureIndex(creatureIndex, playerID)) return false;
+        CreatureModel creature = getPlayer(playerID).getTable().getCreature(creatureIndex);
+        if (foodLeft <= 0 || creature.grazedThisRound) return false;
+
+
+        foodLeft--;
+        creature.grazedThisRound = true;
+        return true;
     }
 }
