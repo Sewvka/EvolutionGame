@@ -37,8 +37,6 @@ public class PlayerView extends Group {
         switch (alignment) {
             case "bottom":
                 setPosition(worldW/2 - getWidth() / 2, 0);
-                System.out.println("x is " + getX() + "; y is " + getY());
-                System.out.println("w is " + getWidth() + "; h is " + getHeight());
                 break;
             case "left":
                 setPosition(-worldW / 16, worldH / 2 + getWidth() / 2);

@@ -109,6 +109,10 @@ public class CreatureModel {
         return res;
     }
 
+    public float getAbilityCount() {
+        return Integer.bitCount(abilities) + communicationList.size + (float) symbiosisList.size/2 + (float) cooperationList.size/2 + fatMax;
+    }
+
     public void addAbility(String ability) {
         if (Abilities.isCooperative(ability)) {
             throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");

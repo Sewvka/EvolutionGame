@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.user.actors.Ability;
 import ru.nsu.ccfit.evolution.user.actors.CreatureView;
 
 public class PlayerModel {
@@ -36,5 +37,16 @@ public class PlayerModel {
 
     public TableModel getTable() {
         return table;
+    }
+
+    public int getVictoryPoints() {
+        float result = 0;
+        result += table.getCreatureCount() * 2;
+        for (int i = 0; i < table.getCreatureCount(); i++) {
+            result += table.getCreature(i).foodRequired() - 1;
+            result += table.getCreature(i).getAbilityCount();
+        }
+
+        return (int) result;
     }
 }

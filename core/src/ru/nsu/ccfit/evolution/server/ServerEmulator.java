@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -22,9 +21,12 @@ public class ServerEmulator {
     private final int playerCount;
     private final Deck deck;
     private final SessionScreen sessionScreen;
+    private boolean lastTurn;
+    private int firstPlayerIndex;
 
     public ServerEmulator(SessionScreen sessionScreen) {
         playerCount = 1;
+        firstPlayerIndex = 0;
         this.sessionScreen = sessionScreen;
         deck = new Deck();
         players = new PlayerModel[playerCount];
@@ -32,25 +34,46 @@ public class ServerEmulator {
             players[i] = new PlayerModel(i);
         }
         gameStage = GAME_START;
+        lastTurn = false;
     }
 
     public void init() {
+        firstPlayerIndex = -1;
         advanceStage();
     }
 
     private void initDevelopment() {
         gameStage = DEVELOPMENT;
+        firstPlayerIndex++;
+        if (firstPlayerIndex >= playerCount) firstPlayerIndex = 0;
+
         //игроки получают необходимое кол-во карт
-        for (PlayerModel p : players) {
+        int j = firstPlayerIndex;
+        for (int k = 0; k < players.length; k++) {
+            PlayerModel p = players[j];
             if (p.getHand().getCardCount() == 0 && p.getTable().getCreatureCount() == 0) {
-                for (int i = 0; i < 6; i++) p.getHand().drawCard(deck.draw());
+                for (int i = 0; i < 6; i++) {
+                    int drawnID = deck.draw();
+                    if (drawnID == -1) {
+                        lastTurn = true;
+                        break;
+                    }
+                    else p.getHand().drawCard(drawnID);
+                }
             } else {
                 for (int i = 0; i < p.getTable().getCreatureCount() + 1; i++) {
-                    p.getHand().drawCard(deck.draw());
+                    int drawnID = deck.draw();
+                    if (drawnID == -1) {
+                        lastTurn = true;
+                        break;
+                    }
+                    else p.getHand().drawCard(drawnID);
                 }
             }
+            j++;
+            if (j >= playerCount) j = 0;
         }
-        activePlayerIndex = 0;
+        activePlayerIndex = firstPlayerIndex;
         sessionScreen.initDevelopment();
     }
 
@@ -82,6 +105,11 @@ public class ServerEmulator {
             p.getTable().clearAllFood();
         }
         sessionScreen.initExtinction();
+
+        if (lastTurn) {
+            int winner = getWinner();
+            sessionScreen.gameOver(winner);
+        }
         advanceStage();
     }
 
@@ -300,7 +328,7 @@ public class ServerEmulator {
         if (prey.hasAbility("swimmer") != predator.hasAbility("swimmer")) return false;
         if (prey.hasAbility("running")) {
             Random die = new Random();
-            if (die.nextInt(2) == 0) return false;
+            return die.nextInt(2) != 0;
         }
         return true;
     }
@@ -412,5 +440,19 @@ public class ServerEmulator {
 
         creature.turnsSinceHibernation = 0;
         return true;
+    }
+
+    private int getWinner() {
+        int maxPoints = 0;
+        int winnerID = -1;
+        for (int i = 0; i < playerCount; i++) {
+            int points = getPlayer(i).getVictoryPoints();
+            if (points >= maxPoints) {
+                maxPoints = points;
+                winnerID = i;
+            }
+        }
+
+        return winnerID;
     }
 }

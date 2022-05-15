@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -39,7 +40,9 @@ public class SessionScreen extends GameScreen {
         passButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (queuedCard != null && queuedAbilityActivation != null) server.requestPassTurn(game.getPlayerID());
+                if (queuedCard == null && queuedAbilityActivation == null) {
+                    server.requestPassTurn(game.getPlayerID());
+                }
             }
         });
         uiStage.addActor(passButton);
@@ -289,5 +292,14 @@ public class SessionScreen extends GameScreen {
 
     public void feedCreatureExternal(int creatureIndex, int playerID, boolean fromTray) {
         sessionStage.feedCreature(creatureIndex, playerID, fromTray);
+    }
+
+    public void gameOver(int winner) {
+        //тут будет отображение экрана конца игры
+
+        //временно
+        System.out.println("Player n. " + winner + " wins!");
+        game.dispose();
+        Gdx.app.exit();
     }
 }

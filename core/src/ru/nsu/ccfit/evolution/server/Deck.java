@@ -40,7 +40,7 @@ public class Deck {
     public Deck() {
         cards = new Array<>(DECK_SIZE);
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 2; i++) {
             for (int j = 0; j < cardAmountMap.get(i); j++) cards.add(i);
         }
 
@@ -48,6 +48,7 @@ public class Deck {
     }
 
     public int draw() {
+        if (cards.isEmpty()) return -1;
         return cards.removeIndex(cards.size - 1);
     }
 }
