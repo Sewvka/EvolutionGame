@@ -16,7 +16,7 @@ public class JoinGameListener extends AbstractListener {
             httpResponse.getBoolean("response");
             logger.info("User successfully joined the lobby");
             gameWorldState.setInLobby(true);
-            evolutionGame.getClient().checkLobby(gameWorldState.getSelfID(), gameWorldState.getGameID());
+            evolutionGame.getClient().startLobbyChecking();
         } catch (IllegalArgumentException ex) {
             logger.severe(httpResponse.getString("response"));
             gameWorldState.setGameID(-1);

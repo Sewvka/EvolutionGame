@@ -16,7 +16,6 @@ public class LoginListener extends AbstractListener {
         logger.info("User is successfully logged in, user id: " + userID);
         gameWorldState.setSelfID(userID);
         gameWorldState.setLoggedIn(true);
-        // TODO: do something
     }
 
 }

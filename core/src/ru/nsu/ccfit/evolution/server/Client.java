@@ -159,19 +159,7 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        /*Client client = new Client();
-        client.login("ymimsr");
-        client.createGame(2);
-
-        client.cardAllocation(2);
-
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }*/
+        //Client client = new Client();
     }
 
 }

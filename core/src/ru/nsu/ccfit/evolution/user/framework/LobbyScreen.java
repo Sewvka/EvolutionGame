@@ -22,7 +22,7 @@ public class LobbyScreen extends GameScreen {
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        gameIDLabel = new Label("Game ID: " + game.getGameWorldState(), game.getAssets().getSkin());
+        gameIDLabel = new Label("Game ID: " + game.getGameWorldState().getGameID(), game.getAssets().getSkin());
         gameIDLabel.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
         gameIDLabel.setPosition(getViewport().getWorldWidth() / 16, 14 * getViewport().getWorldHeight() / 16);
 
@@ -63,6 +63,7 @@ public class LobbyScreen extends GameScreen {
         stage.addActor(playerLabel3);
         stage.addActor(playerLabel4);
         stage.addActor(startLobbyButton);
+        addStage(stage);
     }
 
     @Override

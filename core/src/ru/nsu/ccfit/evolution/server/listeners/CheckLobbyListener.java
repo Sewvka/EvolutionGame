@@ -17,7 +17,7 @@ public class CheckLobbyListener extends AbstractListener {
     @Override
     public void handle(JsonValue httpResponse) {
         JsonValue response = httpResponse.get("response");
-        if (httpResponse.has("status")) {
+        if (response.has("players")) {
             logger.info("Check lobby request successfully received, gameID: " + gameWorldState.getGameID());
             JsonValue jsonPlayers = response.get("players");
             Map<Integer, String> players = new HashMap<>();
@@ -29,10 +29,12 @@ public class CheckLobbyListener extends AbstractListener {
             }
             gameWorldState.setPlayers(players);
 
-            String status = response.getString("status");
-            if (status.toLowerCase(Locale.ROOT).contains("started")) {
-                logger.info("Game is started");
-                gameWorldState.setGameStarted(true);
+            if (response.has("status")) {
+                String status = response.getString("status");
+                if (status.toLowerCase(Locale.ROOT).contains("started")) {
+                    logger.info("Game is started");
+                    gameWorldState.setGameStarted(true);
+                }
             }
         } else {
             logger.severe(
