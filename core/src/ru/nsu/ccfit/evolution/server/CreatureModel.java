@@ -21,6 +21,7 @@ public class CreatureModel {
     public boolean grazedThisRound;
     public boolean piracyUsed;
     public boolean isPoisoned;
+    public int turnsSinceHibernation;
 
     public CreatureModel() {
         abilities = 0;
@@ -35,6 +36,7 @@ public class CreatureModel {
         grazedThisRound = false;
         isPoisoned = false;
         piracyUsed = false;
+        turnsSinceHibernation = -1;
     }
 
     public Array<CreatureModel> getCooperationList() {
@@ -58,7 +60,7 @@ public class CreatureModel {
     }
 
     public boolean isFed() {
-        return food >= foodRequired();
+        return food >= foodRequired() || turnsSinceHibernation == 0;
     }
 
     public void removeFat(int fatCount) {
@@ -181,5 +183,7 @@ public class CreatureModel {
     public void resetPerTurnAbilities() {
         resetPerRoundAbilities();
         piracyUsed = false;
+        if (turnsSinceHibernation >= 0) turnsSinceHibernation++;
+        if (turnsSinceHibernation >= 2) turnsSinceHibernation = -1;
     }
 }

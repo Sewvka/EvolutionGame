@@ -40,8 +40,8 @@ public class SessionStage extends Stage {
         getSelectedCreature().addFood();
     }
 
-    public void feedCreature(int creatureIndex, int playerID, boolean isRed) {
-        if (isRed) {
+    public void feedCreature(int creatureIndex, int playerID, boolean fromTray) {
+        if (fromTray) {
             food.removeFood();
         }
         players.get(playerID).getTable().get(creatureIndex).addFood();

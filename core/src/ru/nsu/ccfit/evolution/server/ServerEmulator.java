@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -90,14 +91,13 @@ public class ServerEmulator {
         return (player.getExtinctCreatures());
     }
 
-    public void nextTurn() {
+    public void nextRound() {
         if (allPlayersPassed()) {
             advanceStage();
-        }
-        else {
+        } else {
             activePlayerIndex++;
             if (activePlayerIndex >= playerCount) activePlayerIndex = 0;
-            if (players[activePlayerIndex].passedTurn) nextTurn();
+            if (players[activePlayerIndex].passedTurn) nextRound();
             Objects.requireNonNull(getPlayer(activePlayerIndex)).getTable().resetPerRoundAbilities();
         }
     }
@@ -148,7 +148,7 @@ public class ServerEmulator {
 
         player.getHand().removeCard(selectedCard);
         player.getTable().addCreature();
-        nextTurn();
+        nextRound();
         return true;
     }
 
@@ -158,17 +158,21 @@ public class ServerEmulator {
         if (falseID(playerID) || falseID(targetID) || isInactive(playerID)) return false;
         if (falseCardIndex(selectedCard, playerID)) return false;
         if (falseCreatureIndex(selectedCreature, targetID)) return false;
+
         PlayerModel player = getPlayer(playerID);
         PlayerModel target = getPlayer(targetID);
+        CreatureModel creature = target.getTable().getCreature(selectedCreature);
 
-        if (!ability.equals("parasite") && playerID != targetID) return false;
+        if ((ability.equals("parasite")) == (playerID == targetID)) return false;
+        if (ability.equals("carnivorous") && creature.hasAbility("scavenger")) return false;
+        if (ability.equals("scavenger") && creature.hasAbility("carnivorous")) return false;
         if (!player.getHand().containsAbility(ability, selectedCard)) return false;
         if (target.getTable().getCreatureCount() < 1) return false;
         if (target.getTable().getCreature(selectedCreature).hasAbility(ability) && !ability.equals("fat")) return false;
 
         player.getHand().removeCard(selectedCard);
         target.getTable().addAbility(selectedCreature, ability);
-        nextTurn();
+        nextRound();
         return true;
     }
 
@@ -188,7 +192,7 @@ public class ServerEmulator {
 
         player.getHand().removeCard(selectedCard);
         player.getTable().addCoopAbility(selectedCreatureIndex1, selectedCreatureIndex2, ability);
-        nextTurn();
+        nextRound();
         return true;
     }
 
@@ -216,7 +220,7 @@ public class ServerEmulator {
         c.removeFat(fatConsumed);
         c.addFood(fatConsumed);
         if (fatConsumed > 0) checkCooperation(c, playerID);
-        nextTurn();
+        nextRound();
         return fatConsumed;
     }
 
@@ -255,8 +259,31 @@ public class ServerEmulator {
             predator.addFood(2);
             checkCooperation(predator, playerID);
             predator.preyedThisRound = true;
-            nextTurn();
+            checkAllScavengers(playerID);
+            nextRound();
             return true;
+        }
+        return false;
+    }
+
+    private void checkAllScavengers(int startingID) {
+        int id = startingID;
+        for (int i = 0; i < playerCount; i++) {
+            if (checkScavenger(id)) break;
+            id++;
+            if (id >= playerCount) id = 0;
+        }
+    }
+
+    private boolean checkScavenger(int playerID) {
+        Array<CreatureModel> creatures = getPlayer(playerID).getTable().getActiveCreatures();
+        for (int i = 0; i < creatures.size; i++) {
+            if (creatures.get(i).hasAbility("scavenger")) {
+                if (creatures.get(i).addFood()) {
+                    sessionScreen.feedCreatureExternal(i, playerID, false);
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -281,7 +308,7 @@ public class ServerEmulator {
 
     public boolean requestFeed(int creatureIndexInTable, int playerID) {
         if (feedCreature(creatureIndexInTable, playerID)) {
-            nextTurn();
+            nextRound();
             return true;
         }
         return false;
@@ -292,6 +319,7 @@ public class ServerEmulator {
         if (falseCreatureIndex(creatureIndexInTable, playerID)) return false;
         if (falseID(playerID) || isInactive(playerID)) return false;
         CreatureModel c = getPlayer(playerID).getTable().getCreature(creatureIndexInTable);
+        if (c.turnsSinceHibernation == 0) return false;
         if (foodLeft > 0) {
             if (c.addFood()) {
                 foodLeft--;
@@ -310,10 +338,11 @@ public class ServerEmulator {
             if (!c.getCommunicationUsed().get(partnerIndex)) {
                 c.getCommunicationUsed().set(partnerIndex, true);
                 partner.getCommunicationUsed().set(creatureIndex, true);
-
-                int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
-                feedCreature(partnedIndexInTable, playerID);
-                sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, true);
+                int partnerIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
+                if (c.turnsSinceHibernation == 0) {
+                    feedCreature(partnerIndexInTable, playerID);
+                    sessionScreen.feedCreatureExternal(partnerIndexInTable, playerID, true);
+                }
             }
         }
     }
@@ -327,9 +356,11 @@ public class ServerEmulator {
                 partner.getCooperationUsed().set(creatureIndex, true);
 
                 int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
-                partner.addFood();
-                checkCooperation(partner, playerID);
-                sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, false);
+                if (c.turnsSinceHibernation == 0) {
+                    partner.addFood();
+                    checkCooperation(partner, playerID);
+                    sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, false);
+                }
             }
         }
     }
@@ -338,7 +369,7 @@ public class ServerEmulator {
         if (falseID(playerID) || isInactive(playerID)) return;
         PlayerModel player = getPlayer(playerID);
         player.passedTurn = true;
-        nextTurn();
+        nextRound();
     }
 
     public int getStage() {
@@ -367,6 +398,16 @@ public class ServerEmulator {
 
         foodLeft--;
         creature.grazedThisRound = true;
+        return true;
+    }
+
+    public boolean requestHibernationActivation(int playerID, int creatureIndex) {
+        if (falseID(playerID) || isInactive(playerID)) return false;
+        if (falseCreatureIndex(creatureIndex, playerID)) return false;
+        CreatureModel creature = getPlayer(playerID).getTable().getCreature(creatureIndex);
+        if (creature.turnsSinceHibernation >= 0) return false;
+
+        creature.turnsSinceHibernation = 0;
         return true;
     }
 }

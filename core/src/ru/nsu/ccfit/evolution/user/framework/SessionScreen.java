@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
@@ -136,16 +137,20 @@ public class SessionScreen extends GameScreen {
     }
 
     public boolean activateAbility(Ability ability) {
+        CreatureView parent = (CreatureView) ability.getParent();
         switch (ability.getName()) {
             case "carnivorous":
             case "piracy":
                 queueAbility(ability);
                 return true;
             case "fat":
-                activateFat((CreatureView) ability.getParent());
+                activateFat(parent);
                 return true;
             case "grazing":
-                activateGrazer((CreatureView) ability.getParent());
+                activateGrazer(parent);
+                return true;
+            case "hibernation_ability":
+                activateHibernation(parent);
                 return true;
         }
         return false;
@@ -155,6 +160,11 @@ public class SessionScreen extends GameScreen {
         if (server.getGameStage() == 2) {
             queuedAbilityActivation = ability;
         }
+    }
+
+    private void activateHibernation(CreatureView creature) {
+        PlayerView player = (PlayerView) creature.getParent().getParent();
+        server.requestHibernationActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
     }
 
     private void activateFat(CreatureView creature) {
@@ -278,7 +288,7 @@ public class SessionScreen extends GameScreen {
         f.setPosition(0, 0);
     }
 
-    public void feedCreatureExternal(int creatureIndex, int playerID, boolean isRed) {
-        sessionStage.feedCreature(creatureIndex, playerID, isRed);
+    public void feedCreatureExternal(int creatureIndex, int playerID, boolean fromTray) {
+        sessionStage.feedCreature(creatureIndex, playerID, fromTray);
     }
 }
