@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import ru.nsu.ccfit.evolution.server.Client;
 import ru.nsu.ccfit.evolution.server.PlayerModel;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
@@ -25,8 +26,8 @@ public class SessionScreen extends GameScreen {
     private Ability queuedAbilityActivation;
     private CreatureView queuedCreature;
 
-    public SessionScreen(final EvolutionGame game) {
-        super(game);
+    public SessionScreen(final EvolutionGame game, Client client) {
+        super(game, client);
         server = new ServerEmulator(this);
         sessionStage = new SessionStage(game, server.getPlayerCount(), this);
         overlayStage = new Stage(getViewport());

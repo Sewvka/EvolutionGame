@@ -7,16 +7,16 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
-import ru.nsu.ccfit.evolution.server.listeners.CardAllocationListener;
-import ru.nsu.ccfit.evolution.server.listeners.CreateGameListener;
+import ru.nsu.ccfit.evolution.server.listeners.*;
+import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 import sun.net.NetworkClient;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +25,22 @@ public class Client {
 
     private String baseURL = "http://37.230.115.215:5000/";
 
-    public Client() {
+    private GameWorldState gameWorldState;
+    private EvolutionGame evolutionGame;
+
+    private static final Logger logger;
+
+    private Timer lobbyCheckTimer = new Timer(true);
+
+    static {
+        logger = Logger.getLogger(Client.class.getName());
+        Handler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.ALL);
+        logger.addHandler(consoleHandler);
+        logger.setUseParentHandlers(false);
+    }
+
+    public Client(EvolutionGame evolutionGame, GameWorldState gameWorldState) {
         Gdx.net = new Net() {
             private NetJavaImpl netJavaImpl = new NetJavaImpl();
 
@@ -59,9 +74,9 @@ public class Client {
                 return false;
             }
         };
+        this.evolutionGame = evolutionGame;
+        this.gameWorldState = gameWorldState;
     }
-
-    private static final Logger logger = Logger.getLogger(Client.class.getName());
 
     public void createGame(int userID) {
         logger.info("Sending request to server for creating a game lobby, user id: " + userID);
@@ -72,7 +87,7 @@ public class Client {
         httpRequest.setUrl(baseURL + "newgame");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        Gdx.net.sendHttpRequest(httpRequest, new CreateGameListener());
+        Gdx.net.sendHttpRequest(httpRequest, new CreateGameListener(gameWorldState, evolutionGame));
     }
 
     public void login(String username) {
@@ -84,7 +99,8 @@ public class Client {
         httpRequest.setUrl(baseURL + "login");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        Gdx.net.sendHttpRequest(httpRequest, new CreateGameListener());
+        gameWorldState.setSelfUsername(username);
+        Gdx.net.sendHttpRequest(httpRequest, new LoginListener(gameWorldState, evolutionGame));
     }
 
     public void cardAllocation(int userID) {
@@ -96,13 +112,57 @@ public class Client {
         httpRequest.setUrl(baseURL + "cardallocation");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        Gdx.net.sendHttpRequest(httpRequest, new CardAllocationListener());
+        Gdx.net.sendHttpRequest(httpRequest, new CardAllocationListener(gameWorldState, evolutionGame));
+    }
+
+    public void joinGame(int userID, int gameID) {
+        logger.info("Sending request to server for joining to game, userID: " + userID + " gameID: " + gameID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("game", String.valueOf(gameID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "joingame");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        gameWorldState.setGameID(gameID);
+        Gdx.net.sendHttpRequest(httpRequest, new JoinGameListener(gameWorldState, evolutionGame));
+    }
+
+    public void checkLobby(int userID, int gameID) {
+        logger.info("Sending request to server for checking possible changes in lobby: " + userID + " gameID: " + gameID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("game", String.valueOf(gameID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "checklobby");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new CheckLobbyListener(gameWorldState, evolutionGame));
+    }
+
+    public void startLobbyChecking() {
+        logger.info("Starting timer for lobby checking");
+        lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 300);
+    }
+
+    public void stopLobbyChecking() {
+        lobbyCheckTimer.cancel();
+    }
+
+    class LobbyChecker extends TimerTask {
+        @Override
+        public void run() {
+            checkLobby(gameWorldState.getSelfID(), gameWorldState.getGameID());
+        }
     }
 
     public static void main(String[] args) {
-        Client client = new Client();
+        /*Client client = new Client();
         client.login("ymimsr");
         client.createGame(2);
+
         client.cardAllocation(2);
 
         while (true) {
@@ -111,7 +171,7 @@ public class Client {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-        }
+        }*/
     }
 
 }

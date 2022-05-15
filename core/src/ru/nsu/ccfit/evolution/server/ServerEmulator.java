@@ -14,7 +14,6 @@ public class ServerEmulator {
     private final static int FEEDING = 2;
     private final static int EXTINCTION = 3;
     private final PlayerModel[] players;
-    private final Client client;
     private int gameStage;
     private int foodTotal;
     private int foodLeft;
@@ -31,7 +30,6 @@ public class ServerEmulator {
         for (int i = 0; i < playerCount; i++) {
             players[i] = new PlayerModel(i);
         }
-        this.client = new Client();
         gameStage = GAME_START;
     }
 

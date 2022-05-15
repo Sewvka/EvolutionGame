@@ -6,17 +6,20 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import ru.nsu.ccfit.evolution.server.Client;
 
 public class GameScreen implements Screen {
     final EvolutionGame game;
+    protected final Client client;
     private final Viewport viewport;
     private final OrthographicCamera camera;
     private final StageMultiplexer stageMultiplexer;
     public static final float WORLD_SIZE_X = 1280;
     public static final float WORLD_SIZE_Y = 720;
 
-    public GameScreen(EvolutionGame game) {
+    public GameScreen(EvolutionGame game, Client client) {
         this.game = game;
+        this.client = client;
         stageMultiplexer = new StageMultiplexer();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WORLD_SIZE_X, WORLD_SIZE_Y);
