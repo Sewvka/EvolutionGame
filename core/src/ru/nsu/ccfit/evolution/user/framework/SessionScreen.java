@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
@@ -36,11 +35,11 @@ public class SessionScreen extends GameScreen {
         addStage(uiStage);
 
         TextButton passButton = new TextButton("Pass turn", game.getAssets().getSkin());
-        passButton.setPosition(getViewport().getWorldWidth() / 32, getViewport().getWorldHeight() / 18);
+        passButton.setPosition(GameScreen.WORLD_SIZE_X / 32, GameScreen.WORLD_SIZE_Y / 18);
         passButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                server.requestPassTurn(game.getPlayerID());
+                if (queuedCard != null && queuedAbilityActivation != null) server.requestPassTurn(game.getPlayerID());
             }
         });
         uiStage.addActor(passButton);
@@ -101,7 +100,7 @@ public class SessionScreen extends GameScreen {
         dialog.button(card.getAbility2(), 2);
         dialog.button("Cancel", 3);
         dialog.show(uiStage, null);
-        dialog.setPosition((getViewport().getWorldWidth() - dialog.getWidth()) / 2, (getViewport().getWorldHeight() - dialog.getHeight()) / 2);
+        dialog.setPosition((GameScreen.WORLD_SIZE_X - dialog.getWidth()) / 2, (GameScreen.WORLD_SIZE_Y - dialog.getHeight()) / 2);
         dialog.setMovable(false);
     }
 

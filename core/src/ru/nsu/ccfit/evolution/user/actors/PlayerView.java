@@ -3,17 +3,16 @@ package ru.nsu.ccfit.evolution.user.actors;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
+import ru.nsu.ccfit.evolution.user.framework.GameScreen;
 
 public class PlayerView extends Group {
     private final TableView table;
     private final HandView hand;
     private final int playerID;
-    private final Viewport viewport;
 
-    public PlayerView(EvolutionGame game, Viewport viewport, boolean isUser, int playerID) {
+    public PlayerView(EvolutionGame game, boolean isUser, int playerID) {
         this.playerID = playerID;
-        this.viewport = viewport;
-        setSize(viewport.getWorldWidth() / 16 * 6, viewport.getWorldHeight() / 9 * 5);
+        setSize(GameScreen.WORLD_SIZE_X / 16 * 6, GameScreen.WORLD_SIZE_Y / 9 * 5);
         hand = new HandView(game, isUser, getWidth() / 2, 0);
         table = new TableView(game, 0, getHeight() / 5 * 2, getWidth(), getHeight() / 5 * 3);
         addActor(table);
@@ -33,28 +32,32 @@ public class PlayerView extends Group {
     }
 
     public void setAlignment(String alignment) {
+        float worldW = GameScreen.WORLD_SIZE_X;
+        float worldH = GameScreen.WORLD_SIZE_Y;
         switch (alignment) {
             case "bottom":
-                setPosition(viewport.getWorldWidth() / 2 - getWidth() / 2, 0);
+                setPosition(worldW/2 - getWidth() / 2, 0);
+                System.out.println("x is " + getX() + "; y is " + getY());
+                System.out.println("w is " + getWidth() + "; h is " + getHeight());
                 break;
             case "left":
-                setPosition(-viewport.getWorldWidth() / 16, viewport.getWorldHeight() / 2 + getWidth() / 2);
+                setPosition(-worldW / 16, worldH / 2 + getWidth() / 2);
                 setRotation(-90);
                 break;
             case "right":
-                setPosition(viewport.getWorldWidth() / 16 + viewport.getWorldWidth(), viewport.getWorldHeight() / 2 - getWidth() / 2);
+                setPosition(worldW / 16 + worldW, worldH / 2 - getWidth() / 2);
                 setRotation(90);
                 break;
             case "top":
-                setPosition(viewport.getWorldWidth() / 2 + getWidth() / 2, viewport.getWorldHeight() / 9 + viewport.getWorldHeight());
+                setPosition(worldW / 2 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 break;
             case "topL":
-                setPosition(viewport.getWorldWidth() / 4 + getWidth() / 2, viewport.getWorldHeight() / 9 + viewport.getWorldHeight());
+                setPosition(worldW / 4 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 break;
             case "topR":
-                setPosition(viewport.getWorldWidth() / 4 * 3 + getWidth() / 2, viewport.getWorldHeight() / 9 + viewport.getWorldHeight());
+                setPosition(worldW / 4 * 3 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 break;
         }

@@ -9,8 +9,8 @@ public class LoadingScreen extends GameScreen {
     public LoadingScreen(final EvolutionGame game) {
         super(game);
         bar = new ProgressBar(0, 100, 1, false, game.getAssets().getSkin(), "default-horizontal");
-        bar.setSize(getViewport().getWorldWidth() / 3, 20);
-        bar.setPosition((getViewport().getWorldWidth() - bar.getWidth()) / 2, (getViewport().getWorldHeight() - bar.getHeight()) / 2);
+        bar.setSize(GameScreen.WORLD_SIZE_X / 3, 20);
+        bar.setPosition((GameScreen.WORLD_SIZE_X - bar.getWidth()) / 2, (GameScreen.WORLD_SIZE_Y - bar.getHeight()) / 2);
         bar.setAnimateDuration(0);
         Stage stage = new Stage(getViewport());
         stage.addActor(bar);

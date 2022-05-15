@@ -16,6 +16,7 @@ public class SessionStage extends Stage {
     private final int playerCount;
     private final SessionScreen sessionScreen;
     public SessionStage(EvolutionGame game, int playerCount, SessionScreen sessionScreen) {
+        super(sessionScreen.getViewport());
         if (playerCount > 4) throw new InvalidParameterException("Game does not support more than 4 players!");
         //if (playerCount < 2) throw new InvalidParameterException("Game requires at least two players!");
         if (playerCount < 1) throw new InvalidParameterException("Game requires at least one player!");
@@ -23,13 +24,13 @@ public class SessionStage extends Stage {
         this.sessionScreen = sessionScreen;
         players = new ArrayList<>(playerCount);
         food = new FoodTray(game);
-        food.setPosition(sessionScreen.getViewport().getWorldWidth() / 16, sessionScreen.getViewport().getWorldHeight()/8);
+        food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y/8);
 
         //в конечном итоге номера ID игроков должен будет предоставлять сервер
-        players.add(new PlayerView(game, sessionScreen.getViewport(), true, 0));
+        players.add(new PlayerView(game, true, 0));
         addActor(players.get(0));
         for (int i = 1; i < playerCount; i++) {
-            players.add(new PlayerView(game, sessionScreen.getViewport(), false, i));
+            players.add(new PlayerView(game, false, i));
             addActor(players.get(i));
         }
         alignPlayers();
@@ -71,7 +72,7 @@ public class SessionStage extends Stage {
         setHandTouchable(Touchable.disabled);
         for (PlayerView p : players) {
             HandView h = p.getHand();
-            h.addAction(moveTo(h.getX(), -sessionScreen.getViewport().getWorldHeight()/9, 0.3f));
+            h.addAction(moveTo(h.getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
             h.setTouchable(Touchable.disabled);
         }
         food.init(foodTotal);

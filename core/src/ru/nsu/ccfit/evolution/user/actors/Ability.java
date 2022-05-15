@@ -69,6 +69,7 @@ public class Ability extends GameActor {
             case "piracy":
                 parentCreature.addFood();
                 targetCreature.removeFood();
+                screen.cancelAbilityUsage();
         }
     }
 
