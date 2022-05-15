@@ -17,6 +17,7 @@ public class CreatureModel {
     private int food;
     private int fatMax;
     private int fatStored;
+    public boolean isPassiveSymbiote;
     public boolean preyedThisRound;
     public boolean grazedThisRound;
     public boolean piracyUsed;
@@ -36,6 +37,7 @@ public class CreatureModel {
         grazedThisRound = false;
         isPoisoned = false;
         piracyUsed = false;
+        isPassiveSymbiote = false;
         turnsSinceHibernation = -1;
     }
 
@@ -185,5 +187,19 @@ public class CreatureModel {
         piracyUsed = false;
         if (turnsSinceHibernation >= 0) turnsSinceHibernation++;
         if (turnsSinceHibernation >= 2) turnsSinceHibernation = -1;
+    }
+
+    public boolean hasUnfedSymbiote() {
+        if (isPassiveSymbiote) {
+            for (int i = 0; i < symbiosisList.size; i++) {
+                if (!symbiosisList.get(i).isFed()) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasSymbiote() {
+        return (isPassiveSymbiote && !symbiosisList.isEmpty());
     }
 }

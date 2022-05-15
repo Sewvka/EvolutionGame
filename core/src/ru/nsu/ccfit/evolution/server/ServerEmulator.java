@@ -236,6 +236,7 @@ public class ServerEmulator {
         if (pirate.equals(target)) return false;
         if (pirate.piracyUsed || !pirate.canEatMore()) return false;
         if (target.isFed() || target.getFood() < 1) return false;
+        if (pirate.hasUnfedSymbiote() || pirate.turnsSinceHibernation == 0) return false;
 
         target.removeFood();
         pirate.piracyUsed = true;
@@ -252,6 +253,7 @@ public class ServerEmulator {
         PlayerModel target = getPlayer(targetID);
         CreatureModel predator = player.getTable().getCreature(predatorIndex);
         CreatureModel prey = target.getTable().getCreature(preyIndex);
+        if (predator.turnsSinceHibernation == 0 || predator.hasUnfedSymbiote()) return false;
 
         if (checkPredationConditions(predator, prey)) {
             if (prey.hasAbility("poisonous")) predator.isPoisoned = true;
@@ -278,7 +280,7 @@ public class ServerEmulator {
     private boolean checkScavenger(int playerID) {
         Array<CreatureModel> creatures = getPlayer(playerID).getTable().getActiveCreatures();
         for (int i = 0; i < creatures.size; i++) {
-            if (creatures.get(i).hasAbility("scavenger")) {
+            if (creatures.get(i).hasAbility("scavenger") && !creatures.get(i).hasUnfedSymbiote()) {
                 if (creatures.get(i).addFood()) {
                     sessionScreen.feedCreatureExternal(i, playerID, false);
                     return true;
@@ -291,13 +293,14 @@ public class ServerEmulator {
     private boolean checkPredationConditions(CreatureModel predator, CreatureModel prey) {
         if (predator.equals(prey)) return false;
         if (predator.preyedThisRound || !predator.canEatMore()) return false;
+        if (prey.hasSymbiote()) return false;
         if (prey.hasAbility("burrowing") && prey.isFed()) return false;
         if (prey.hasAbility("camouflage") && !predator.hasAbility("sharp_vision")) return false;
         if (prey.hasAbility("high_body_weight") && !predator.hasAbility("high_body_weight")) return false;
         if (prey.hasAbility("swimmer") != predator.hasAbility("swimmer")) return false;
         if (prey.hasAbility("running")) {
             Random die = new Random();
-            return die.nextInt(2) != 0;
+            if (die.nextInt(2) == 0) return false;
         }
         return true;
     }
@@ -319,7 +322,7 @@ public class ServerEmulator {
         if (falseCreatureIndex(creatureIndexInTable, playerID)) return false;
         if (falseID(playerID) || isInactive(playerID)) return false;
         CreatureModel c = getPlayer(playerID).getTable().getCreature(creatureIndexInTable);
-        if (c.turnsSinceHibernation == 0) return false;
+        if (c.turnsSinceHibernation == 0 || c.hasUnfedSymbiote()) return false;
         if (foodLeft > 0) {
             if (c.addFood()) {
                 foodLeft--;
@@ -356,7 +359,7 @@ public class ServerEmulator {
                 partner.getCooperationUsed().set(creatureIndex, true);
 
                 int partnedIndexInTable = getPlayer(playerID).getTable().indexOf(partner);
-                if (c.turnsSinceHibernation == 0) {
+                if (c.turnsSinceHibernation == 0 && !c.hasUnfedSymbiote()) {
                     partner.addFood();
                     checkCooperation(partner, playerID);
                     sessionScreen.feedCreatureExternal(partnedIndexInTable, playerID, false);

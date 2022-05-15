@@ -27,6 +27,7 @@ public class TableModel {
         }
         for (CreatureModel partner : new Array.ArrayIterator<>(c.getSymbiosisList())) {
             partner.getSymbiosisList().removeValue(c, true);
+            partner.isPassiveSymbiote = false;
         }
         activeCreatures.removeIndex(index);
     }
@@ -54,6 +55,7 @@ public class TableModel {
     public void addCoopAbility(int index1, int index2, String ability) {
         activeCreatures.get(index1).addCoopAbility(ability, activeCreatures.get(index2));
         activeCreatures.get(index2).addCoopAbility(ability, activeCreatures.get(index1));
+        if (ability.equals("symbiosis")) activeCreatures.get(index2).isPassiveSymbiote = true;
     }
 
     public void resetPerRoundAbilities() {
