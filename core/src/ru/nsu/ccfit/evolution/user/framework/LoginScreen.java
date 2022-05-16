@@ -16,12 +16,12 @@ public class LoginScreen extends GameScreen {
         super(evolutionGame, client);
 
         loginInput = new TextField("your login", evolutionGame.getAssets().getSkin());
-        loginInput.setSize(getViewport().getWorldWidth() / 4, getViewport().getWorldHeight() / 16);
-        loginInput.setPosition(3 * getViewport().getWorldWidth() / 8, 15 * getViewport().getWorldHeight() / 32);
+        loginInput.setSize(GameScreen.WORLD_SIZE_X / 4, GameScreen.WORLD_SIZE_Y / 16);
+        loginInput.setPosition(3 * GameScreen.WORLD_SIZE_X / 8, 15 * GameScreen.WORLD_SIZE_Y / 32);
 
         submitButton = new TextButton("Submit", evolutionGame.getAssets().getSkin());
-        submitButton.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        submitButton.setPosition(7 * getViewport().getWorldWidth() / 16, getViewport().getWorldHeight() / 8);
+        submitButton.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
+        submitButton.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y / 8);
         submitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -43,7 +43,6 @@ public class LoginScreen extends GameScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
-
         if (game.getGameWorldState().isLoggedIn())
             game.setScreen(new MainScreen(game, client));
     }

@@ -15,8 +15,8 @@ public class MainScreen extends GameScreen {
         super(game, client);
 
         joinLobby = new TextButton("Join lobby", game.getAssets().getSkin());
-        joinLobby.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        joinLobby.setPosition(7 * getViewport().getWorldWidth() / 16, 6 * getViewport().getWorldHeight() / 16);
+        joinLobby.setSize(GameScreen.WORLD_SIZE_X / 8, getViewport().getWorldHeight() / 16);
+        joinLobby.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, 6 * getViewport().getWorldHeight() / 16);
         joinLobby.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -25,8 +25,8 @@ public class MainScreen extends GameScreen {
         });
 
         createLobby = new TextButton("Create lobby", game.getAssets().getSkin());
-        createLobby.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        createLobby.setPosition(7 * getViewport().getWorldWidth() / 16, 9 * getViewport().getWorldHeight() / 16);
+        createLobby.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
+        createLobby.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, 9 * GameScreen.WORLD_SIZE_Y / 16);
         createLobby.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
