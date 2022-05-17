@@ -17,13 +17,13 @@ public class JoinLobbyScreen extends GameScreen {
         super(game, client);
 
         gameIDTextField = new TextField("Game ID", game.getAssets().getSkin());
-        gameIDTextField.setSize(getViewport().getWorldWidth() / 4, getViewport().getWorldHeight() / 16);
-        gameIDTextField.setPosition(3 * getViewport().getWorldWidth() / 8, 15 * getViewport().getWorldHeight() / 32);
+        gameIDTextField.setSize(GameScreen.WORLD_SIZE_X / 4, GameScreen.WORLD_SIZE_Y / 16);
+        gameIDTextField.setPosition(3 * GameScreen.WORLD_SIZE_X / 8, 15 * GameScreen.WORLD_SIZE_Y / 32);
         gameIDTextField.setTextFieldFilter(new DigitFilter());
 
         submitButton = new TextButton("Submit", game.getAssets().getSkin());
-        submitButton.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        submitButton.setPosition(7 * getViewport().getWorldWidth() / 16, getViewport().getWorldHeight() / 8);
+        submitButton.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
+        submitButton.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y / 8);
         submitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

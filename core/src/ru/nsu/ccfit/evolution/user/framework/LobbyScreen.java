@@ -22,33 +22,36 @@ public class LobbyScreen extends GameScreen {
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
+
         gameIDLabel = new Label("Game ID: " + game.getGameWorldState().getGameID(), game.getAssets().getSkin());
-        gameIDLabel.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        gameIDLabel.setPosition(getViewport().getWorldWidth() / 16, 14 * getViewport().getWorldHeight() / 16);
+        gameIDLabel.setSize(W / 8, H / 16);
+        gameIDLabel.setPosition(W / 16, 14 * H / 16);
 
         selfPlayerLabel = new Label(game.getGameWorldState().getSelfUsername(), game.getAssets().getSkin());
-        selfPlayerLabel.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        selfPlayerLabel.setPosition(13 * getViewport().getWorldWidth() / 16, 14 * getViewport().getWorldHeight() / 16);
+        selfPlayerLabel.setSize(W / 8, H / 16);
+        selfPlayerLabel.setPosition(13 * W / 16, 14 * H / 16);
 
         Label playerLabel2 = new Label("", game.getAssets().getSkin());
-        playerLabel2.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        playerLabel2.setPosition(13 * getViewport().getWorldWidth() / 16, 12 * getViewport().getWorldHeight() / 16);
+        playerLabel2.setSize(W / 8, H / 16);
+        playerLabel2.setPosition(13 * W / 16, 12 * H / 16);
 
         Label playerLabel3 = new Label("", game.getAssets().getSkin());
-        playerLabel3.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        playerLabel3.setPosition(13 * getViewport().getWorldWidth() / 16, 10 * getViewport().getWorldHeight() / 16);
+        playerLabel3.setSize(W / 8, H / 16);
+        playerLabel3.setPosition(13 * W / 16, 10 * H / 16);
 
         Label playerLabel4 = new Label("", game.getAssets().getSkin());
-        playerLabel3.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        playerLabel3.setPosition(13 * getViewport().getWorldWidth() / 16, 8 * getViewport().getWorldHeight() / 16);
+        playerLabel3.setSize(W / 8, H / 16);
+        playerLabel3.setPosition(13 * W / 16, 8 * H / 16);
 
         playerLabels.add(playerLabel2);
         playerLabels.add(playerLabel3);
         playerLabels.add(playerLabel4);
 
         startLobbyButton = new TextButton("Submit", game.getAssets().getSkin());
-        startLobbyButton.setSize(getViewport().getWorldWidth() / 8, getViewport().getWorldHeight() / 16);
-        startLobbyButton.setPosition(7 * getViewport().getWorldWidth() / 16, getViewport().getWorldHeight() / 8);
+        startLobbyButton.setSize(W / 8, H / 16);
+        startLobbyButton.setPosition(7 * W / 16, H / 8);
         startLobbyButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import org.ietf.jgss.GSSManager;
 import ru.nsu.ccfit.evolution.server.Client;
 
 public class MainScreen extends GameScreen {
@@ -15,8 +16,8 @@ public class MainScreen extends GameScreen {
         super(game, client);
 
         joinLobby = new TextButton("Join lobby", game.getAssets().getSkin());
-        joinLobby.setSize(GameScreen.WORLD_SIZE_X / 8, getViewport().getWorldHeight() / 16);
-        joinLobby.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, 6 * getViewport().getWorldHeight() / 16);
+        joinLobby.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
+        joinLobby.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, 6 * GameScreen.WORLD_SIZE_Y / 16);
         joinLobby.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
