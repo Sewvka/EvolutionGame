@@ -55,7 +55,7 @@ public class LobbyScreen extends GameScreen {
         startLobbyButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new LoadingScreen(game, client));
+                client.startGame(game.getGameWorldState().getSelfID(), game.getGameWorldState().getGameID());
             }
         });
 
@@ -67,15 +67,18 @@ public class LobbyScreen extends GameScreen {
         stage.addActor(playerLabel4);
         stage.addActor(startLobbyButton);
         addStage(stage);
+
+        for (Label playerLabel : playerLabels) {
+            playerLabel.setVisible(false);
+        }
+        if (!game.getGameWorldState().isHost()) {
+            startLobbyButton.setTouchable(Touchable.disabled);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-
-        for (Label playerLabel : playerLabels) {
-            playerLabel.setVisible(false);
-        }
 
         if (game.getGameWorldState().getPlayers() != null) {
             int index = 0;
@@ -86,7 +89,6 @@ public class LobbyScreen extends GameScreen {
             }
         }
 
-        if (!game.getGameWorldState().isHost())
-            startLobbyButton.setTouchable(Touchable.disabled);
+        if (game.getGameWorldState().isGameStarted()) game.setScreen(new LoadingScreen(game, client));
     }
 }

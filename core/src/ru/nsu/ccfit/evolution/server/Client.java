@@ -115,6 +115,19 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new CardAllocationListener(gameWorldState, evolutionGame));
     }
 
+    public void startGame(int userID, int gameID) {
+        logger.info("Sending request to server for starting game, userID: " + userID + " gameID: " + gameID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("game", String.valueOf(gameID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "startgame");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new JoinGameListener(gameWorldState, evolutionGame));
+    }
+
     public void joinGame(int userID, int gameID) {
         logger.info("Sending request to server for joining to game, userID: " + userID + " gameID: " + gameID);
         Map<String, String> parameters = new HashMap<>();

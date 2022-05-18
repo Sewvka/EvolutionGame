@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +15,15 @@ public class GameWorldState {
     private boolean isInLobby = false;
     private boolean isHost = false;
     private int gameID = -1;
+
     private Map<Integer, String> players;
+    private final ArrayList<Integer> hand = new ArrayList<>();
 
     private boolean isGameStarted = false;
+
+    public ArrayList<Integer> getHand() {
+        return hand;
+    }
 
     public boolean isLoggedIn() {
         return isLoggedIn;

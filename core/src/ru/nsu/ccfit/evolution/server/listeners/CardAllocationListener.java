@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.evolution.server.listeners;
 
 import com.badlogic.gdx.utils.JsonValue;
+import com.sun.tools.javac.util.StringUtils;
 import ru.nsu.ccfit.evolution.server.GameWorldState;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
@@ -16,8 +17,14 @@ public class CardAllocationListener extends AbstractListener {
     @Override
     public void handle(JsonValue httpResponse) {
         List<Integer> cards = new ArrayList<>();
-        String cardIterator = httpResponse.getString("cards");
-        logger.info("Card allocation, cards: " + cardIterator);
+        //JsonValue  response = httpResponse.get("response");
+        JsonValue jsonCards = httpResponse.get("cards");
+        for (JsonValue jsonCard = jsonCards.child; jsonCard != null; jsonCard = jsonCard.next) {
+            int cardID = jsonCard.asInt();
+            cards.add(cardID);
+        }
+        gameWorldState.getHand().addAll(cards);
+        logger.info("Card allocation, cards: " + jsonCards.toString());
     }
 
 }

@@ -3,6 +3,7 @@ package ru.nsu.ccfit.evolution.server.listeners;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.nsu.ccfit.evolution.server.GameWorldState;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
+import ru.nsu.ccfit.evolution.user.framework.LoadingScreen;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,8 +25,7 @@ public class CheckLobbyListener extends AbstractListener {
             for (JsonValue jsonPlayer = jsonPlayers.child; jsonPlayer != null; jsonPlayer = jsonPlayer.next) {
                 int playerID = jsonPlayer.getInt(0);
                 String playerName = jsonPlayer.getString(2);
-                if (playerID != gameWorldState.getSelfID())
-                    players.put(playerID, playerName);
+                players.put(playerID, playerName);
             }
             gameWorldState.setPlayers(players);
 

@@ -15,15 +15,15 @@ public class HandView extends Group {
     final float CARD_W = 120;
     final float CARD_H = 168;
     private final Array<CardView> activeCards;
-    private final Pool<CardView> cardPool;
 
-    public HandView(final EvolutionGame game, final boolean isUser, float x, float y) {
+    private final Pool<CardView> cardPool;
+    public HandView(final EvolutionGame game, final boolean isSelf, float x, float y) {
         setPosition(x, y);
         activeCards = new Array<>();
         cardPool = new Pool<CardView>() {
             @Override
             protected CardView newObject() {
-                return new CardView(game, CARD_W, CARD_H, isUser);
+                return new CardView(game, CARD_W, CARD_H, isSelf);
             }
         };
     }
@@ -40,6 +40,10 @@ public class HandView extends Group {
         for (Integer id : new Array.ArrayIterator<>(ids)) {
             addCard(id);
         }
+    }
+
+    public Array<CardView> getCards() {
+        return activeCards;
     }
 
     public void removeCardAt(int index) {

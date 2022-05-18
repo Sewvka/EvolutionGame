@@ -17,12 +17,12 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     private boolean isDisplayed;
     private int id;
     private final EvolutionGame game;
-    private final boolean isUser;
+    private final boolean isSelf;
 
 
-    public CardView(EvolutionGame game, float w, float h, boolean isUser) {
+    public CardView(EvolutionGame game, float w, float h, boolean isSelf) {
         super(null, w, h);
-        this.isUser = isUser;
+        this.isSelf = isSelf;
         this.game = game;
         inDeck = false;
         isDisplayed = false;
@@ -42,7 +42,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     @Override
     public boolean isDisplayable() {
         HandView parentHand = (HandView) getTrueParent();
-        return (isUser && inDeck && parentHand.noCardDisplayed() && !isDisplayed);
+        return (isSelf && inDeck && parentHand.noCardDisplayed() && !isDisplayed);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
 
     @Override
     public boolean isHoverable() {
-        return (inDeck && !isDisplayed && isUser);
+        return (inDeck && !isDisplayed && isSelf);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     @Override
     public boolean isDraggable() {
         HandView parentHand = (HandView) getTrueParent();
-        return (!isDisplayed && isUser && inDeck && parentHand.noCardDisplayed());
+        return (!isDisplayed && isSelf && inDeck && parentHand.noCardDisplayed());
     }
 
     @Override
@@ -112,13 +112,15 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     }
 
     public void init(int id) {
-        String cardname = Cards.getName(id);
-        setTexture(new TextureRegion(game.getAssets().getCardTexture(cardname)));
+        if (!isSelf) setTexture(new TextureRegion(game.getAssets().getTexture("cards/cover.png")));
+        else {
+            String cardname = Cards.getName(id);
+            setTexture(new TextureRegion(game.getAssets().getCardTexture(cardname)));
+            this.id = id;
+            ability1 = Cards.getAbilityFromName(cardname, true);
+            ability2 = Cards.getAbilityFromName(cardname, false);
+        }
         inDeck = true;
-        this.id = id;
-
-        ability1 = Cards.getAbilityFromName(cardname, true);
-        ability2 = Cards.getAbilityFromName(cardname, false);
     }
 
     public String getAbility1() {

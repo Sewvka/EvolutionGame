@@ -14,6 +14,8 @@ import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.server.ServerEmulator;
 import ru.nsu.ccfit.evolution.user.actors.*;
 
+import java.util.ArrayList;
+
 public class SessionScreen extends GameScreen {
     private final SessionStage sessionStage;
     private final Stage overlayStage;
@@ -29,7 +31,7 @@ public class SessionScreen extends GameScreen {
     public SessionScreen(final EvolutionGame game, Client client) {
         super(game, client);
         server = new ServerEmulator(this);
-        sessionStage = new SessionStage(game, server.getPlayerCount(), this);
+        sessionStage = new SessionStage(game, game.getGameWorldState().getPlayers().size(), this);
         overlayStage = new Stage(getViewport());
         uiStage = new Stage(getViewport());
         addStage(sessionStage);
@@ -42,13 +44,12 @@ public class SessionScreen extends GameScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (queuedCard == null && queuedAbilityActivation == null) {
-                    server.requestPassTurn(game.getPlayerID());
+                    //server.requestPassTurn(game.getPlayerID());
                 }
             }
         });
         uiStage.addActor(passButton);
-
-        server.init();
+        initDevelopment();
     }
 
     public ServerEmulator getServerEmulator() {
@@ -127,7 +128,7 @@ public class SessionScreen extends GameScreen {
                 return;
             }
         }
-        if (server.requestAbilityPlacement(ability, parentHand.getCardIndex(card), selectedTable.getCreatureIndex(selectedCreature), player.getPlayerID(), target.getPlayerID())) {
+        if (server.requestAbilityPlacement(ability, parentHand.getCardIndex(card), selectedTable.getCreatureIndex(selectedCreature), player.getID(), target.getID())) {
             parentHand.removeCard(card);
             card.remove();
             selectedCreature.addAbility(card.getId(), firstAbility);
@@ -167,18 +168,18 @@ public class SessionScreen extends GameScreen {
 
     private void activateHibernation(CreatureView creature) {
         PlayerView player = (PlayerView) creature.getParent().getParent();
-        server.requestHibernationActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
+        server.requestHibernationActivation(player.getID(), player.getTable().getCreatureIndex(creature));
     }
 
     private void activateFat(CreatureView creature) {
         PlayerView player = (PlayerView) creature.getParent().getParent();
-        int fatConsumed = server.requestFatActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature));
+        int fatConsumed = server.requestFatActivation(player.getID(), player.getTable().getCreatureIndex(creature));
         if (fatConsumed > 0) creature.consumeFat(fatConsumed);
     }
 
     private void activateGrazer(CreatureView creature) {
         PlayerView player = (PlayerView) creature.getParent().getParent();
-        if (server.requestGrazerActivation(player.getPlayerID(), player.getTable().getCreatureIndex(creature))) {
+        if (server.requestGrazerActivation(player.getID(), player.getTable().getCreatureIndex(creature))) {
             sessionStage.getFood().removeFood();
         }
     }
@@ -188,11 +189,11 @@ public class SessionScreen extends GameScreen {
         PlayerView target = (PlayerView) selectedTable.getParent();
         HandView parentHand = (HandView) card.getTrueParent();
         PlayerView player = (PlayerView) parentHand.getParent();
-        if (player.getPlayerID() != target.getPlayerID()) {
+        if (player.getID() != target.getID()) {
             card.putInDeck();
             return;
         }
-        if (server.requestCreaturePlacement(parentHand.getCardIndex(card), player.getPlayerID())) {
+        if (server.requestCreaturePlacement(parentHand.getCardIndex(card), player.getID())) {
             selectedTable.addCreature();
             parentHand.removeCard(card);
             card.remove();
@@ -232,12 +233,12 @@ public class SessionScreen extends GameScreen {
             CreatureView parentCreature = (CreatureView) queuedAbilityActivation.getParent();
             switch (queuedAbilityActivation.getName()) {
                 case "carnivorous":
-                    if (server.requestPredation(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getPlayerID(), target.getPlayerID())) {
+                    if (server.requestPredation(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getID(), target.getID())) {
                         queuedAbilityActivation.resumeActivation(targetCreature);
                     }
                     break;
                 case "piracy":
-                    if (server.requestPiracy(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getPlayerID(), target.getPlayerID())) {
+                    if (server.requestPiracy(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getID(), target.getID())) {
                         queuedAbilityActivation.resumeActivation(targetCreature);
                     }
                     break;
@@ -250,7 +251,7 @@ public class SessionScreen extends GameScreen {
         PlayerView target = (PlayerView) selectedTable.getParent();
         HandView parentHand = (HandView) queuedCard.getTrueParent();
         PlayerView player = (PlayerView) parentHand.getParent();
-        if (player.getPlayerID() != target.getPlayerID()) {
+        if (player.getID() != target.getID()) {
             queuedCard.putInDeck();
             return;
         }
@@ -258,7 +259,7 @@ public class SessionScreen extends GameScreen {
         int selectedCreature1 = selectedTable.getCreatureIndex(targetCreature1);
         int selectedCreature2 = selectedTable.getCreatureIndex(targetCreature2);
         String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
-        if (server.requestCoopAbilityPlacement(ability, parentHand.getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getPlayerID())) {
+        if (server.requestCoopAbilityPlacement(ability, parentHand.getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getID())) {
             Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
             Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
             ab1.setBuddy(ab2);
@@ -281,7 +282,7 @@ public class SessionScreen extends GameScreen {
         if (sessionStage.isTableSelected()) {
             if (sessionStage.getSelectedTable().isCreatureSelected()) {
                 PlayerView player = (PlayerView) sessionStage.getSelectedTable().getParent();
-                if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getPlayerID())) {
+                if (server.requestFeed(sessionStage.getSelectedTable().getSelectedCreatureIndex(), player.getID())) {
                     sessionStage.feedToken();
                     return;
                 }
@@ -302,5 +303,11 @@ public class SessionScreen extends GameScreen {
         System.out.println("Player n. " + winner + " wins!");
         game.dispose();
         Gdx.app.exit();
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        sessionStage.update();
     }
 }

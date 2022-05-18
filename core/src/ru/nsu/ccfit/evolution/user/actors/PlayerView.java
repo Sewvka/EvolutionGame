@@ -7,16 +7,21 @@ import ru.nsu.ccfit.evolution.user.framework.GameScreen;
 
 public class PlayerView extends Group {
     private final TableView table;
-    private final HandView hand;
+    private HandView hand;
     private final int playerID;
+    private final String playerName;
 
-    public PlayerView(EvolutionGame game, boolean isUser, int playerID) {
+    public PlayerView(EvolutionGame game, int playerID, String playerName) {
         this.playerID = playerID;
+        this.playerName = playerName;
+        boolean isSelf = game.getGameWorldState().getSelfID() == playerID;
         setSize(GameScreen.WORLD_SIZE_X / 16 * 6, GameScreen.WORLD_SIZE_Y / 9 * 5);
-        hand = new HandView(game, isUser, getWidth() / 2, 0);
+        if (isSelf) {
+            hand = new HandView(game, isSelf, getWidth() / 2, 0);
+            addActor(hand);
+        }
         table = new TableView(game, 0, getHeight() / 5 * 2, getWidth(), getHeight() / 5 * 3);
         addActor(table);
-        addActor(hand);
     }
 
     public HandView getHand() {
@@ -27,9 +32,11 @@ public class PlayerView extends Group {
         return table;
     }
 
-    public int getPlayerID() {
+    public int getID() {
         return playerID;
     }
+
+    public String getName() { return playerName; }
 
     public void setAlignment(String alignment) {
         float worldW = GameScreen.WORLD_SIZE_X;
