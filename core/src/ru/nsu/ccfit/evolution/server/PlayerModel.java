@@ -43,8 +43,8 @@ public class PlayerModel {
         float result = 0;
         result += table.getCreatureCount() * 2;
         for (int i = 0; i < table.getCreatureCount(); i++) {
-            result += table.getCreature(i).foodRequired() - 1;
-            result += table.getCreature(i).getAbilityCount();
+            result += table.get(i).foodRequired() - 1;
+            result += table.get(i).getAbilityCount();
         }
 
         return (int) result;

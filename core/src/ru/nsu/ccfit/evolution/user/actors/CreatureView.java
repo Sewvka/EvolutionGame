@@ -14,6 +14,7 @@ public class CreatureView extends GameActor implements Hoverable {
     private final Cover cover;
     private final Array<Ability> abilities;
     private int foodCount;
+    private int id;
 
     public CreatureView(EvolutionGame game, float w, float h) {
         super(null, w, h);
@@ -177,5 +178,13 @@ public class CreatureView extends GameActor implements Hoverable {
         clearChildren();
         addActor(cover);
         foodCount = 0;
+    }
+
+    public void setID(int id) {
+        this.id = id;
+    }
+
+    public int getID() {
+        return id;
     }
 }

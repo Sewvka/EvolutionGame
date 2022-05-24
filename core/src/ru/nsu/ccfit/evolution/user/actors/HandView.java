@@ -51,7 +51,7 @@ public class HandView extends Group {
         CardView c = activeCards.get(index);
         cardPool.free(c);
         activeCards.removeIndex(index);
-        removeActor(c);
+        c.remove();
     }
 
     public void removeCard(CardView c) {

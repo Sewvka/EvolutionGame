@@ -3,6 +3,8 @@ package ru.nsu.ccfit.evolution.user.framework;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.server.CreatureModel;
+import ru.nsu.ccfit.evolution.server.TableModel;
 import ru.nsu.ccfit.evolution.user.actors.*;
 
 import java.security.InvalidParameterException;
@@ -79,16 +81,16 @@ public class SessionStage extends Stage {
     public void initExtinction() {
         food.remove();
         for (PlayerView p : playerActors.values()) {
-            Array<Integer> extinctIDs = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getID());
-            Array<CreatureView> extinct = new Array<>();
-            for (int i : new Array.ArrayIterator<>(extinctIDs)) {
-                extinct.add(p.getTable().get(i));
-            }
-            for (CreatureView c : new Array.ArrayIterator<>(extinct)) {
-                p.getTable().removeCreature(c);
-            }
-
-            p.getTable().clearAllFood();
+//            Array<Integer> extinctIDs = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getID());
+//            Array<CreatureView> extinct = new Array<>();
+//            for (int i : new Array.ArrayIterator<>(extinctIDs)) {
+//                extinct.add(p.getTable().get(i));
+//            }
+//            for (CreatureView c : new Array.ArrayIterator<>(extinct)) {
+//                p.getTable().removeCreature(c);
+//            }
+//
+//            p.getTable().clearAllFood();
         }
     }
 
@@ -178,15 +180,35 @@ public class SessionStage extends Stage {
     }
 
     public void update() {
-        PlayerView player = playerActors.get(game.getGameWorldState().getSelfID());
-        ArrayList<Integer> hand = game.getGameWorldState().getHand();
-        for (int i = 0; i < hand.size(); i++) {
-            if (i >= player.getHand().getCards().size) {
-                player.getHand().addCard(hand.get(i));
+        PlayerView playerView = playerActors.get(game.getGameWorldState().getSelfID());
+        ArrayList<Integer> handModel = game.getGameWorldState().getHand();
+        for (int i = 0; i < handModel.size(); i++) {
+            if (i >= playerView.getHand().getCards().size) {
+                playerView.getHand().addCard(handModel.get(i));
             }
-            else if (player.getHand().getCards().get(i).getId() != hand.get(i)) {
-                player.getHand().removeCardAt(i);
+            else if (playerView.getHand().getCards().get(i).getId() != handModel.get(i)) {
+                i+=0;
+                playerView.getHand().removeCardAt(i);
                 i--;
+            }
+        }
+        for (int i = handModel.size(); i < playerView.getHand().getCards().size; i++) {
+            playerView.getHand().removeCardAt(i);
+        }
+
+        for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
+            TableModel tableModel = game.getGameWorldState().getTables().get(playerID);
+            TableView tableView = playerActors.get(playerID).getTable();
+            for (int creatureID : tableModel.getCreatures().keySet()) {
+                CreatureModel creatureModel = tableModel.get(creatureID);
+                if (!tableView.getCreatures().containsKey(creatureID)) {
+                    tableView.addCreature(creatureID);
+                }
+            }
+            for (int creatureID : tableView.getCreatures().keySet()) {
+                if (!tableModel.getCreatures().containsKey(creatureID)) {
+                    tableView.removeCreature(creatureID);
+                }
             }
         }
     }

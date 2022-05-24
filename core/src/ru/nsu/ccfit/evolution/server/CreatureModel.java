@@ -1,55 +1,32 @@
 package ru.nsu.ccfit.evolution.server;
 
-import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.common.Abilities;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CreatureModel {
-    private short abilities;
-
-    private final Array<CreatureModel> cooperationList;
-    private final Array<Boolean> cooperationUsed;
-    private final Array<CreatureModel> symbiosisList;
-    private final Array<CreatureModel> communicationList;
-    private final Array<Boolean> communicationUsed;
-    private int food;
-    private int fatMax;
-    private int fatStored;
-    public boolean isPassiveSymbiote;
-    public boolean preyedThisRound;
-    public boolean grazedThisRound;
-    public boolean piracyUsed;
-    public boolean isPoisoned;
-    public int turnsSinceHibernation;
+    private short abilities = 0;
+    private final ArrayList<CreatureModel> cooperationList = new ArrayList<>();
+    private final ArrayList<CreatureModel> symbiosisList = new ArrayList<>();
+    private final ArrayList<CreatureModel> communicationList = new ArrayList<>();
+    private int food = 0;
+    private int fatMax = 0;
+    private int fatStored = 0;
 
     public CreatureModel() {
-        abilities = 0;
-        fatMax = 0;
-        fatStored = 0;
-        communicationList = new Array<>();
-        communicationUsed = new Array<>();
-        symbiosisList = new Array<>();
-        cooperationList = new Array<>();
-        cooperationUsed = new Array<>();
-        preyedThisRound = false;
-        grazedThisRound = false;
-        isPoisoned = false;
-        piracyUsed = false;
-        isPassiveSymbiote = false;
-        turnsSinceHibernation = -1;
     }
 
-    public Array<CreatureModel> getCooperationList() {
+    public ArrayList<CreatureModel> getCooperationList() {
         return cooperationList;
     }
 
-    public Array<CreatureModel> getSymbiosisList() {
+    public ArrayList<CreatureModel> getSymbiosisList() {
         return symbiosisList;
     }
 
-    public Array<CreatureModel> getCommunicationList() {
+    public ArrayList<CreatureModel> getCommunicationList() {
         return communicationList;
     }
 
@@ -59,10 +36,6 @@ public class CreatureModel {
 
     public int getFood() {
         return food;
-    }
-
-    public boolean isFed() {
-        return food >= foodRequired() || turnsSinceHibernation == 0;
     }
 
     public void removeFat(int fatCount) {
@@ -79,14 +52,12 @@ public class CreatureModel {
         }
     }
 
-    public boolean addFood() {
+    public void addFood() {
         if (food < foodRequired()) {
             food++;
-            return true;
         } else if (canEatMore()) {
             fatStored++;
-            return true;
-        } else return false;
+        }
     }
 
     public void removeFood() {
@@ -110,7 +81,7 @@ public class CreatureModel {
     }
 
     public float getAbilityCount() {
-        return Integer.bitCount(abilities) + communicationList.size + (float) symbiosisList.size/2 + (float) cooperationList.size/2 + fatMax;
+        return Integer.bitCount(abilities) + communicationList.size() + (float) symbiosisList.size() / 2 + (float) cooperationList.size() / 2 + fatMax;
     }
 
     public void addAbility(String ability) {
@@ -130,11 +101,9 @@ public class CreatureModel {
         switch (ability) {
             case "cooperation":
                 cooperationList.add(partner);
-                cooperationUsed.add(Boolean.FALSE);
                 break;
             case "communication":
                 communicationList.add(partner);
-                communicationUsed.add(Boolean.FALSE);
                 break;
             case "symbiosis":
                 symbiosisList.add(partner);
@@ -144,9 +113,9 @@ public class CreatureModel {
 
     public boolean hasAbility(String ability) {
         if (ability.equals("fat")) return (fatMax > 0);
-        if (ability.equals("cooperation")) return cooperationList.size > 0;
-        if (ability.equals("communication")) return communicationList.size > 0;
-        if (ability.equals("symbiosis")) return symbiosisList.size > 0;
+        if (ability.equals("cooperation")) return cooperationList.size() > 0;
+        if (ability.equals("communication")) return communicationList.size() > 0;
+        if (ability.equals("symbiosis")) return symbiosisList.size() > 0;
         return (abilities & Abilities.get(ability)) != 0;
     }
 
@@ -154,56 +123,16 @@ public class CreatureModel {
         if (!Abilities.isCooperative(ability)) return false;
         switch (ability) {
             case "cooperation":
-                return cooperationList.contains(partner, true);
+                return cooperationList.contains(partner);
             case "communication":
-                return communicationList.contains(partner, true);
+                return communicationList.contains(partner);
             case "symbiosis":
-                return symbiosisList.contains(partner, true);
+                return symbiosisList.contains(partner);
         }
         return false;
     }
 
     public void removeAbility(String ability) {
         abilities -= Abilities.get(ability);
-    }
-
-    public Array<Boolean> getCooperationUsed() {
-        return cooperationUsed;
-    }
-
-    public Array<Boolean> getCommunicationUsed() {
-        return communicationUsed;
-    }
-
-    public void resetPerRoundAbilities() {
-        preyedThisRound = false;
-        grazedThisRound = false;
-        for (int i = 0; i < communicationUsed.size; i++) {
-            communicationUsed.set(i, false);
-        }
-        for (int i = 0; i < cooperationUsed.size; i++) {
-            cooperationUsed.set(i, false);
-        }
-    }
-
-    public void resetPerTurnAbilities() {
-        resetPerRoundAbilities();
-        piracyUsed = false;
-        if (turnsSinceHibernation >= 0) turnsSinceHibernation++;
-        if (turnsSinceHibernation >= 2) turnsSinceHibernation = -1;
-    }
-
-    public boolean hasUnfedSymbiote() {
-        if (isPassiveSymbiote) {
-            for (int i = 0; i < symbiosisList.size; i++) {
-                if (!symbiosisList.get(i).isFed()) return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean hasSymbiote() {
-        return (isPassiveSymbiote && !symbiosisList.isEmpty());
     }
 }

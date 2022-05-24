@@ -2,77 +2,59 @@ package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
 
+import java.util.HashMap;
+
 public class TableModel {
-    private final Array<CreatureModel> activeCreatures;
+    private final HashMap<Integer, CreatureModel> creatures;
 
     public TableModel() {
-        activeCreatures = new Array<>(6);
+        creatures = new HashMap<>();
     }
 
-    public void addCreature() {
-        activeCreatures.add(new CreatureModel());
+    public void addCreature(int id) {
+        creatures.put(id, new CreatureModel());
     }
 
-    public void removeCreature(int index) {
-        CreatureModel c = activeCreatures.get(index);
-        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCooperationList())) {
-            int i = partner.getCooperationList().indexOf(c, true);
-            partner.getCooperationList().removeValue(c, true);
-            partner.getCooperationUsed().removeIndex(i);
+    public void removeCreature(int id) {
+        CreatureModel c = creatures.get(id);
+        for (CreatureModel partner : c.getCooperationList()) {
+            int i = partner.getCooperationList().indexOf(c);
+            partner.getCooperationList().remove(c);
         }
-        for (CreatureModel partner : new Array.ArrayIterator<>(c.getCommunicationList())) {
-            int i = partner.getCommunicationList().indexOf(c, true);
-            partner.getCommunicationList().removeValue(c, true);
-            partner.getCommunicationUsed().removeIndex(i);
+        for (CreatureModel partner : c.getCommunicationList()) {
+            int i = partner.getCommunicationList().indexOf(c);
+            partner.getCommunicationList().remove(c);
         }
-        for (CreatureModel partner : new Array.ArrayIterator<>(c.getSymbiosisList())) {
-            partner.getSymbiosisList().removeValue(c, true);
-            partner.isPassiveSymbiote = false;
+        for (CreatureModel partner : c.getSymbiosisList()) {
+            partner.getSymbiosisList().remove(c);
         }
-        activeCreatures.removeIndex(index);
+        creatures.remove(id);
     }
 
     public int getCreatureCount() {
-        return activeCreatures.size;
+        return creatures.size();
     }
 
-    public CreatureModel getCreature(int index) {
-        return activeCreatures.get(index);
+    public CreatureModel get(int id) {
+        return creatures.get(id);
     }
 
-    public int indexOf(CreatureModel c) {
-        return activeCreatures.indexOf(c, true);
+    public void addAbility(int id, String ability) {
+        creatures.get(id).addAbility(ability);
     }
 
-    public Array<CreatureModel> getActiveCreatures() {
-        return activeCreatures;
-    }
-
-    public void addAbility(int index, String ability) {
-        activeCreatures.get(index).addAbility(ability);
-    }
-
-    public void addCoopAbility(int index1, int index2, String ability) {
-        activeCreatures.get(index1).addCoopAbility(ability, activeCreatures.get(index2));
-        activeCreatures.get(index2).addCoopAbility(ability, activeCreatures.get(index1));
-        if (ability.equals("symbiosis")) activeCreatures.get(index2).isPassiveSymbiote = true;
-    }
-
-    public void resetPerRoundAbilities() {
-        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
-            c.resetPerRoundAbilities();
-        }
-    }
-
-    public void resetPerTurnAbilities() {
-        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
-            c.resetPerTurnAbilities();
-        }
+    public void addCoopAbility(int id1, int id2, String ability) {
+        creatures.get(id1).addCoopAbility(ability, creatures.get(id2));
+        creatures.get(id2).addCoopAbility(ability, creatures.get(id1));
     }
 
     public void clearAllFood() {
-        for (CreatureModel c : new Array.ArrayIterator<>(activeCreatures)) {
+        for (CreatureModel c : creatures.values()) {
             c.resetFood();
         }
+    }
+
+    public HashMap<Integer, CreatureModel> getCreatures() {
+        return creatures;
     }
 }

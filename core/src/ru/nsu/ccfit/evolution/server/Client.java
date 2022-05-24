@@ -103,6 +103,19 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new LoginListener(gameWorldState, evolutionGame));
     }
 
+    public void cardPlacement(int userID, int cardID) {
+        logger.info("Sending request to server for card placement, userID: " + userID + ", cardID: " + cardID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("selected_card", String.valueOf(cardID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "cardplacement/check");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new CardPlacementListener(gameWorldState, evolutionGame));
+    }
+
     public void cardAllocation(int userID) {
         logger.info("Sending request to server for card allocation, userID: " + userID);
         Map<String, String> parameters = new HashMap<>();

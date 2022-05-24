@@ -112,7 +112,10 @@ public class CardView extends GameActor implements Draggable, Hoverable, Display
     }
 
     public void init(int id) {
-        if (!isSelf) setTexture(new TextureRegion(game.getAssets().getTexture("cards/cover.png")));
+        if (!isSelf) {
+            setTexture(new TextureRegion(game.getAssets().getTexture("cards/cover.png")));
+            this.id = -1;
+        }
         else {
             String cardname = Cards.getName(id);
             setTexture(new TextureRegion(game.getAssets().getCardTexture(cardname)));
