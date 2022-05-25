@@ -4,18 +4,19 @@ import ru.nsu.ccfit.evolution.common.Abilities;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class CreatureModel {
-    private short abilities = 0;
+    private ArrayList<AbilityModel> abilities = new ArrayList<>();
     private final ArrayList<CreatureModel> cooperationList = new ArrayList<>();
     private final ArrayList<CreatureModel> symbiosisList = new ArrayList<>();
     private final ArrayList<CreatureModel> communicationList = new ArrayList<>();
     private int food = 0;
     private int fatMax = 0;
     private int fatStored = 0;
+    private final int id;
 
-    public CreatureModel() {
+    public CreatureModel(int id) {
+        this.id = id;
     }
 
     public ArrayList<CreatureModel> getCooperationList() {
@@ -80,15 +81,11 @@ public class CreatureModel {
         return res;
     }
 
-    public float getAbilityCount() {
-        return Integer.bitCount(abilities) + communicationList.size() + (float) symbiosisList.size() / 2 + (float) cooperationList.size() / 2 + fatMax;
-    }
-
     public void addAbility(String ability) {
         if (Abilities.isCooperative(ability)) {
             throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
         }
-        if (!ability.equals("fat")) abilities |= Abilities.get(ability);
+        if (!ability.equals("fat")) abilities.add(new AbilityModel(, id, id));
         else {
             fatMax++;
         }

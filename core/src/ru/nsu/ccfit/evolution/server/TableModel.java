@@ -12,7 +12,7 @@ public class TableModel {
     }
 
     public void addCreature(int id) {
-        creatures.put(id, new CreatureModel());
+        creatures.put(id, new CreatureModel(id));
     }
 
     public void removeCreature(int id) {

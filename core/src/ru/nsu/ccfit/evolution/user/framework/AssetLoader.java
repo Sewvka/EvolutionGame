@@ -39,7 +39,7 @@ public class AssetLoader {
     }
 
     public Texture getAbilityTexture(String abilityName) {
-        return null;
+        return assets.get("abilities/" + abilityName + ".png", Texture.class);
     }
 
     public Texture getTexture(String filename) {
