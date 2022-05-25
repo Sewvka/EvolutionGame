@@ -13,18 +13,15 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class AbilityView extends GameActor {
     private AbilityView buddy;
-
     private final String name;
     private final EvolutionGame game;
-    public AbilityView(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, AbilityView buddy) {
-        super(null, w, h);
-        TextureRegion texture = new TextureRegion(game.getAssets().getTexture("cards/" + Cards.getName(cardID) + ".png"));
-        if (!firstAbility) texture.flip(true, true);
-        setTexture(texture);
-        this.game = game;
-        this.buddy = buddy;
 
-        name = Cards.getAbilityFromName(Cards.getName(cardID), firstAbility);
+    public AbilityView(EvolutionGame game, float w, float h, String name) {
+        super(null, w, h);
+        setTexture(new TextureRegion(game.getAssets().getAbilityTexture(name)));
+        this.game = game;
+        buddy = null;
+        this.name = name;
         addListener(new AbilityInputListener());
     }
 

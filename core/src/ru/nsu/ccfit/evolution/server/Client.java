@@ -3,18 +3,10 @@ package ru.nsu.ccfit.evolution.server;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.*;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
 import ru.nsu.ccfit.evolution.server.listeners.*;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
-import sun.net.NetworkClient;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -122,8 +114,8 @@ public class Client {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("user", String.valueOf(userID));
         parameters.put("initial_card", String.valueOf(cardID));
-        parameters.put("creature_card1", String.valueOf(creature1ID));
-        parameters.put("creature_card2", String.valueOf(creature2ID));
+        parameters.put("creature_card", String.valueOf(creature1ID));
+        parameters.put("coop_creature", String.valueOf(creature2ID));
         parameters.put("selected_property", selectedProperty);
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);

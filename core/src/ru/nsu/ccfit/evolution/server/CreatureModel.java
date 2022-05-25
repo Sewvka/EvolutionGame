@@ -1,15 +1,9 @@
 package ru.nsu.ccfit.evolution.server;
 
-import ru.nsu.ccfit.evolution.common.Abilities;
-
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 public class CreatureModel {
     private ArrayList<AbilityModel> abilities = new ArrayList<>();
-    private final ArrayList<CreatureModel> cooperationList = new ArrayList<>();
-    private final ArrayList<CreatureModel> symbiosisList = new ArrayList<>();
-    private final ArrayList<CreatureModel> communicationList = new ArrayList<>();
     private int food = 0;
     private int fatMax = 0;
     private int fatStored = 0;
@@ -17,18 +11,6 @@ public class CreatureModel {
 
     public CreatureModel(int id) {
         this.id = id;
-    }
-
-    public ArrayList<CreatureModel> getCooperationList() {
-        return cooperationList;
-    }
-
-    public ArrayList<CreatureModel> getSymbiosisList() {
-        return symbiosisList;
-    }
-
-    public ArrayList<CreatureModel> getCommunicationList() {
-        return communicationList;
     }
 
     public void resetFood() {
@@ -81,55 +63,38 @@ public class CreatureModel {
         return res;
     }
 
-    public void addAbility(String ability) {
-        if (Abilities.isCooperative(ability)) {
-            throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
-        }
-        if (!ability.equals("fat")) abilities.add(new AbilityModel(, id, id));
+    public void addAbility(String ability, int targetID1, int targetID2) {
+        if (!ability.equals("fat")) abilities.add(new AbilityModel(ability, targetID1, targetID2));
         else {
             fatMax++;
         }
     }
 
-    public void addCoopAbility(String ability, CreatureModel partner) {
-        if (!Abilities.isCooperative(ability)) {
-            throw new InvalidParameterException("Use addAbility method to add non-coop abilities!");
-        }
-        switch (ability) {
-            case "cooperation":
-                cooperationList.add(partner);
-                break;
-            case "communication":
-                communicationList.add(partner);
-                break;
-            case "symbiosis":
-                symbiosisList.add(partner);
-                break;
-        }
-    }
-
     public boolean hasAbility(String ability) {
         if (ability.equals("fat")) return (fatMax > 0);
-        if (ability.equals("cooperation")) return cooperationList.size() > 0;
-        if (ability.equals("communication")) return communicationList.size() > 0;
-        if (ability.equals("symbiosis")) return symbiosisList.size() > 0;
-        return (abilities & Abilities.get(ability)) != 0;
-    }
-
-    public boolean hasCoopAbilityLink(String ability, CreatureModel partner) {
-        if (!Abilities.isCooperative(ability)) return false;
-        switch (ability) {
-            case "cooperation":
-                return cooperationList.contains(partner);
-            case "communication":
-                return communicationList.contains(partner);
-            case "symbiosis":
-                return symbiosisList.contains(partner);
+        for (AbilityModel a : abilities) {
+            if (a.getName().equals(ability)) return true;
         }
         return false;
     }
 
     public void removeAbility(String ability) {
-        abilities -= Abilities.get(ability);
+        for (AbilityModel a : abilities) {
+            if (a.getName().equals(ability)) {
+                abilities.remove(a);
+                break;
+            }
+        }
+    }
+
+    public void removeCoopAbility(String ability, int partnerID) {
+        for (AbilityModel a : abilities) {
+            if (a.getName().equals(ability) && (a.getCreatureID1() == partnerID || a.getCreatureID2() == partnerID))
+                abilities.remove(a);
+        }
+    }
+
+    public ArrayList<AbilityModel> getAbilities() {
+        return abilities;
     }
 }

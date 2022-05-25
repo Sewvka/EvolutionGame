@@ -3,6 +3,7 @@ package ru.nsu.ccfit.evolution.user.framework;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
+import ru.nsu.ccfit.evolution.server.AbilityModel;
 import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.server.TableModel;
 import ru.nsu.ccfit.evolution.user.actors.*;
@@ -200,12 +201,34 @@ public class SessionStage extends Stage {
     }
 
     private void updateCreature(int playerID, int creatureID) {
-        CreatureModel creatureModel = game.getGameWorldState().getTables().get(playerID).get(creatureID);
+        CreatureModel creatureModel = game.getGameWorldState().getTables().get(playerID).getCreatures().get(creatureID);
         TableView tableView = playerActors.get(playerID).getTable();
         if (!tableView.getCreatures().containsKey(creatureID)) {
             tableView.addCreature(creatureID);
         }
         CreatureView creatureView = tableView.getCreatures().get(creatureID);
+        for (AbilityModel abilityModel : creatureModel.getAbilities()) {
+            if (!creatureView.hasAbility(abilityModel.getName(), abilityModel.getCreatureID2())) {
+                if (abilityModel.isCooperative()) {
+                    int partnerID = abilityModel.getCreatureID2();
+                    AbilityView a1 = creatureView.addAbility(abilityModel.getName());
+                    AbilityView a2 = tableView.get(partnerID).addAbility(abilityModel.getName());
+                    a1.setBuddy(a2);
+                    a2.setBuddy(a1);
+                }
+                else {
+                    creatureView.addAbility(abilityModel.getName());
+                }
+            }
+        }
+
+        int fatDiff = creatureModel.getFatMax() - creatureView.getFatCount();
+        for (int i = 0; i < fatDiff; i++) {
+            creatureView.addAbility("fat");
+        }
+        for (int i = 0; i < -fatDiff; i++) {
+            creatureView.removeAbility("fat");
+        }
     }
 
     private void updateHand() {
@@ -224,5 +247,9 @@ public class SessionStage extends Stage {
         for (int i = handModel.size(); i < playerView.getHand().getCards().size; i++) {
             playerView.getHand().removeCardAt(i);
         }
+    }
+
+    public void putCardsInDeck() {
+        playerActors.get(game.getGameWorldState().getSelfID()).getHand().putCardsInDeck();
     }
 }

@@ -118,7 +118,8 @@ public class SessionScreen extends GameScreen {
             return;
         }
         game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(card));
-        client.addProperty(game.getGameWorldState().getSelfID(), card.getId(), card.getId(), selectedCreature.getID(), ability);
+        client.addProperty(game.getGameWorldState().getSelfID(), card.getId(), selectedCreature.getID(), selectedCreature.getID(), ability);
+        sessionStage.putCardsInDeck();
     }
 
     public void playAbility(CardView card, boolean firstAbility) {
@@ -181,6 +182,7 @@ public class SessionScreen extends GameScreen {
         }
         game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(card));
         client.cardPlacement(game.getGameWorldState().getSelfID(), card.getId());
+        sessionStage.putCardsInDeck();
     }
 
     public void moveActorToFront(GameActor actor) {
@@ -242,15 +244,10 @@ public class SessionScreen extends GameScreen {
         int creatureID1 = targetCreature1.getID();
         int creatureID2 = targetCreature2.getID();
         String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
+        game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(queuedCard));
         client.addProperty(game.getGameWorldState().getSelfID(), queuedCard.getId(), creatureID1, creatureID2, ability);
-//            Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
-//            Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
-//            ab1.setBuddy(ab2);
-//            ab2.setBuddy(ab1);
-//            parentHand.removeCard(queuedCard);
-//            queuedCard.remove();
-//            queuedCard = null;
-//        } else queuedCard.putInDeck();
+        queuedCard = null;
+        sessionStage.putCardsInDeck();
     }
 
     public boolean isAbilityQueued() {

@@ -1,8 +1,9 @@
-package ru.nsu.ccfit.evolution.server;
+package ru.nsu.ccfit.evolution.server.listeners;
 
 import com.badlogic.gdx.utils.JsonValue;
-import ru.nsu.ccfit.evolution.common.Abilities;
-import ru.nsu.ccfit.evolution.server.listeners.AbstractListener;
+import ru.nsu.ccfit.evolution.server.CreatureModel;
+import ru.nsu.ccfit.evolution.server.GameWorldState;
+import ru.nsu.ccfit.evolution.server.TableModel;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 public class AddPropertyListener extends AbstractListener {
@@ -16,15 +17,15 @@ public class AddPropertyListener extends AbstractListener {
             if (httpResponse.getBoolean("response")) {
                 logger.info("Ability successfully placed.");
                 TableModel table = gameWorldState.getTables().get(gameWorldState.getSelfID());
-                CreatureModel creature1 = table.get(gameWorldState.getTargetedCreatureID1());
-                CreatureModel creature2 = table.get(gameWorldState.getTargetedCreatureID2());
+                CreatureModel creature1 = table.getCreatures().get(gameWorldState.getTargetedCreatureID1());
+                CreatureModel creature2 = table.getCreatures().get(gameWorldState.getTargetedCreatureID2());
                 String ability = gameWorldState.getPlayedAbility();
 
-                if (Abilities.isCooperative(ability)) {
-                    creature1.addCoopAbility(ability, creature2);
-                    creature2.addCoopAbility(ability, creature1);
+                if (gameWorldState.getTargetedCreatureID1() != gameWorldState.getTargetedCreatureID2()) {
+                    creature1.addAbility(ability, gameWorldState.getTargetedCreatureID1(), gameWorldState.getTargetedCreatureID2());
+                    creature2.addAbility(ability, gameWorldState.getTargetedCreatureID2(), gameWorldState.getTargetedCreatureID1());
                 } else {
-                    creature2.addAbility(ability);
+                    creature1.addAbility(ability, gameWorldState.getTargetedCreatureID1(), gameWorldState.getTargetedCreatureID1());
                 }
                 gameWorldState.getHand().remove(gameWorldState.getPlacedCardIndex());
             } else {

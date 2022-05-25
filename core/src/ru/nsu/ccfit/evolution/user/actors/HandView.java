@@ -88,4 +88,10 @@ public class HandView extends Group {
         }
         return true;
     }
+
+    public void putCardsInDeck() {
+        for (CardView c : activeCards) {
+            if (!c.isInDeck()) c.putInDeck();
+        }
+    }
 }
