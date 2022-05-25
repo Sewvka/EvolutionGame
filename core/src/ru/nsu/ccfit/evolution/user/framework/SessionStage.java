@@ -96,9 +96,7 @@ public class SessionStage extends Stage {
     }
 
     public void setHandTouchable(Touchable touchable) {
-        for (PlayerView p : playerActors.values()) {
-            p.getHand().setTouchable(touchable);
-        }
+        playerActors.get(game.getGameWorldState().getSelfID()).getHand().setTouchable(touchable);
     }
 
     public TableView getSelectedTable() {
