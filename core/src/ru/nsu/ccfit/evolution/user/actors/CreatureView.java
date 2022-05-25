@@ -12,7 +12,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class CreatureView extends GameActor implements Hoverable {
     private final EvolutionGame game;
     private final Cover cover;
-    private final Array<Ability> abilities;
+    private final Array<AbilityView> abilities;
     private int foodCount;
     private int id;
 
@@ -45,7 +45,7 @@ public class CreatureView extends GameActor implements Hoverable {
     }
 
     public void removeBuddies() {
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (Abilities.isCooperative(a.getName())) {
                 CreatureView c = (CreatureView) a.getBuddy().getParent();
                 c.removeAbility(a.getBuddy());
@@ -53,20 +53,20 @@ public class CreatureView extends GameActor implements Hoverable {
         }
     }
 
-    public void removeAbility(Ability a) {
+    public void removeAbility(AbilityView a) {
         abilities.removeValue(a, true);
         removeActor(a);
     }
 
-    public Ability addAbility(int cardID, boolean firstAbility) {
-        Ability ability = new Ability(game, getWidth(), getHeight(), cardID, firstAbility, null);
-        addActorBefore(cover, ability);
-        abilities.add(ability);
-        return ability;
+    public AbilityView addAbility(int cardID, boolean firstAbility) {
+        AbilityView abilityView = new AbilityView(game, getWidth(), getHeight(), cardID, firstAbility, null);
+        addActorBefore(cover, abilityView);
+        abilities.add(abilityView);
+        return abilityView;
     }
 
     public void clearFood() {
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (!a.getName().equals("fat")) a.clearChildren();
         }
         cover.clearChildren();
@@ -78,7 +78,7 @@ public class CreatureView extends GameActor implements Hoverable {
             cover.clearChildren();
             return;
         }
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (a.hasChildren()) {
                 a.clearChildren();
                 return;
@@ -118,14 +118,14 @@ public class CreatureView extends GameActor implements Hoverable {
     }
 
     private void addFoodToAbility(FoodToken f, int abilityIndex, int shift) {
-        Ability a = abilities.get(abilityIndex);
+        AbilityView a = abilities.get(abilityIndex);
         a.addActor(f);
         f.addAction(moveTo(10 + shift * (f.getWidth() + 10), a.getHeight() - f.getHeight() - 5, 0.1f));
     }
 
     public void consumeFat(int fatConsumed) {
         int fatRemaining = fatConsumed;
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (a.getName().equals("fat")) {
                 if (a.getChildren().size > 0) {
                     a.clearChildren();
@@ -139,7 +139,7 @@ public class CreatureView extends GameActor implements Hoverable {
 
     private int getAbilityIndex(String ability) {
         int i = 0;
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (a.getName().equals(ability)) return i;
             i++;
         }
@@ -148,7 +148,7 @@ public class CreatureView extends GameActor implements Hoverable {
 
     private int getNextFat() {
         int i = 0;
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             if (a.getName().equals("fat") && !a.hasChildren()) return i;
             i++;
         }
@@ -163,7 +163,7 @@ public class CreatureView extends GameActor implements Hoverable {
 
     private void updateAbilityPositions() {
         int i = 0;
-        for (Ability a : new Array.ArrayIterator<>(abilities)) {
+        for (AbilityView a : new Array.ArrayIterator<>(abilities)) {
             float y = (abilities.size - i) * a.getHeight() / 5;
             a.addAction(moveTo(a.getX(), y, 0.1f));
             i++;

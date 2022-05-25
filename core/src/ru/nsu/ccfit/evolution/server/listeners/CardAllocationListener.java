@@ -17,7 +17,6 @@ public class CardAllocationListener extends AbstractListener {
     @Override
     public void handle(JsonValue httpResponse) {
         List<Integer> cards = new ArrayList<>();
-        //JsonValue  response = httpResponse.get("response");
         JsonValue jsonCards = httpResponse.get("cards");
         for (JsonValue jsonCard = jsonCards.child; jsonCard != null; jsonCard = jsonCard.next) {
             int cardID = jsonCard.asInt();

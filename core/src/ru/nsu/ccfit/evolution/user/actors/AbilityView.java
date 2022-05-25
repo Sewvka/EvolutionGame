@@ -11,12 +11,12 @@ import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-public class Ability extends GameActor {
-    private Ability buddy;
+public class AbilityView extends GameActor {
+    private AbilityView buddy;
 
     private final String name;
     private final EvolutionGame game;
-    public Ability(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, Ability buddy) {
+    public AbilityView(EvolutionGame game, float w, float h, int cardID, boolean firstAbility, AbilityView buddy) {
         super(null, w, h);
         TextureRegion texture = new TextureRegion(game.getAssets().getTexture("cards/" + Cards.getName(cardID) + ".png"));
         if (!firstAbility) texture.flip(true, true);
@@ -32,11 +32,11 @@ public class Ability extends GameActor {
         return name;
     }
 
-    public void setBuddy(Ability buddy) {
+    public void setBuddy(AbilityView buddy) {
         this.buddy = buddy;
     }
 
-    public Ability getBuddy() {
+    public AbilityView getBuddy() {
         return buddy;
     }
 

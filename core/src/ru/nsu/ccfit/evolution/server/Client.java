@@ -116,6 +116,26 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new CardPlacementListener(gameWorldState, evolutionGame));
     }
 
+    public void addProperty(int userID, int cardID, int creature1ID, int creature2ID, String selectedProperty) {
+        logger.info("Sending request to server for property addition, userID: " + userID + ", cardID: " + cardID +
+                ", creatureID: " + creature1ID + "creature2ID: " + creature2ID + ", ability name: " + selectedProperty);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("initial_card", String.valueOf(cardID));
+        parameters.put("creature_card1", String.valueOf(creature1ID));
+        parameters.put("creature_card2", String.valueOf(creature2ID));
+        parameters.put("selected_property", selectedProperty);
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "addproperty");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        gameWorldState.setPlayedAbility(selectedProperty);
+        gameWorldState.setTargetedCreatureID1(creature1ID);
+        gameWorldState.setTargetedCreatureID2(creature2ID);
+        Gdx.net.sendHttpRequest(httpRequest, new AddPropertyListener(gameWorldState, evolutionGame));
+    }
+
     public void cardAllocation(int userID) {
         logger.info("Sending request to server for card allocation, userID: " + userID);
         Map<String, String> parameters = new HashMap<>();

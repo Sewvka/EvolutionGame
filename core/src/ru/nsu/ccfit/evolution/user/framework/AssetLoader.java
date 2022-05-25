@@ -38,6 +38,10 @@ public class AssetLoader {
         return assets.get("cards/" + cardName + ".png", Texture.class);
     }
 
+    public Texture getAbilityTexture(String abilityName) {
+        return null;
+    }
+
     public Texture getTexture(String filename) {
         return assets.get(filename, Texture.class);
     }

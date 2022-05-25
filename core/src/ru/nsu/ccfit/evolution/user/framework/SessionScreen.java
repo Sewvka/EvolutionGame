@@ -20,7 +20,7 @@ public class SessionScreen extends GameScreen {
 
     private CardView queuedCard;
     private boolean queuedCoopAbilityBoolean;
-    private Ability queuedAbilityActivation;
+    private AbilityView queuedAbilityActivation;
     private CreatureView queuedCreature;
 
     public SessionScreen(final EvolutionGame game, Client client) {
@@ -117,11 +117,8 @@ public class SessionScreen extends GameScreen {
             }
             return;
         }
-//        if (server.requestAbilityPlacement(ability, parentHand.getCardIndex(card), selectedTable.getCreatureIndex(selectedCreature), player.getID(), target.getID())) {
-//            parentHand.removeCard(card);
-//            card.remove();
-//            selectedCreature.addAbility(card.getId(), firstAbility);
-//        } else card.putInDeck();
+        game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(card));
+        client.addProperty(game.getGameWorldState().getSelfID(), card.getId(), card.getId(), selectedCreature.getID(), ability);
     }
 
     public void playAbility(CardView card, boolean firstAbility) {
@@ -129,12 +126,12 @@ public class SessionScreen extends GameScreen {
         playAbility(card, selectedCreature, firstAbility);
     }
 
-    public boolean activateAbility(Ability ability) {
-        CreatureView parent = (CreatureView) ability.getParent();
-        switch (ability.getName()) {
+    public boolean activateAbility(AbilityView abilityView) {
+        CreatureView parent = (CreatureView) abilityView.getParent();
+        switch (abilityView.getName()) {
             case "carnivorous":
             case "piracy":
-                queueAbility(ability);
+                queueAbility(abilityView);
                 return true;
             case "fat":
                 activateFat(parent);
@@ -149,7 +146,7 @@ public class SessionScreen extends GameScreen {
         return false;
     }
 
-    private void queueAbility(Ability ability) {
+    private void queueAbility(AbilityView abilityView) {
 //        if (server.getGameStage() == 2) {
 //            queuedAbilityActivation = ability;
 //        }
@@ -242,10 +239,10 @@ public class SessionScreen extends GameScreen {
             return;
         }
 
-//        int selectedCreature1 = selectedTable.getCreatureIndex(targetCreature1);
-//        int selectedCreature2 = selectedTable.getCreatureIndex(targetCreature2);
-//        String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
-////        if (server.requestCoopAbilityPlacement(ability, parentHand.getCardIndex(queuedCard), selectedCreature1, selectedCreature2, player.getID())) {
+        int creatureID1 = targetCreature1.getID();
+        int creatureID2 = targetCreature2.getID();
+        String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
+        client.addProperty(game.getGameWorldState().getSelfID(), queuedCard.getId(), creatureID1, creatureID2, ability);
 //            Ability ab1 = targetCreature1.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
 //            Ability ab2 = targetCreature2.addAbility(queuedCard.getId(), queuedCoopAbilityBoolean);
 //            ab1.setBuddy(ab2);

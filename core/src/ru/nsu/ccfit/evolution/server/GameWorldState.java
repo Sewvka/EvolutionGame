@@ -15,13 +15,42 @@ public class GameWorldState {
     private boolean isInLobby = false;
     private boolean isHost = false;
     private int gameID = -1;
-    private int placedCardIndex = -1;
 
     private Map<Integer, String> players;
     private final ArrayList<Integer> hand = new ArrayList<>();
     private final Map<Integer, TableModel> tables = new HashMap<>();
 
     private boolean isGameStarted = false;
+
+    //stuff to remember when playing card/creatures.
+    private int placedCardIndex = -1;
+    private int targetedCreatureID1 = -1;
+    private int targetedCreatureID2 = -1;
+    private String playedAbility = null;
+
+    public int getTargetedCreatureID1() {
+        return targetedCreatureID1;
+    }
+
+    public int getTargetedCreatureID2() {
+        return targetedCreatureID2;
+    }
+
+    public void setTargetedCreatureID1(int targetedCreatureID1) {
+        this.targetedCreatureID1 = targetedCreatureID1;
+    }
+
+    public void setTargetedCreatureID2(int targetedCreatureID2) {
+        this.targetedCreatureID2 = targetedCreatureID2;
+    }
+
+    public String getPlayedAbility() {
+        return playedAbility;
+    }
+
+    public void setPlayedAbility(String playedAbility) {
+        this.playedAbility = playedAbility;
+    }
 
     public ArrayList<Integer> getHand() {
         return hand;

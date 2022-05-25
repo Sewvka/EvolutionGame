@@ -180,6 +180,35 @@ public class SessionStage extends Stage {
     }
 
     public void update() {
+        updateHand();
+        for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
+            updatePlayer(playerID);
+        }
+    }
+
+    private void updatePlayer(int playerID) {
+        TableModel tableModel = game.getGameWorldState().getTables().get(playerID);
+        TableView tableView = playerActors.get(playerID).getTable();
+        for (int creatureID : tableModel.getCreatures().keySet()) {
+            updateCreature(playerID, creatureID);
+        }
+        for (int creatureID : tableView.getCreatures().keySet()) {
+            if (!tableModel.getCreatures().containsKey(creatureID)) {
+                tableView.removeCreature(creatureID);
+            }
+        }
+    }
+
+    private void updateCreature(int playerID, int creatureID) {
+        CreatureModel creatureModel = game.getGameWorldState().getTables().get(playerID).get(creatureID);
+        TableView tableView = playerActors.get(playerID).getTable();
+        if (!tableView.getCreatures().containsKey(creatureID)) {
+            tableView.addCreature(creatureID);
+        }
+        CreatureView creatureView = tableView.getCreatures().get(creatureID);
+    }
+
+    private void updateHand() {
         PlayerView playerView = playerActors.get(game.getGameWorldState().getSelfID());
         ArrayList<Integer> handModel = game.getGameWorldState().getHand();
         for (int i = 0; i < handModel.size(); i++) {
@@ -194,22 +223,6 @@ public class SessionStage extends Stage {
         }
         for (int i = handModel.size(); i < playerView.getHand().getCards().size; i++) {
             playerView.getHand().removeCardAt(i);
-        }
-
-        for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
-            TableModel tableModel = game.getGameWorldState().getTables().get(playerID);
-            TableView tableView = playerActors.get(playerID).getTable();
-            for (int creatureID : tableModel.getCreatures().keySet()) {
-                CreatureModel creatureModel = tableModel.get(creatureID);
-                if (!tableView.getCreatures().containsKey(creatureID)) {
-                    tableView.addCreature(creatureID);
-                }
-            }
-            for (int creatureID : tableView.getCreatures().keySet()) {
-                if (!tableModel.getCreatures().containsKey(creatureID)) {
-                    tableView.removeCreature(creatureID);
-                }
-            }
         }
     }
 }

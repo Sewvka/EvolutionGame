@@ -1,8 +1,6 @@
 package ru.nsu.ccfit.evolution.server;
 
 import com.badlogic.gdx.utils.Array;
-import ru.nsu.ccfit.evolution.user.actors.Ability;
-import ru.nsu.ccfit.evolution.user.actors.CreatureView;
 
 public class PlayerModel {
     public boolean passedTurn;

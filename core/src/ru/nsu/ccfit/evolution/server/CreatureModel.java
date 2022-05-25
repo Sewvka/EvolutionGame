@@ -88,7 +88,7 @@ public class CreatureModel {
         if (Abilities.isCooperative(ability)) {
             throw new InvalidParameterException("Use addCoopAbility method to add coop abilities!");
         }
-        if (!Objects.equals(ability, "fat")) abilities |= Abilities.get(ability);
+        if (!ability.equals("fat")) abilities |= Abilities.get(ability);
         else {
             fatMax++;
         }

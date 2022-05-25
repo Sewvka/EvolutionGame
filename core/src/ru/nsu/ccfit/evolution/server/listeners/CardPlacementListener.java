@@ -16,8 +16,12 @@ public class CardPlacementListener extends AbstractListener {
             int creatureID = response.getInt("creature");
             gameWorldState.getTables().get(gameWorldState.getSelfID()).addCreature(creatureID);
             gameWorldState.getHand().remove(gameWorldState.getPlacedCardIndex());
-            gameWorldState.setPlacedCardIndex(-1);
             logger.info("Creature successfully placed. New creature ID: " + creatureID);
+            gameWorldState.setPlacedCardIndex(-1);
+        }
+        else {
+            logger.info("Creature couldn't be placed");
+            gameWorldState.setPlacedCardIndex(-1);
         }
     }
 
