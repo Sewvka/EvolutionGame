@@ -40,6 +40,8 @@ public class CheckLobbyListener extends AbstractListener {
                 if (status.toLowerCase(Locale.ROOT).contains("started")) {
                     logger.info("Game is started");
                     gameWorldState.setGameStarted(true);
+                    evolutionGame.getClient().stopLobbyChecking();
+                    evolutionGame.getClient().startChangeChecking();
                 }
             }
         } else {

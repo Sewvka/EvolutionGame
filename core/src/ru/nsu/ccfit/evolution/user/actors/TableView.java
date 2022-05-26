@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 public class TableView extends Group {
     static final float CREATURE_W = 80;
     static final float CREATURE_H = 112;
-    private final Map<Integer, CreatureView> activeCreatures;
+    private final Map<Integer, CreatureView> creatures;
     private CreatureView selectedCreature;
     private boolean tableSelected;
     private final Pool<CreatureView> creaturePool;
@@ -33,7 +33,7 @@ public class TableView extends Group {
         setOrigin(tableW / 2, tableH / 2);
         setBounds(x, y, tableW, tableH);
         tableTexture = new TextureRegion(game.getAssets().getTexture("table.png"));
-        activeCreatures = new HashMap<>();
+        creatures = new HashMap<>();
         creaturePool = new Pool<CreatureView>() {
             @Override
             protected CreatureView newObject() {
@@ -62,7 +62,7 @@ public class TableView extends Group {
     }
 
     public CreatureView get(int index) {
-        return activeCreatures.get(index);
+        return creatures.get(index);
     }
 
     public boolean isCreatureSelected() {
@@ -70,11 +70,11 @@ public class TableView extends Group {
     }
 
     public Map<Integer, CreatureView> getCreatures() {
-        return activeCreatures;
+        return creatures;
     }
 
     public int creatureCount() {
-        return activeCreatures.size();
+        return creatures.size();
     }
 
     public boolean isSelected() {
@@ -84,7 +84,7 @@ public class TableView extends Group {
     public void addCreature(int id) {
         CreatureView c = creaturePool.obtain();
         c.setID(id);
-        activeCreatures.put(id, c);
+        creatures.put(id, c);
         addActor(c);
     }
 
@@ -93,9 +93,9 @@ public class TableView extends Group {
     }
 
     public void removeCreature(int id) {
-        CreatureView c = activeCreatures.get(id);
+        CreatureView c = creatures.get(id);
         c.removeBuddies();
-        activeCreatures.remove(id);
+        creatures.remove(id);
         creaturePool.free(c);
         removeActor(c);
     }
@@ -108,8 +108,8 @@ public class TableView extends Group {
 
     public void act(float delta) {
         int i = 0;
-        for (CreatureView c : activeCreatures.values()) {
-            float x = (i - (float) (activeCreatures.size() - 1) / 2) * (c.getWidth() + 2) - c.getWidth() / 2 + c.getParent().getOriginX();
+        for (CreatureView c : creatures.values()) {
+            float x = (i - (float) (creatures.size() - 1) / 2) * (c.getWidth() + 2) - c.getWidth() / 2 + c.getParent().getOriginX();
             c.addAction(moveTo(x, c.getY(), 0.1f));
             i++;
         }
@@ -117,7 +117,7 @@ public class TableView extends Group {
     }
 
     public void clearAllFood() {
-        for (CreatureView c : activeCreatures.values()) {
+        for (CreatureView c : creatures.values()) {
             c.clearFood();
         }
     }

@@ -13,54 +13,36 @@ public class CreatureModel {
         this.id = id;
     }
 
-    public void resetFood() {
-        food = 0;
-    }
-
     public int getFood() {
         return food;
     }
 
-    public void removeFat(int fatCount) {
-        fatStored -= fatCount;
+    public void setFood(int food) {
+        this.food = food;
     }
 
-    public boolean canEatMore() {
-        return food + fatStored < foodRequired() + fatMax;
-    }
-
-    public void addFood(int foodCount) {
-        for (int i = 0; i < foodCount; i++) {
-            addFood();
-        }
-    }
-
-    public void addFood() {
-        if (food < foodRequired()) {
-            food++;
-        } else if (canEatMore()) {
-            fatStored++;
-        }
+    public int getId() {
+        return id;
     }
 
     public void removeFood() {
         if (food > 0) food--;
     }
 
-    public int getFatMax() {
-        return fatMax;
-    }
-
     public int getFatStored() {
         return fatStored;
     }
 
-    public int foodRequired() {
-        int res = 1;
-        if (hasAbility("high_body_weight")) res += 1;
-        if (hasAbility("parasite")) res += 2;
-        if (hasAbility("carnivorous")) res += 1;
-        return res;
+    public void setFatStored(int fatStored) {
+        this.fatStored = fatStored;
+    }
+
+    public int getFatMax() {
+        return fatMax;
+    }
+
+    public void setFatMax(int fatMax) {
+        this.fatMax = fatMax;
     }
 
     public void addAbility(String ability, int targetID1, int targetID2) {

@@ -1,9 +1,10 @@
 package ru.nsu.ccfit.evolution.server;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TableModel {
-    private final HashMap<Integer, CreatureModel> creatures;
+    private Map<Integer, CreatureModel> creatures;
 
     public TableModel() {
         creatures = new HashMap<>();
@@ -30,13 +31,11 @@ public class TableModel {
         creatures.remove(id);
     }
 
-    public void clearAllFood() {
-        for (CreatureModel c : creatures.values()) {
-            c.resetFood();
-        }
+    public void setCreatures(Map<Integer, CreatureModel> creatures) {
+        this.creatures = creatures;
     }
 
-    public HashMap<Integer, CreatureModel> getCreatures() {
+    public Map<Integer, CreatureModel> getCreatures() {
         return creatures;
     }
 }
