@@ -74,11 +74,6 @@ public class SessionStage extends Stage {
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
         setHandTouchable(Touchable.disabled);
-        for (PlayerView p : playerActors.values()) {
-            HandView h = p.getHand();
-            h.addAction(moveTo(h.getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
-            h.setTouchable(Touchable.disabled);
-        }
         food.init(foodTotal);
         addActor(food);
     }

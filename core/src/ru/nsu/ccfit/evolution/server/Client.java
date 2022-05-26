@@ -193,7 +193,7 @@ public class Client {
 
     public void startChangeChecking() {
         logger.info("Starting timer for change checking");
-        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 1000);
+        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
     }
 
     public void startLobbyChecking() {
