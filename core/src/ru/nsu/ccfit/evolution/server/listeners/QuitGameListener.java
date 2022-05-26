@@ -22,7 +22,7 @@ public class QuitGameListener extends AbstractListener {
             }
         } else {
             logger.severe(
-                    "Unexpected error in query to DB when checking a lobby, gameID: "
+                    "Unexpected error in query to DB when quitting game, gameID: "
                             + gameWorldState.getSelfID());
         }
     }

@@ -192,6 +192,20 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new QuitGameListener(gameWorldState, evolutionGame));
     }
 
+    public void checkChanges(int userID, int gameID) {
+        logger.info("Sending request to server for checking possible changes in game, userID: " + userID
+                + ", gameID: " + gameID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("game", String.valueOf(gameID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "checkchanges");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new CheckChangesListener(gameWorldState, evolutionGame));
+    }
+
     public void startLobbyChecking() {
         logger.info("Starting timer for lobby checking");
         lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 300);
