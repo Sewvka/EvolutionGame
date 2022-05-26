@@ -98,6 +98,9 @@ public class LobbyScreen extends GameScreen {
         if (!game.getGameWorldState().isHost()) {
             startLobbyButton.setVisible(false);
             startLobbyButton.setTouchable(Touchable.disabled);
+        } else {
+            startLobbyButton.setVisible(true);
+            startLobbyButton.setTouchable(Touchable.enabled);
         }
 
         if (game.getGameWorldState().isGameStarted()) {

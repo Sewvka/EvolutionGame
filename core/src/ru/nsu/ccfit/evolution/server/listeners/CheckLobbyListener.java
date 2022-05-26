@@ -28,6 +28,11 @@ public class CheckLobbyListener extends AbstractListener {
                 players.put(playerID, playerName);
                 logger.info("Username: " + playerName + ", userID: " + playerID);
             }
+
+            int hostID = response.getInt("host");
+            gameWorldState.setHost(hostID == gameWorldState.getSelfID());
+            logger.info("Game id: " + gameWorldState.getGameID() + ", host id: " + hostID);
+
             gameWorldState.setPlayers(players);
             for (int id : players.keySet()) {
                 if (!gameWorldState.getTables().containsKey(id)) {
