@@ -1,11 +1,8 @@
 package ru.nsu.ccfit.evolution.server.listeners;
 
-import com.badlogic.gdx.Net;
 import com.badlogic.gdx.utils.JsonValue;
 import ru.nsu.ccfit.evolution.server.GameWorldState;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
-
-import java.util.logging.Logger;
 
 public class CreateGameListener extends AbstractListener {
 

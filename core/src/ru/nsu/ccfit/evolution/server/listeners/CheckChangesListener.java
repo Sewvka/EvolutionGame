@@ -35,7 +35,9 @@ public class CheckChangesListener extends AbstractListener {
                         for (JsonValue jsonAbility = jsonAbilities.child; jsonAbility != null; jsonAbility = jsonAbility.next) {
                             int abilityID = jsonAbility.getInt("property");
                             int creatureID1 = jsonAbility.getInt("appointed");
-                            int creatureID2 = jsonAbility.getInt("target");
+                            int creatureID2 = creatureID1;
+                            if (jsonAbility.has("target"))
+                                creatureID2 = jsonAbility.getInt("target");
                             AbilityModel a = new AbilityModel(Abilities.getAbilityName(abilityID), creatureID1, creatureID2);
                             c.getAbilities().add(a);
                             logger.info("Ability successfully added. Ability name: " + Abilities.getAbilityName(abilityID)
@@ -71,9 +73,14 @@ public class CheckChangesListener extends AbstractListener {
             int activePlayerID = response.get("turn").getInt("id");
             gameWorldState.setActivePlayerID(activePlayerID);
         }
-
         if (response.has("food_available")) {
             gameWorldState.setFoodAvailable(response.getInt("food_available"));
         }
+
+        if (response.has("turn") || response.has("food_available") || response.has("game_stage")
+            || response.has("creatures")) {
+            logger.info("Changes received.");
+        }
+        else logger.info("No changes received.");
     }
 }

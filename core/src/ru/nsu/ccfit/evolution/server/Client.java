@@ -116,7 +116,7 @@ public class Client {
         parameters.put("user", String.valueOf(userID));
         parameters.put("initial_card", String.valueOf(cardID));
         parameters.put("creature_card", String.valueOf(creature1ID));
-        parameters.put("coop_creature", String.valueOf(creature2ID));
+        if (creature1ID != creature2ID) parameters.put("coop_creature", String.valueOf(creature2ID));
         parameters.put("selected_property", selectedProperty);
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
@@ -193,7 +193,7 @@ public class Client {
 
     public void startChangeChecking() {
         logger.info("Starting timer for change checking");
-        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
+        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 1000);
     }
 
     public void startLobbyChecking() {
