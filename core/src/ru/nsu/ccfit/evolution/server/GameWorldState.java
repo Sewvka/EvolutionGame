@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameWorldState {
-
     // initialized after login
     private boolean isLoggedIn = false;
     private int selfID = -1;
@@ -15,6 +14,7 @@ public class GameWorldState {
     private boolean isInLobby = false;
     private boolean isHost = false;
     private int gameID = -1;
+    private int foodAvailable = 0;
 
     private Map<Integer, String> players;
     private final ArrayList<Integer> hand = new ArrayList<>();
@@ -22,34 +22,35 @@ public class GameWorldState {
 
     private boolean isGameStarted = false;
 
-    //stuff to remember when playing card/creatures.
+    //stuff to remember when playing cards/creatures.
     private int placedCardIndex = -1;
-    private int targetedCreatureID1 = -1;
-    private int targetedCreatureID2 = -1;
-    private String playedAbility = null;
 
-    public int getTargetedCreatureID1() {
-        return targetedCreatureID1;
+    //'flags' for turn and stage changes.
+    private int activePlayerID = -1;
+    private GameStage gameStage = null;
+
+    public int getFoodAvailable() {
+        return foodAvailable;
     }
 
-    public int getTargetedCreatureID2() {
-        return targetedCreatureID2;
+    public void setFoodAvailable(int foodAvailable) {
+        this.foodAvailable = foodAvailable;
     }
 
-    public void setTargetedCreatureID1(int targetedCreatureID1) {
-        this.targetedCreatureID1 = targetedCreatureID1;
+    public GameStage getGameStage() {
+        return gameStage;
     }
 
-    public void setTargetedCreatureID2(int targetedCreatureID2) {
-        this.targetedCreatureID2 = targetedCreatureID2;
+    public void setGameStage(GameStage gameStage) {
+        this.gameStage = gameStage;
     }
 
-    public String getPlayedAbility() {
-        return playedAbility;
+    public int getActivePlayerID() {
+        return activePlayerID;
     }
 
-    public void setPlayedAbility(String playedAbility) {
-        this.playedAbility = playedAbility;
+    public void setActivePlayerID(int activePlayerID) {
+        this.activePlayerID = activePlayerID;
     }
 
     public ArrayList<Integer> getHand() {

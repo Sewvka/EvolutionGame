@@ -23,6 +23,7 @@ public class Client {
     private static final Logger logger;
 
     private Timer lobbyCheckTimer = new Timer(true);
+    private Timer checkChangesTimer = new Timer(true);
 
     static {
         logger = Logger.getLogger(Client.class.getName());
@@ -122,9 +123,6 @@ public class Client {
         httpRequest.setUrl(baseURL + "addproperty");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        gameWorldState.setPlayedAbility(selectedProperty);
-        gameWorldState.setTargetedCreatureID1(creature1ID);
-        gameWorldState.setTargetedCreatureID2(creature2ID);
         Gdx.net.sendHttpRequest(httpRequest, new AddPropertyListener(gameWorldState, evolutionGame));
     }
 
@@ -180,13 +178,47 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new CheckLobbyListener(gameWorldState, evolutionGame));
     }
 
+    public void checkChanges(int userID, int gameID) {
+        logger.info("Sending request to server for checking possible changes in game. User: " + userID + " gameID: " + gameID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("game", String.valueOf(gameID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "checkchanges");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new CheckChangesListener(gameWorldState, evolutionGame));
+    }
+
+    public void startChangeChecking() {
+        logger.info("Starting timer for change checking");
+        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
+    }
+
     public void startLobbyChecking() {
         logger.info("Starting timer for lobby checking");
-        lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 300);
+        lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 500);
+    }
+
+    public void passMove(int userID) {
+        logger.info("Sending request to server for passing turn: " + userID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "passmove");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new PassMoveListener(gameWorldState, evolutionGame));
     }
 
     public void stopLobbyChecking() {
         lobbyCheckTimer.cancel();
+    }
+
+    public void stopChangeChecking() {
+        checkChangesTimer.cancel();
     }
 
     class LobbyChecker extends TimerTask {
@@ -196,8 +228,14 @@ public class Client {
         }
     }
 
+    class ChangeChecker extends TimerTask {
+        @Override
+        public void run() {
+            checkChanges(gameWorldState.getSelfID(), gameWorldState.getGameID());
+        }
+    }
+
     public static void main(String[] args) {
-        //Client client = new Client();
     }
 
 }

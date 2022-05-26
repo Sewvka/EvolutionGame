@@ -40,7 +40,6 @@ public class EvolutionGame extends Game {
     @Override
     public void dispose() {
         assets.dispose();
-        //screen.dispose();
     }
 
     public AssetLoader getAssets() {

@@ -2,7 +2,6 @@ package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.server.AbilityModel;
 import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.server.TableModel;
@@ -25,7 +24,6 @@ public class SessionStage extends Stage {
         super(sessionScreen.getViewport());
         this.game = game;
         if (playerCount > 4) throw new InvalidParameterException("Game does not support more than 4 players!");
-        //if (playerCount < 2) throw new InvalidParameterException("Game requires at least two players!");
         if (playerCount < 1) throw new InvalidParameterException("Game requires at least one player!");
         this.sessionScreen = sessionScreen;
         playerActors = new HashMap<>();
@@ -65,10 +63,16 @@ public class SessionStage extends Stage {
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         user.getHand().addAction(moveTo(user.getHand().getX(), 0, 0.3f));
         game.getClient().cardAllocation(user.getID());
-        setHandTouchable(Touchable.enabled);
+        for (PlayerView p : playerActors.values()) {
+            p.getTable().clearAllFood();
+        }
+        food.remove();
     }
 
     public void initFeeding(int foodTotal) {
+        setHandTouchable(Touchable.disabled);
+        PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
+        user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
         setHandTouchable(Touchable.disabled);
         for (PlayerView p : playerActors.values()) {
             HandView h = p.getHand();
@@ -79,24 +83,14 @@ public class SessionStage extends Stage {
         addActor(food);
     }
 
-    public void initExtinction() {
-        food.remove();
-        for (PlayerView p : playerActors.values()) {
-//            Array<Integer> extinctIDs = sessionScreen.getServerEmulator().requestExtinctCreatures(p.getID());
-//            Array<CreatureView> extinct = new Array<>();
-//            for (int i : new Array.ArrayIterator<>(extinctIDs)) {
-//                extinct.add(p.getTable().get(i));
-//            }
-//            for (CreatureView c : new Array.ArrayIterator<>(extinct)) {
-//                p.getTable().removeCreature(c);
-//            }
-//
-//            p.getTable().clearAllFood();
-        }
-    }
-
     public void setHandTouchable(Touchable touchable) {
         playerActors.get(game.getGameWorldState().getSelfID()).getHand().setTouchable(touchable);
+    }
+
+    public void setTableTouchable(Touchable touchable) {
+        for (PlayerView p : playerActors.values()) {
+            p.getTable().setTouchable(touchable);
+        }
     }
 
     public TableView getSelectedTable() {

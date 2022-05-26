@@ -1,6 +1,5 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -8,9 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import ru.nsu.ccfit.evolution.server.Client;
-import ru.nsu.ccfit.evolution.user.actors.PlayerView;
 import ru.nsu.ccfit.evolution.common.Abilities;
+import ru.nsu.ccfit.evolution.server.Client;
+import ru.nsu.ccfit.evolution.server.GameStage;
 import ru.nsu.ccfit.evolution.user.actors.*;
 
 public class SessionScreen extends GameScreen {
@@ -23,7 +22,7 @@ public class SessionScreen extends GameScreen {
     private AbilityView queuedAbilityActivation;
     private CreatureView queuedCreature;
 
-    public SessionScreen(final EvolutionGame game, Client client) {
+    public SessionScreen(final EvolutionGame game, final Client client) {
         super(game, client);
         sessionStage = new SessionStage(game, game.getGameWorldState().getPlayers().size(), this);
         overlayStage = new Stage(getViewport());
@@ -38,7 +37,7 @@ public class SessionScreen extends GameScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (queuedCard == null && queuedAbilityActivation == null) {
-                    //server.requestPassTurn(game.getPlayerID());
+                    client.passMove(game.getGameWorldState().getSelfID());
                 }
             }
         });
@@ -51,11 +50,7 @@ public class SessionScreen extends GameScreen {
     }
 
     public void initFeeding() {
-        //sessionStage.initFeeding(server.getFoodTotal());
-    }
-
-    public void initExtinction() {
-        sessionStage.initExtinction();
+        sessionStage.initFeeding(game.getGameWorldState().getFoodAvailable());
     }
 
     public void playCard(CardView card) {
@@ -203,6 +198,29 @@ public class SessionScreen extends GameScreen {
         actor.setPosition(coords.x, coords.y);
     }
 
+    private void resumeCoopCardPlay(CreatureView targetCreature1, CreatureView targetCreature2) {
+        TableView selectedTable = sessionStage.getSelectedTable();
+        PlayerView target = (PlayerView) selectedTable.getParent();
+        HandView parentHand = (HandView) queuedCard.getTrueParent();
+        PlayerView player = (PlayerView) parentHand.getParent();
+        if (player.getID() != target.getID()) {
+            queuedCard.putInDeck();
+            return;
+        }
+
+        int creatureID1 = targetCreature1.getID();
+        int creatureID2 = targetCreature2.getID();
+        String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
+        game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(queuedCard));
+        client.addProperty(game.getGameWorldState().getSelfID(), queuedCard.getId(), creatureID1, creatureID2, ability);
+        queuedCard = null;
+        sessionStage.putCardsInDeck();
+    }
+
+    public boolean isAbilityQueued() {
+        return queuedAbilityActivation != null;
+    }
+
     public void creatureClicked(CreatureView targetCreature) {
         if (queuedCard != null && !queuedCreature.equals(targetCreature)) {
             queuedCard.setTouchable(Touchable.enabled);
@@ -231,29 +249,6 @@ public class SessionScreen extends GameScreen {
         }
     }
 
-    private void resumeCoopCardPlay(CreatureView targetCreature1, CreatureView targetCreature2) {
-        TableView selectedTable = sessionStage.getSelectedTable();
-        PlayerView target = (PlayerView) selectedTable.getParent();
-        HandView parentHand = (HandView) queuedCard.getTrueParent();
-        PlayerView player = (PlayerView) parentHand.getParent();
-        if (player.getID() != target.getID()) {
-            queuedCard.putInDeck();
-            return;
-        }
-
-        int creatureID1 = targetCreature1.getID();
-        int creatureID2 = targetCreature2.getID();
-        String ability = queuedCoopAbilityBoolean ? queuedCard.getAbility1() : queuedCard.getAbility2();
-        game.getGameWorldState().setPlacedCardIndex(player.getHand().getCardIndex(queuedCard));
-        client.addProperty(game.getGameWorldState().getSelfID(), queuedCard.getId(), creatureID1, creatureID2, ability);
-        queuedCard = null;
-        sessionStage.putCardsInDeck();
-    }
-
-    public boolean isAbilityQueued() {
-        return queuedAbilityActivation != null;
-    }
-
     public void cancelAbilityUsage() {
         queuedAbilityActivation = null;
     }
@@ -272,22 +267,40 @@ public class SessionScreen extends GameScreen {
         f.setPosition(0, 0);
     }
 
-    public void feedCreatureExternal(int creatureIndex, int playerID, boolean fromTray) {
-        sessionStage.feedCreature(creatureIndex, playerID, fromTray);
-    }
-
-    public void gameOver(int winner) {
-        //тут будет отображение экрана конца игры
-
-        //временно
-        System.out.println("Player n. " + winner + " wins!");
-        game.dispose();
-        Gdx.app.exit();
-    }
-
     @Override
     public void render(float delta) {
         super.render(delta);
+        updateTurn();
+        updateStage();
         sessionStage.update();
+    }
+
+    private void updateTurn() {
+        int activePlayerID = game.getGameWorldState().getActivePlayerID();
+        if (activePlayerID != -1) {
+            if (activePlayerID == game.getGameWorldState().getSelfID()) {
+                sessionStage.setHandTouchable(Touchable.enabled);
+                sessionStage.setTableTouchable(Touchable.enabled);
+            } else {
+                sessionStage.setHandTouchable(Touchable.disabled);
+                sessionStage.setTableTouchable(Touchable.disabled);
+            }
+            game.getGameWorldState().setActivePlayerID(-1);
+        }
+    }
+
+    private void updateStage() {
+        GameStage stage = game.getGameWorldState().getGameStage();
+        if (stage != null) {
+            switch (stage) {
+                case DEVELOPMENT:
+                    initDevelopment();
+                    break;
+                case FEEDING:
+                    initFeeding();
+                    break;
+            }
+            game.getGameWorldState().setGameStage(null);
+        }
     }
 }

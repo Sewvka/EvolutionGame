@@ -26,6 +26,7 @@ public class FoodTray extends Group {
     }
 
     public void init(int foodTotal) {
+        clearChildren();
         this.foodTotal = foodTotal;
         foodCurrent = foodTotal;
         updateText();

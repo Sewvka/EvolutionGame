@@ -23,7 +23,6 @@ public class CardAllocationListener extends AbstractListener {
             cards.add(cardID);
         }
         gameWorldState.getHand().addAll(cards);
-        logger.info("Card allocation, cards: " + jsonCards.toString());
+        logger.info("Card allocation, cards: " + jsonCards);
     }
-
 }
