@@ -16,7 +16,7 @@ public class GameWorldState {
     private boolean isHost = false;
     private int gameID = -1;
 
-    private Map<Integer, String> players;
+    private Map<Integer, String> players = new HashMap<>();
     private final ArrayList<Integer> hand = new ArrayList<>();
     private final Map<Integer, TableModel> tables = new HashMap<>();
 
@@ -137,4 +137,22 @@ public class GameWorldState {
     public void setGameStarted(boolean gameStarted) {
         isGameStarted = gameStarted;
     }
+
+    public void clear() {
+        isInLobby = false;
+        isHost = false;
+        gameID = -1;
+
+        players.clear();
+        hand.clear();
+        tables.clear();
+
+        isGameStarted = false;
+
+        placedCardIndex = -1;
+        targetedCreatureID1 = -1;
+        targetedCreatureID2 = -1;
+        playedAbility = null;
+    }
+
 }

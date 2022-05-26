@@ -26,6 +26,7 @@ public class CheckLobbyListener extends AbstractListener {
                 int playerID = jsonPlayer.getInt(0);
                 String playerName = jsonPlayer.getString(2);
                 players.put(playerID, playerName);
+                logger.info("Username: " + playerName + ", userID: " + playerID);
             }
             gameWorldState.setPlayers(players);
             for (int id : players.keySet()) {

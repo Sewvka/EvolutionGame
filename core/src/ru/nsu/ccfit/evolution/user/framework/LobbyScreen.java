@@ -45,6 +45,7 @@ public class LobbyScreen extends GameScreen {
         playerLabel3.setSize(W / 8, H / 16);
         playerLabel3.setPosition(13 * W / 16, 8 * H / 16);
 
+        playerLabels.add(selfPlayerLabel);
         playerLabels.add(playerLabel2);
         playerLabels.add(playerLabel3);
         playerLabels.add(playerLabel4);
@@ -73,12 +74,17 @@ public class LobbyScreen extends GameScreen {
         }
         if (!game.getGameWorldState().isHost()) {
             startLobbyButton.setTouchable(Touchable.disabled);
+            startLobbyButton.setVisible(false);
         }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        for (Label label : playerLabels) {
+            label.setVisible(false);
+        }
 
         if (game.getGameWorldState().getPlayers() != null) {
             int index = 0;
@@ -93,5 +99,12 @@ public class LobbyScreen extends GameScreen {
             game.getClient().stopLobbyChecking();
             game.setScreen(new LoadingScreen(game, client));
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (!game.getGameWorldState().isGameStarted())
+            client.quitGame(game.getGameWorldState().getSelfID());
     }
 }

@@ -180,6 +180,18 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new CheckLobbyListener(gameWorldState, evolutionGame));
     }
 
+    public void quitGame(int userID) {
+        logger.info("Sending request to server to quit game, userID: " + userID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "quitgame");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new QuitGameListener(gameWorldState, evolutionGame));
+    }
+
     public void startLobbyChecking() {
         logger.info("Starting timer for lobby checking");
         lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 300);
