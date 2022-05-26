@@ -13,5 +13,7 @@ public class StartGameListener extends AbstractListener {
     public void handle(JsonValue httpResponse) {
         boolean result = httpResponse.getBoolean("response");
         logger.info("Game start result: " + result);
+
+        gameWorldState.setInLobby(false);
     }
 }

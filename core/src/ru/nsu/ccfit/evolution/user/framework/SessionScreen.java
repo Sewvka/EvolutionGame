@@ -275,6 +275,12 @@ public class SessionScreen extends GameScreen {
         sessionStage.update();
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        client.quitGame(game.getGameWorldState().getSelfID());
+    }
+
     private void updateTurn() {
         int activePlayerID = game.getGameWorldState().getActivePlayerID();
         if (activePlayerID != -1) {

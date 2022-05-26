@@ -23,8 +23,8 @@ public class CheckLobbyListener extends AbstractListener {
             JsonValue jsonPlayers = response.get("players");
             Map<Integer, String> players = new HashMap<>();
             for (JsonValue jsonPlayer = jsonPlayers.child; jsonPlayer != null; jsonPlayer = jsonPlayer.next) {
-                int playerID = jsonPlayer.getInt(0);
-                String playerName = jsonPlayer.getString(2);
+                int playerID = jsonPlayer.getInt("id");
+                String playerName = jsonPlayer.getString("username");
                 players.put(playerID, playerName);
                 logger.info("Username: " + playerName + ", userID: " + playerID);
             }
@@ -40,6 +40,7 @@ public class CheckLobbyListener extends AbstractListener {
                 if (status.toLowerCase(Locale.ROOT).contains("started")) {
                     logger.info("Game is started");
                     gameWorldState.setGameStarted(true);
+                    gameWorldState.setInLobby(false);
                     evolutionGame.getClient().stopLobbyChecking();
                     evolutionGame.getClient().startChangeChecking();
                 }

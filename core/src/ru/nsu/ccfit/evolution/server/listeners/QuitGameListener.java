@@ -18,7 +18,7 @@ public class QuitGameListener extends AbstractListener {
                 logger.info("User successfully quited game, userID: " + gameWorldState.getSelfID());
                 gameWorldState.clear();
             } else {
-                logger.info("User couldn't quit game, userID: " + gameWorldState.getGameID());
+                logger.info("User couldn't quit game, userID: " + gameWorldState.getSelfID());
             }
         } else {
             logger.severe(

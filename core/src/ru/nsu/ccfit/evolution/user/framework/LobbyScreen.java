@@ -95,6 +95,11 @@ public class LobbyScreen extends GameScreen {
             }
         }
 
+        if (!game.getGameWorldState().isHost()) {
+            startLobbyButton.setVisible(false);
+            startLobbyButton.setTouchable(Touchable.disabled);
+        }
+
         if (game.getGameWorldState().isGameStarted()) {
             game.getClient().stopLobbyChecking();
             game.setScreen(new LoadingScreen(game, client));

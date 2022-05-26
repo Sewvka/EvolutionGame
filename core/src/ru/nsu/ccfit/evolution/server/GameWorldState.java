@@ -151,9 +151,8 @@ public class GameWorldState {
         isGameStarted = false;
 
         placedCardIndex = -1;
-        targetedCreatureID1 = -1;
-        targetedCreatureID2 = -1;
-        playedAbility = null;
+        activePlayerID = -1;
+        gameStage = null;
     }
 
 }

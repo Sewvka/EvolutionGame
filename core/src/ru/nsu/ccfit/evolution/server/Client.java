@@ -148,7 +148,7 @@ public class Client {
         httpRequest.setUrl(baseURL + "startgame");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        Gdx.net.sendHttpRequest(httpRequest, new JoinGameListener(gameWorldState, evolutionGame));
+        Gdx.net.sendHttpRequest(httpRequest, new StartGameListener(gameWorldState, evolutionGame));
     }
 
     public void joinGame(int userID, int gameID) {
