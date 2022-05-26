@@ -84,11 +84,14 @@ public class LobbyScreen extends GameScreen {
             int index = 0;
             for (Map.Entry<Integer, String> player : game.getGameWorldState().getPlayers().entrySet()) {
                 Label playerLabel = playerLabels.get(index++);
-                player.setValue(player.getValue());
+                playerLabel.setText(player.getValue());
                 playerLabel.setVisible(true);
             }
         }
 
-        if (game.getGameWorldState().isGameStarted()) game.setScreen(new LoadingScreen(game, client));
+        if (game.getGameWorldState().isGameStarted()) {
+            game.getClient().stopLobbyChecking();
+            game.setScreen(new LoadingScreen(game, client));
+        }
     }
 }
