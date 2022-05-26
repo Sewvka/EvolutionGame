@@ -36,6 +36,7 @@ public class SessionStage extends Stage {
             playerActors.put(id, new PlayerView(game, id, players.get(id)));
             addActor(playerActors.get(id));
         }
+        playerActors.get(game.getGameWorldState().getSelfID()).getHand().setTouchable(Touchable.disabled);
         alignPlayers();
     }
 
