@@ -55,6 +55,10 @@ public class CheckChangesListener extends AbstractListener {
                 }
             }
         }
+        if (response.has("food_available")) {
+            gameWorldState.setFoodAvailable(response.getInt("food_available"));
+            logger.info("food available: " + response.getInt("food_available"));
+        }
         if (response.has("game_stage")) {
             String gameStage = response.getString("game_stage").toLowerCase(Locale.ROOT);
             logger.info("new game stage: " + gameStage);
@@ -75,10 +79,6 @@ public class CheckChangesListener extends AbstractListener {
             gameWorldState.setActivePlayerID(activePlayerID);
             logger.info("new player turn: " + activePlayerID);
         }
-        if (response.has("food_available")) {
-            gameWorldState.setFoodAvailable(response.getInt("food_available"));
-        }
-
         if (response.has("turn") || response.has("food_available") || response.has("game_stage")
             || response.has("creatures")) {
             logger.info("Changes received.");
