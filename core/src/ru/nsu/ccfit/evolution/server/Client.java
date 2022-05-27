@@ -235,16 +235,6 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new GamesListListener(gameWorldState, evolutionGame));
     }
 
-    public void startChangeChecking() {
-        logger.info("Starting timer for change checking");
-        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
-    }
-
-    public void startLobbyChecking() {
-        logger.info("Starting timer for lobby checking");
-        lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 500);
-    }
-
     public void startGamesListChecking() {
         logger.info("Starting timer for games list checking");
         gamesListTimer.scheduleAtFixedRate(new GamesListChecker(), 0, 500);
