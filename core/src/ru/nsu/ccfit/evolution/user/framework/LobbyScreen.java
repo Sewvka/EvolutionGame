@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -22,8 +23,8 @@ public class LobbyScreen extends GameScreen {
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = GameScreen.WORLD_SIZE_X;
-        float H = GameScreen.WORLD_SIZE_Y;
+        float W = Gdx.graphics.getWidth();
+        float H = Gdx.graphics.getHeight();
 
         gameIDLabel = new Label("Game ID: " + game.getGameWorldState().getGameID(), game.getAssets().getSkin());
         gameIDLabel.setSize(W / 8, H / 16);

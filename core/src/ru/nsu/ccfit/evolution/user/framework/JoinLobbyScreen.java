@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -12,18 +13,20 @@ public class JoinLobbyScreen extends GameScreen {
     private TextField gameIDTextField;
     private TextButton submitButton;
 
-
     public JoinLobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
+        float W = Gdx.graphics.getWidth();
+        float H = Gdx.graphics.getHeight();
+
         gameIDTextField = new TextField("Game ID", game.getAssets().getSkin());
-        gameIDTextField.setSize(GameScreen.WORLD_SIZE_X / 4, GameScreen.WORLD_SIZE_Y / 16);
-        gameIDTextField.setPosition(3 * GameScreen.WORLD_SIZE_X / 8, 15 * GameScreen.WORLD_SIZE_Y / 32);
+        gameIDTextField.setSize(W / 4, H / 16);
+        gameIDTextField.setPosition(3 * W / 8, 15 * H / 32);
         gameIDTextField.setTextFieldFilter(new DigitFilter());
 
         submitButton = new TextButton("Submit", game.getAssets().getSkin());
-        submitButton.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
-        submitButton.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y / 8);
+        submitButton.setSize(W / 8, H / 16);
+        submitButton.setPosition(7 * W / 16, H / 8);
         submitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
