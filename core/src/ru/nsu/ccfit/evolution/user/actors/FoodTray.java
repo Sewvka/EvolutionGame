@@ -42,7 +42,7 @@ public class FoodTray extends Group {
 
     public void update(int foodCurrent) {
         this.foodCurrent = foodCurrent;
-        if (foodCurrent <= 0) token.remove();
+        if (foodCurrent <= 0 && token != null) token.remove();
         updateText();
     }
 
