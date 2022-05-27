@@ -24,7 +24,6 @@ public class GamesListListener extends AbstractListener {
             logger.info("Game lobby found, gameID: " + gameID);
             int index = gameWorldState.getGameLobbies().indexOf(new LobbyModel(gameID, 0, null));
             if (index != -1) {
-                // TODO: check if amount of players in lobby needs to be changed
                 gameWorldState.getGameLobbies().get(index).setHostName(hostName);
                 gameWorldState.getGameLobbies().get(index).setPlayersCount(playersCount);
             } else {
