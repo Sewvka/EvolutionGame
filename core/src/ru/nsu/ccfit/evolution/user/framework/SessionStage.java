@@ -244,4 +244,14 @@ public class SessionStage extends Stage {
     public void putCardsInDeck() {
         playerActors.get(game.getGameWorldState().getSelfID()).getHand().putCardsInDeck();
     }
+
+    public void myTurn() {
+        playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
+        food.setTouchable(Touchable.enabled);
+    }
+
+    public void otherTurn() {
+        playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(false);
+        food.setTouchable(Touchable.disabled);
+    }
 }

@@ -21,6 +21,7 @@ public class SessionScreen extends GameScreen {
     private boolean queuedCoopAbilityBoolean;
     private AbilityView queuedAbilityActivation;
     private CreatureView queuedCreature;
+    private TextButton passButton;
 
     public SessionScreen(final EvolutionGame game, final Client client) {
         super(game, client);
@@ -31,7 +32,7 @@ public class SessionScreen extends GameScreen {
         addStage(overlayStage);
         addStage(uiStage);
 
-        TextButton passButton = new TextButton("Pass turn", game.getAssets().getSkin());
+        passButton = new TextButton("Pass turn", game.getAssets().getSkin());
         passButton.setPosition(GameScreen.WORLD_SIZE_X / 32, GameScreen.WORLD_SIZE_Y / 18);
         passButton.addListener(new ChangeListener() {
             @Override
@@ -42,6 +43,8 @@ public class SessionScreen extends GameScreen {
             }
         });
         uiStage.addActor(passButton);
+        passButton.setTouchable(Touchable.disabled);
+        sessionStage.otherTurn();
         initDevelopment();
     }
 
@@ -257,7 +260,7 @@ public class SessionScreen extends GameScreen {
         if (sessionStage.isTableSelected()) {
             if (sessionStage.getSelectedTable().isCreatureSelected()) {
                 PlayerView player = (PlayerView) sessionStage.getSelectedTable().getParent();
-                  if (game.getGameWorldState().getSelfID() == player.getID()) {
+                if (game.getGameWorldState().getSelfID() == player.getID()) {
                     client.feed(player.getID(), sessionStage.getSelectedTable().getSelectedCreature().getID());
                 }
             }
@@ -284,11 +287,11 @@ public class SessionScreen extends GameScreen {
         int activePlayerID = game.getGameWorldState().getActivePlayerID();
         if (activePlayerID != -1) {
             if (activePlayerID == game.getGameWorldState().getSelfID()) {
-                sessionStage.setHandTouchable(Touchable.enabled);
-                sessionStage.setTableTouchable(Touchable.enabled);
+                passButton.setTouchable(Touchable.enabled);
+                sessionStage.myTurn();
             } else {
-                sessionStage.setHandTouchable(Touchable.disabled);
-                sessionStage.setTableTouchable(Touchable.disabled);
+                passButton.setTouchable(Touchable.disabled);
+                sessionStage.otherTurn();
             }
             game.getGameWorldState().setActivePlayerID(-1);
         }

@@ -5,11 +5,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import ru.nsu.ccfit.evolution.common.Cards;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 import ru.nsu.ccfit.evolution.user.framework.SessionScreen;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 
 public class AbilityView extends GameActor {
     private AbilityView buddy;

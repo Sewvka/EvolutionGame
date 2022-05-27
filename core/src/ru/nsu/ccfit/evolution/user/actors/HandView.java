@@ -15,6 +15,7 @@ public class HandView extends Group {
     final float CARD_W = 120;
     final float CARD_H = 168;
     private final Array<CardView> activeCards;
+    private boolean isDraggable;
 
     private final Pool<CardView> cardPool;
     public HandView(final EvolutionGame game, final boolean isSelf, float x, float y) {
@@ -26,6 +27,15 @@ public class HandView extends Group {
                 return new CardView(game, CARD_W, CARD_H, isSelf);
             }
         };
+        isDraggable = true;
+    }
+
+    public boolean isDraggable() {
+        return isDraggable;
+    }
+
+    public void setDraggable(boolean isDraggable) {
+        this.isDraggable = isDraggable;
     }
 
     public void addCard(int id) {
@@ -34,12 +44,6 @@ public class HandView extends Group {
         activeCards.add(c);
         addActor(c);
         c.setTrueParent(this);
-    }
-
-    public void addAll(Array<Integer> ids) {
-        for (Integer id : new Array.ArrayIterator<>(ids)) {
-            addCard(id);
-        }
     }
 
     public Array<CardView> getCards() {
@@ -90,7 +94,7 @@ public class HandView extends Group {
     }
 
     public void putCardsInDeck() {
-        for (CardView c : activeCards) {
+        for (CardView c : new Array.ArrayIterator<>(activeCards)) {
             if (!c.isInDeck()) c.putInDeck();
         }
     }
