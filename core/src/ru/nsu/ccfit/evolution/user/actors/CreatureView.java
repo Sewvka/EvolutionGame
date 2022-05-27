@@ -87,6 +87,7 @@ public class CreatureView extends GameActor implements Hoverable {
         for (AbilityView a : abilities) {
             if (!a.getName().equals("fat")) res += a.getChildren().size;
         }
+        res += cover.getChildren().size;
         return res;
     }
 
