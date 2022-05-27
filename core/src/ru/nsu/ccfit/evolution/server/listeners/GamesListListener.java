@@ -18,11 +18,17 @@ public class GamesListListener extends AbstractListener {
         JsonValue gamesListJson = httpResponse.get("games");
         for (JsonValue gameJson = gamesListJson.child; gameJson != null; gameJson = gameJson.next) {
             int gameID = gameJson.getInt("id");
+            int playersCount = gameJson.getInt("players_cnt");
+            String hostName = gameJson.get("host").getString("username");
+
             logger.info("Game lobby found, gameID: " + gameID);
-            if (gameWorldState.getGameLobbies().contains(gameID)) {
+            int index = gameWorldState.getGameLobbies().indexOf(new LobbyModel(gameID, 0, null));
+            if (index != -1) {
                 // TODO: check if amount of players in lobby needs to be changed
+                gameWorldState.getGameLobbies().get(index).setHostName(hostName);
+                gameWorldState.getGameLobbies().get(index).setPlayersCount(playersCount);
             } else {
-                gameWorldState.getGameLobbies().add(new LobbyModel(gameID));
+                gameWorldState.getGameLobbies().add(new LobbyModel(gameID, playersCount, hostName));
             }
         }
     }

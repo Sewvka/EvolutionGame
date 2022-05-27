@@ -6,12 +6,13 @@ import java.util.Objects;
 public class LobbyModel {
 
     private int gameID;
-    // private int players;
-    // private String hostName;
+    private int playersCount;
+    private String hostName;
 
-
-    public LobbyModel(int gameID) {
+    public LobbyModel(int gameID, int playersCount, String hostName) {
         this.gameID = gameID;
+        this.playersCount = playersCount;
+        this.hostName = hostName;
     }
 
     public int getGameID() {
@@ -20,6 +21,22 @@ public class LobbyModel {
 
     public void setGameID(int gameID) {
         this.gameID = gameID;
+    }
+
+    public int getPlayersCount() {
+        return playersCount;
+    }
+
+    public void setPlayersCount(int playersCount) {
+        this.playersCount = playersCount;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     @Override
@@ -37,8 +54,6 @@ public class LobbyModel {
 
     @Override
     public String toString() {
-        return "LobbyModel{" +
-                "gameID=" + gameID +
-                '}';
+        return "Host: " + hostName + "; Players: " + playersCount + "\\4";
     }
 }
