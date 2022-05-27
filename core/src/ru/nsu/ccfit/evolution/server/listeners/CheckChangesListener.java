@@ -57,6 +57,7 @@ public class CheckChangesListener extends AbstractListener {
         }
         if (response.has("game_stage")) {
             String gameStage = response.getString("game_stage").toLowerCase(Locale.ROOT);
+            logger.info("new game stage: " + gameStage);
             switch (gameStage) {
                 case "development":
                     gameWorldState.setGameStage(GameStage.DEVELOPMENT);
@@ -72,6 +73,7 @@ public class CheckChangesListener extends AbstractListener {
         if (response.has("turn")) {
             int activePlayerID = response.get("turn").getInt("id");
             gameWorldState.setActivePlayerID(activePlayerID);
+            logger.info("new player turn: " + activePlayerID);
         }
         if (response.has("food_available")) {
             gameWorldState.setFoodAvailable(response.getInt("food_available"));
