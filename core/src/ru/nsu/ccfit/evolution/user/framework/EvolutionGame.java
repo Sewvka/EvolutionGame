@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import ru.nsu.ccfit.evolution.server.Client;
 import ru.nsu.ccfit.evolution.server.GameWorldState;
 
@@ -40,6 +41,10 @@ public class EvolutionGame extends Game {
     @Override
     public void dispose() {
         assets.dispose();
+        if (gameWorldState.isInLobby()) {
+            client.quitGame(gameWorldState.getSelfID());
+            gameWorldState.clear();
+        }
     }
 
     public AssetLoader getAssets() {

@@ -2,6 +2,7 @@ package ru.nsu.ccfit.evolution.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameWorldState {
@@ -10,13 +11,17 @@ public class GameWorldState {
     private int selfID = -1;
     private String selfUsername;
 
+    // info for game lobbies
+    // TODO: create LobbyModel which contains amount of players in lobby, etc; Use List<LobbyModel> after
+    private List<LobbyModel> gameLobbies = new ArrayList<>();
+
     // initialized after joining/creating game
     private boolean isInLobby = false;
     private boolean isHost = false;
     private int gameID = -1;
     private int foodAvailable = 0;
 
-    private Map<Integer, String> players;
+    private Map<Integer, String> players = new HashMap<>();
     private final ArrayList<Integer> hand = new ArrayList<>();
     private final Map<Integer, TableModel> tables = new HashMap<>();
 
@@ -138,4 +143,29 @@ public class GameWorldState {
     public void setGameStarted(boolean gameStarted) {
         isGameStarted = gameStarted;
     }
+
+    public List<LobbyModel> getGameLobbies() {
+        return gameLobbies;
+    }
+
+    public void setGameLobbies(List<LobbyModel> gameLobbies) {
+        this.gameLobbies = gameLobbies;
+    }
+
+    public void clear() {
+        isInLobby = false;
+        isHost = false;
+        gameID = -1;
+
+        players.clear();
+        hand.clear();
+        tables.clear();
+
+        isGameStarted = false;
+
+        placedCardIndex = -1;
+        activePlayerID = -1;
+        gameStage = null;
+    }
+
 }

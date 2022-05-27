@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -22,8 +23,8 @@ public class LobbyScreen extends GameScreen {
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = GameScreen.WORLD_SIZE_X;
-        float H = GameScreen.WORLD_SIZE_Y;
+        float W = Gdx.graphics.getWidth();
+        float H = Gdx.graphics.getHeight();
 
         gameIDLabel = new Label("Game ID: " + game.getGameWorldState().getGameID(), game.getAssets().getSkin());
         gameIDLabel.setSize(W / 8, H / 16);
@@ -45,6 +46,7 @@ public class LobbyScreen extends GameScreen {
         playerLabel3.setSize(W / 8, H / 16);
         playerLabel3.setPosition(13 * W / 16, 8 * H / 16);
 
+        playerLabels.add(selfPlayerLabel);
         playerLabels.add(playerLabel2);
         playerLabels.add(playerLabel3);
         playerLabels.add(playerLabel4);
@@ -73,6 +75,7 @@ public class LobbyScreen extends GameScreen {
         }
         if (!game.getGameWorldState().isHost()) {
             startLobbyButton.setTouchable(Touchable.disabled);
+            startLobbyButton.setVisible(false);
         }
     }
 
@@ -80,15 +83,37 @@ public class LobbyScreen extends GameScreen {
     public void render(float delta) {
         super.render(delta);
 
+        for (Label label : playerLabels) {
+            label.setVisible(false);
+        }
+
         if (game.getGameWorldState().getPlayers() != null) {
             int index = 0;
             for (Map.Entry<Integer, String> player : game.getGameWorldState().getPlayers().entrySet()) {
                 Label playerLabel = playerLabels.get(index++);
-                player.setValue(player.getValue());
+                playerLabel.setText(player.getValue());
                 playerLabel.setVisible(true);
             }
         }
 
-        if (game.getGameWorldState().isGameStarted()) game.setScreen(new LoadingScreen(game, client));
+        if (!game.getGameWorldState().isHost()) {
+            startLobbyButton.setVisible(false);
+            startLobbyButton.setTouchable(Touchable.disabled);
+        } else {
+            startLobbyButton.setVisible(true);
+            startLobbyButton.setTouchable(Touchable.enabled);
+        }
+
+        if (game.getGameWorldState().isGameStarted()) {
+            game.getClient().stopLobbyChecking();
+            game.setScreen(new LoadingScreen(game, client));
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (!game.getGameWorldState().isGameStarted())
+            client.quitGame(game.getGameWorldState().getSelfID());
     }
 }

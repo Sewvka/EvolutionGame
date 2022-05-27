@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,13 +16,16 @@ public class LoginScreen extends GameScreen {
     public LoginScreen(final EvolutionGame evolutionGame, final Client client) {
         super(evolutionGame, client);
 
+        float W = Gdx.graphics.getWidth();
+        float H = Gdx.graphics.getHeight();
+
         loginInput = new TextField("your login", evolutionGame.getAssets().getSkin());
-        loginInput.setSize(GameScreen.WORLD_SIZE_X / 4, GameScreen.WORLD_SIZE_Y / 16);
-        loginInput.setPosition(3 * GameScreen.WORLD_SIZE_X / 8, 15 * GameScreen.WORLD_SIZE_Y / 32);
+        loginInput.setSize(W / 4, H / 16);
+        loginInput.setPosition(3 * W / 8, 15 * H / 32);
 
         submitButton = new TextButton("Submit", evolutionGame.getAssets().getSkin());
-        submitButton.setSize(GameScreen.WORLD_SIZE_X / 8, GameScreen.WORLD_SIZE_Y / 16);
-        submitButton.setPosition(7 * GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y / 8);
+        submitButton.setSize(W / 8, H / 16);
+        submitButton.setPosition(7 * W / 16, H / 8);
         submitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -43,8 +47,9 @@ public class LoginScreen extends GameScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
-        if (game.getGameWorldState().isLoggedIn())
+        if (game.getGameWorldState().isLoggedIn()) {
             game.setScreen(new MainScreen(game, client));
+        }
     }
 
 }

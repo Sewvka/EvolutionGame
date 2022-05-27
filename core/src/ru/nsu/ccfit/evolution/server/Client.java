@@ -24,6 +24,7 @@ public class Client {
 
     private Timer lobbyCheckTimer = new Timer(true);
     private Timer checkChangesTimer = new Timer(true);
+    private Timer gamesListTimer = new Timer(true);
 
     static {
         logger = Logger.getLogger(Client.class.getName());
@@ -148,7 +149,7 @@ public class Client {
         httpRequest.setUrl(baseURL + "startgame");
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
-        Gdx.net.sendHttpRequest(httpRequest, new JoinGameListener(gameWorldState, evolutionGame));
+        Gdx.net.sendHttpRequest(httpRequest, new StartGameListener(gameWorldState, evolutionGame));
     }
 
     public void joinGame(int userID, int gameID) {
@@ -176,6 +177,18 @@ public class Client {
         httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
 
         Gdx.net.sendHttpRequest(httpRequest, new CheckLobbyListener(gameWorldState, evolutionGame));
+    }
+
+    public void quitGame(int userID) {
+        logger.info("Sending request to server to quit game, userID: " + userID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "quitgame");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new QuitGameListener(gameWorldState, evolutionGame));
     }
 
     public void checkChanges(int userID, int gameID) {
@@ -213,6 +226,30 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new PassMoveListener(gameWorldState, evolutionGame));
     }
 
+    public void gamesList() {
+        logger.info("Sending request to server for game lobbies list");
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "gameslist");
+
+        Gdx.net.sendHttpRequest(httpRequest, new GamesListListener(gameWorldState, evolutionGame));
+    }
+
+    public void startChangeChecking() {
+        logger.info("Starting timer for change checking");
+        checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
+    }
+
+    public void startLobbyChecking() {
+        logger.info("Starting timer for lobby checking");
+        lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 500);
+    }
+
+    public void startGamesListChecking() {
+        logger.info("Starting timer for games list checking");
+        gamesListTimer.scheduleAtFixedRate(new GamesListChecker(), 0, 500);
+    }
+
     public void feed(int userID, int creatureID) {
         logger.info("Sending request to feed creature. CreatureID: " + creatureID);
         Map<String, String> parameters = new HashMap<>();
@@ -234,6 +271,10 @@ public class Client {
         checkChangesTimer.cancel();
     }
 
+    public void stopGamesListChecking() {
+        gamesListTimer.cancel();
+    }
+
     class LobbyChecker extends TimerTask {
         @Override
         public void run() {
@@ -245,6 +286,13 @@ public class Client {
         @Override
         public void run() {
             checkChanges(gameWorldState.getSelfID(), gameWorldState.getGameID());
+        }
+    }
+
+    class GamesListChecker extends TimerTask {
+        @Override
+        public void run() {
+            gamesList();
         }
     }
 
