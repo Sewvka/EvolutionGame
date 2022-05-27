@@ -1,6 +1,8 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 import ru.nsu.ccfit.evolution.user.framework.GameScreen;
@@ -10,6 +12,8 @@ public class PlayerView extends Group {
     private HandView hand;
     private final int playerID;
     private final String playerName;
+    private final Label nameLabel;
+
 
     public PlayerView(EvolutionGame game, int playerID, String playerName) {
         this.playerID = playerID;
@@ -22,6 +26,11 @@ public class PlayerView extends Group {
         }
         table = new TableView(game, 0, getHeight() / 5 * 2, getWidth(), getHeight() / 5 * 3);
         addActor(table);
+
+        nameLabel = new Label(playerName, game.getAssets().getSkin());
+        nameLabel.setPosition(0, getHeight() * 0.35f);
+        nameLabel.setColor(Color.WHITE);
+        addActor(nameLabel);
     }
 
     public HandView getHand() {
@@ -36,14 +45,16 @@ public class PlayerView extends Group {
         return playerID;
     }
 
-    public String getName() { return playerName; }
+    public String getName() {
+        return playerName;
+    }
 
     public void setAlignment(String alignment) {
         float worldW = GameScreen.WORLD_SIZE_X;
         float worldH = GameScreen.WORLD_SIZE_Y;
         switch (alignment) {
             case "bottom":
-                setPosition(worldW/2 - getWidth() / 2, 0);
+                setPosition(worldW / 2 - getWidth() / 2, 0);
                 break;
             case "left":
                 setPosition(-worldW / 16, worldH / 2 + getWidth() / 2);
@@ -66,5 +77,6 @@ public class PlayerView extends Group {
                 setRotation(180);
                 break;
         }
+        nameLabel.setRotation(0);
     }
 }

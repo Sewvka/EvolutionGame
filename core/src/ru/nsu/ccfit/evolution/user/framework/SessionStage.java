@@ -55,7 +55,7 @@ public class SessionStage extends Stage {
         for (PlayerView p : playerActors.values()) {
             p.getTable().clearAllFood();
         }
-        food.remove();
+        food.setVisible(false);
     }
 
     public void initFeeding(int foodTotal) {
@@ -63,7 +63,7 @@ public class SessionStage extends Stage {
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
         food.init(foodTotal);
-        addActor(food);
+        food.setVisible(true);
     }
 
     public void setHandTouchable(Touchable touchable) {
@@ -246,6 +246,7 @@ public class SessionStage extends Stage {
     }
 
     public void myTurn() {
+        setHandTouchable(Touchable.enabled);
         playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
         food.setTouchable(Touchable.enabled);
     }

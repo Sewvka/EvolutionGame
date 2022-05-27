@@ -44,7 +44,6 @@ public class SessionScreen extends GameScreen {
         });
         uiStage.addActor(passButton);
         passButton.setTouchable(Touchable.disabled);
-        sessionStage.otherTurn();
         initDevelopment();
     }
 

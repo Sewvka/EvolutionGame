@@ -18,6 +18,8 @@ public class FoodTray extends Group {
 
     public FoodTray(EvolutionGame game) {
         super();
+        token = new FoodToken(game, TOKEN_SIZE, true, "red");
+        token.setTrueParent(this);
         setSize(TOKEN_SIZE + PADDING * 2, TOKEN_SIZE + PADDING * 2);
         label = new Label("", game.getAssets().getSkin());
         label.setPosition(0, TOKEN_SIZE + PADDING * 2);
@@ -27,22 +29,16 @@ public class FoodTray extends Group {
     }
 
     public void init(int foodTotal) {
-        clearChildren();
+        token.remove();
         this.foodTotal = foodTotal;
         foodCurrent = foodTotal;
         updateText();
-        if (foodCurrent > 0) addToken();
-    }
-
-    private void addToken() {
-        token = new FoodToken(game, TOKEN_SIZE, true, "red");
-        token.setTrueParent(this);
-        addActor(token);
+        if (foodCurrent > 0) addActor(token);
     }
 
     public void update(int foodCurrent) {
         this.foodCurrent = foodCurrent;
-        if (foodCurrent <= 0 && token != null) token.remove();
+        if (foodCurrent <= 0) token.remove();
         updateText();
     }
 
