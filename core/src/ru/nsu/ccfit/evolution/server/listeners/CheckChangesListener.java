@@ -57,7 +57,6 @@ public class CheckChangesListener extends AbstractListener {
         }
         if (response.has("game_stage")) {
             String gameStage = response.getString("game_stage").toLowerCase(Locale.ROOT);
-            System.out.println("Received new game stage: " + gameStage);
             switch (gameStage) {
                 case "development":
                     gameWorldState.setGameStage(GameStage.DEVELOPMENT);

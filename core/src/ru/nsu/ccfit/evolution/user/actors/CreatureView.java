@@ -1,6 +1,5 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
-import com.badlogic.gdx.graphics.Color;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.user.actors.listeners.Hoverable;
 import ru.nsu.ccfit.evolution.user.actors.listeners.HoverableListener;
@@ -8,14 +7,12 @@ import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import java.util.ArrayList;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.color;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
 public class CreatureView extends GameActor implements Hoverable {
     private final EvolutionGame game;
     private final Cover cover;
     private final ArrayList<AbilityView> abilities;
-    private int foodCount;
     private int id;
 
     public CreatureView(EvolutionGame game, float w, float h) {
@@ -25,7 +22,6 @@ public class CreatureView extends GameActor implements Hoverable {
         cover = new Cover(game, w, h);
         addActor(cover);
         addListener(new HoverableListener(this));
-        foodCount = 0;
     }
 
     @Override
@@ -76,12 +72,28 @@ public class CreatureView extends GameActor implements Hoverable {
         return abilityView;
     }
 
-    public int getFatCount() {
+    public int getFatMax() {
         int res = 0;
         for (AbilityView a : abilities) {
             if (a.getName().equals("fat")) {
                 res++;
             }
+        }
+        return res;
+    }
+
+    public int getFoodCount() {
+        int res = 0;
+        for (AbilityView a : abilities) {
+            if (!a.getName().equals("fat")) res += a.getChildren().size;
+        }
+        return res;
+    }
+
+    public int getFatCount() {
+        int res = 0;
+        for (AbilityView a : abilities) {
+            if (a.getName().equals("fat")) res += a.getChildren().size;
         }
         return res;
     }
@@ -104,16 +116,23 @@ public class CreatureView extends GameActor implements Hoverable {
             if (!a.getName().equals("fat")) a.clearChildren();
         }
         cover.clearChildren();
-        foodCount = 0;
     }
 
     public void removeFood() {
+        for (AbilityView a : abilities) {
+            if (a.hasChildren() && !a.getName().equals("fat")) {
+                a.clearChildren();
+                return;
+            }
+        }
         if (cover.hasChildren()) {
             cover.clearChildren();
-            return;
         }
+    }
+
+    public void removeFat() {
         for (AbilityView a : abilities) {
-            if (a.hasChildren()) {
+            if (a.hasChildren() && a.getName().equals("fat")) {
                 a.clearChildren();
                 return;
             }
@@ -121,7 +140,7 @@ public class CreatureView extends GameActor implements Hoverable {
     }
 
     public void addFood() {
-        FoodToken f = new FoodToken(game, FoodTray.TOKEN_SIZE, false);
+        FoodToken f = new FoodToken(game, FoodTray.TOKEN_SIZE, false, "red");
         int hbwIndex = getAbilityIndex("high_body_weight");
         int parasiteIndex = getAbilityIndex("parasite");
         int carnivorousIndex = getAbilityIndex("carnivorous");
@@ -129,25 +148,24 @@ public class CreatureView extends GameActor implements Hoverable {
         if (parasiteIndex != -1) {
             parasiteCount = abilities.get(parasiteIndex).getChildren().size;
         }
-        int nextFat = getNextFat();
 
-        if (foodCount == 0) {
+        if (getFoodCount() == 0) {
             cover.addActor(f);
             f.setPosition(10, getHeight() - f.getHeight() - 10);
-            foodCount++;
         } else if (hbwIndex != -1 && !abilities.get(hbwIndex).hasChildren()) {
             addFoodToAbility(f, hbwIndex, 0);
-            foodCount++;
         } else if (carnivorousIndex != -1 && !abilities.get(carnivorousIndex).hasChildren()) {
             addFoodToAbility(f, carnivorousIndex, 0);
-            foodCount++;
         } else if (parasiteIndex != -1 && parasiteCount < 2) {
             addFoodToAbility(f, carnivorousIndex, parasiteCount);
-            foodCount++;
-        } else if (nextFat != -1) {
+        }
+    }
+
+    public void addFat() {
+        FoodToken f = new FoodToken(game, FoodTray.TOKEN_SIZE, false, "yellow");
+        int nextFat = getAvailableFatIndex();
+        if (nextFat != -1) {
             addFoodToAbility(f, nextFat, 0);
-            f.addAction(color(Color.YELLOW));
-            foodCount++;
         }
     }
 
@@ -180,7 +198,7 @@ public class CreatureView extends GameActor implements Hoverable {
         return -1;
     }
 
-    private int getNextFat() {
+    private int getAvailableFatIndex() {
         int i = 0;
         for (AbilityView a : abilities) {
             if (a.getName().equals("fat") && !a.hasChildren()) return i;
@@ -211,7 +229,6 @@ public class CreatureView extends GameActor implements Hoverable {
         abilities.clear();
         clearChildren();
         addActor(cover);
-        foodCount = 0;
     }
 
     public void setID(int id) {

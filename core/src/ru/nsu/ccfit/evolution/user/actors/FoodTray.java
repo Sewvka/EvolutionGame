@@ -2,6 +2,7 @@ package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import ru.nsu.ccfit.evolution.server.GameStage;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
@@ -30,22 +31,18 @@ public class FoodTray extends Group {
         this.foodTotal = foodTotal;
         foodCurrent = foodTotal;
         updateText();
-        addToken();
+        if (foodCurrent > 0) addToken();
     }
 
     private void addToken() {
-        token = new FoodToken(game, TOKEN_SIZE, true);
+        token = new FoodToken(game, TOKEN_SIZE, true, "red");
         token.setTrueParent(this);
         addActor(token);
     }
 
-    public void removeFood() {
-        if (foodCurrent <= 0) return;
-        foodCurrent--;
-        token.remove();
-        if (foodCurrent > 0) {
-            addToken();
-        }
+    public void update(int foodCurrent) {
+        this.foodCurrent = foodCurrent;
+        if (foodCurrent <= 0) token.remove();
         updateText();
     }
 

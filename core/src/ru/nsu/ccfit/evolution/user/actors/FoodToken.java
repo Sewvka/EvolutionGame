@@ -16,8 +16,19 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 public class FoodToken extends GameActor implements Hoverable, Draggable {
     private final boolean isActive;
 
-    public FoodToken(EvolutionGame game, int size, boolean isActive) {
-        super(new TextureRegion(game.getAssets().getTexture("food/food_red.png")), size, size);
+    public FoodToken(EvolutionGame game, int size, boolean isActive, String color) {
+        super(null, size, size);
+        TextureRegion texture;
+        switch (color) {
+            case "yellow":
+                texture = new TextureRegion(game.getAssets().getTexture("food/food_yellow.png"));
+                break;
+            case "blue":
+                texture = new TextureRegion(game.getAssets().getTexture("food/food_blue.png"));
+            default:
+                texture = new TextureRegion(game.getAssets().getTexture("food/food_red.png"));
+        }
+        setTexture(texture);
         addListener(new HoverableListener(this));
         addListener(new DraggableListener(this, Input.Buttons.LEFT));
         this.isActive = isActive;

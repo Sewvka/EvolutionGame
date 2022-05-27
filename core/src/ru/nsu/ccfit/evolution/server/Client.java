@@ -213,6 +213,19 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new PassMoveListener(gameWorldState, evolutionGame));
     }
 
+    public void feed(int userID, int creatureID) {
+        logger.info("Sending request to feed creature. CreatureID: " + creatureID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("creature_card", String.valueOf(creatureID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "feed");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new FeedListener(gameWorldState, evolutionGame));
+    }
+
     public void stopLobbyChecking() {
         lobbyCheckTimer.cancel();
     }

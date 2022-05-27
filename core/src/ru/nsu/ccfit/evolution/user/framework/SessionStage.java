@@ -40,18 +40,6 @@ public class SessionStage extends Stage {
         alignPlayers();
     }
 
-    public void feedToken() {
-        food.removeFood();
-        getSelectedCreature().addFood();
-    }
-
-    public void feedCreature(int creatureIndex, int playerID, boolean fromTray) {
-        if (fromTray) {
-            food.removeFood();
-        }
-        playerActors.get(playerID).getTable().get(creatureIndex).addFood();
-    }
-
     public SessionScreen getSessionScreen() {
         return sessionScreen;
     }
@@ -74,7 +62,6 @@ public class SessionStage extends Stage {
         setHandTouchable(Touchable.disabled);
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
-        setHandTouchable(Touchable.disabled);
         food.init(foodTotal);
         addActor(food);
     }
@@ -170,6 +157,7 @@ public class SessionStage extends Stage {
 
     public void update() {
         updateHand();
+        food.update(game.getGameWorldState().getFoodAvailable());
         for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
             updatePlayer(playerID);
         }
@@ -210,12 +198,28 @@ public class SessionStage extends Stage {
             }
         }
 
-        int fatDiff = creatureModel.getFatMax() - creatureView.getFatCount();
+        int fatDiff = creatureModel.getFatMax() - creatureView.getFatMax();
         for (int i = 0; i < fatDiff; i++) {
             creatureView.addAbility("fat");
         }
         for (int i = 0; i < -fatDiff; i++) {
             creatureView.removeAbility("fat");
+        }
+
+        int foodDiff = creatureModel.getFood() - creatureView.getFoodCount();
+        for (int i = 0; i < foodDiff; i++) {
+            creatureView.addFood();
+        }
+        for (int i = 0; i < -foodDiff; i++) {
+            creatureView.removeFood();
+        }
+
+        int fatStoredDiff = creatureModel.getFatStored() - creatureView.getFatCount();
+        for (int i = 0; i < fatStoredDiff; i++) {
+            creatureView.addFat();
+        }
+        for (int i = 0; i < -fatStoredDiff; i++) {
+            creatureView.removeFat();
         }
     }
 
