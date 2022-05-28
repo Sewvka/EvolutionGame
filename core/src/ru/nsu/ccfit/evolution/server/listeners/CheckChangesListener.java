@@ -64,13 +64,16 @@ public class CheckChangesListener extends AbstractListener {
             logger.info("new game stage: " + gameStage);
             switch (gameStage) {
                 case "development":
-                    gameWorldState.setGameStage(GameStage.DEVELOPMENT);
+                    gameWorldState.setGameStageFlag(GameStage.DEVELOPMENT);
+                    gameWorldState.setCurrentGameStage(GameStage.DEVELOPMENT);
                     break;
                 case "feeding":
-                    gameWorldState.setGameStage(GameStage.FEEDING);
+                    gameWorldState.setGameStageFlag(GameStage.FEEDING);
+                    gameWorldState.setCurrentGameStage(GameStage.FEEDING);
                     break;
                 case "extinction":
-                    gameWorldState.setGameStage(GameStage.EXTINCTION);
+                    gameWorldState.setGameStageFlag(GameStage.EXTINCTION);
+                    gameWorldState.setCurrentGameStage(GameStage.EXTINCTION);
                     break;
             }
         }

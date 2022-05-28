@@ -25,6 +25,7 @@ public class FoodTray extends Group {
         label.setPosition(0, TOKEN_SIZE + PADDING * 2);
         label.setColor(Color.GREEN);
         addActor(label);
+        addActor(token);
         this.game = game;
     }
 

@@ -51,24 +51,6 @@ public class AbilityView extends GameActor {
         return screen.activateAbility(this);
     }
 
-    public void resumeActivation(CreatureView targetCreature) {
-        SessionScreen screen = (SessionScreen) game.getScreen();
-        TableView targetTable = (TableView) targetCreature.getParent();
-        CreatureView parentCreature = (CreatureView) getParent();
-        switch (name) {
-            case "carnivorous":
-                targetTable.removeCreature(targetCreature);
-                parentCreature.addFood();
-                parentCreature.addFood();
-                screen.cancelAbilityUsage();
-                break;
-            case "piracy":
-                parentCreature.addFood();
-                targetCreature.removeFood();
-                screen.cancelAbilityUsage();
-        }
-    }
-
     private class AbilityInputListener extends InputListener {
         @Override
         public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {

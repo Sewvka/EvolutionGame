@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,7 +14,7 @@ public class PlayerView extends Group {
     private final int playerID;
     private final String playerName;
     private final Label nameLabel;
-
+    private final Group labelWrapper;
 
     public PlayerView(EvolutionGame game, int playerID, String playerName) {
         this.playerID = playerID;
@@ -28,9 +29,11 @@ public class PlayerView extends Group {
         addActor(table);
 
         nameLabel = new Label(playerName, game.getAssets().getSkin());
-        nameLabel.setPosition(0, getHeight() * 0.35f);
         nameLabel.setColor(Color.WHITE);
-        addActor(nameLabel);
+        labelWrapper = new Group();
+        labelWrapper.setPosition(0, getHeight() * 0.35f);
+        labelWrapper.addActor(nameLabel);
+        addActor(labelWrapper);
     }
 
     public HandView getHand() {
@@ -59,24 +62,36 @@ public class PlayerView extends Group {
             case "left":
                 setPosition(-worldW / 16, worldH / 2 + getWidth() / 2);
                 setRotation(-90);
+                labelWrapper.rotateBy(90);
+                labelWrapper.setPosition(0, getHeight()*0.4f);
                 break;
             case "right":
                 setPosition(worldW / 16 + worldW, worldH / 2 - getWidth() / 2);
                 setRotation(90);
+                labelWrapper.rotateBy(-90);
+                labelWrapper.setPosition(getWidth(), getHeight());
                 break;
             case "top":
                 setPosition(worldW / 2 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
+                labelWrapper.rotateBy(180);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
                 break;
             case "topL":
                 setPosition(worldW / 4 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
+                labelWrapper.rotateBy(180);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
                 break;
             case "topR":
                 setPosition(worldW / 4 * 3 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
+                labelWrapper.rotateBy(180);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
                 break;
         }
-        nameLabel.setRotation(0);
     }
 }

@@ -32,7 +32,8 @@ public class GameWorldState {
 
     //'flags' for turn and stage changes.
     private int activePlayerID = -1;
-    private GameStage gameStage = null;
+    private GameStage gameStageFlag = null;
+    private GameStage currentGameStage;
 
     public int getFoodAvailable() {
         return foodAvailable;
@@ -42,12 +43,20 @@ public class GameWorldState {
         this.foodAvailable = foodAvailable;
     }
 
-    public GameStage getGameStage() {
-        return gameStage;
+    public GameStage getGameStageFlag() {
+        return gameStageFlag;
     }
 
-    public void setGameStage(GameStage gameStage) {
-        this.gameStage = gameStage;
+    public void setGameStageFlag(GameStage gameStageFlag) {
+        this.gameStageFlag = gameStageFlag;
+    }
+
+    public void setCurrentGameStage(GameStage currentGameStage) {
+        this.currentGameStage = currentGameStage;
+    }
+
+    public GameStage getCurrentGameStage() {
+        return currentGameStage;
     }
 
     public int getActivePlayerID() {
@@ -112,8 +121,8 @@ public class GameWorldState {
         isInLobby = inLobby;
     }
 
-    public boolean isHost() {
-        return isHost;
+    public boolean notHost() {
+        return !isHost;
     }
 
     public void setHost(boolean host) {
@@ -165,7 +174,7 @@ public class GameWorldState {
 
         placedCardIndex = -1;
         activePlayerID = -1;
-        gameStage = null;
+        gameStageFlag = null;
     }
 
 }

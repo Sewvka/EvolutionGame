@@ -29,6 +29,7 @@ public class SessionStage extends Stage {
         playerActors = new HashMap<>();
         food = new FoodTray(game);
         food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y/8);
+        addActor(food);
 
         Map<Integer, String> players = game.getGameWorldState().getPlayers();
 
@@ -157,7 +158,7 @@ public class SessionStage extends Stage {
 
     public void update() {
         updateHand();
-        food.update(game.getGameWorldState().getFoodAvailable());
+        if (food.isVisible()) food.update(game.getGameWorldState().getFoodAvailable());
         for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
             updatePlayer(playerID);
         }
@@ -169,10 +170,16 @@ public class SessionStage extends Stage {
         for (int creatureID : tableModel.getCreatures().keySet()) {
             updateCreature(playerID, creatureID);
         }
+
+        ArrayList<Integer> removedList = new ArrayList<>();
         for (int creatureID : tableView.getCreatures().keySet()) {
             if (!tableModel.getCreatures().containsKey(creatureID)) {
-                tableView.removeCreature(creatureID);
+                removedList.add(creatureID);
             }
+        }
+
+        for (int creatureID : removedList) {
+            tableView.removeCreature(creatureID);
         }
     }
 

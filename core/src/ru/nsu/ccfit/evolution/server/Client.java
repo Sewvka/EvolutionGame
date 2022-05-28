@@ -253,6 +253,19 @@ public class Client {
         Gdx.net.sendHttpRequest(httpRequest, new FeedListener(gameWorldState, evolutionGame));
     }
 
+    public void eat(int userID, int creatureID, int targetID) {
+        logger.info("Sending request to eat creature. Predator ID: " + creatureID + ", prey ID: " + targetID);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("user", String.valueOf(userID));
+        parameters.put("creature_card", String.valueOf(creatureID));
+
+        Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
+        httpRequest.setUrl(baseURL + "eat");
+        httpRequest.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+
+        Gdx.net.sendHttpRequest(httpRequest, new EatListener(gameWorldState, evolutionGame));
+    }
+
     public void stopLobbyChecking() {
         lobbyCheckTimer.cancel();
     }

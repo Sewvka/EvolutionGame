@@ -145,9 +145,9 @@ public class SessionScreen extends GameScreen {
     }
 
     private void queueAbility(AbilityView abilityView) {
-//        if (server.getGameStage() == 2) {
-//            queuedAbilityActivation = ability;
-//        }
+        if (game.getGameWorldState().getCurrentGameStage() == GameStage.FEEDING) {
+            queuedAbilityActivation = abilityView;
+        }
     }
 
     private void activateHibernation(CreatureView creature) {
@@ -231,22 +231,16 @@ public class SessionScreen extends GameScreen {
             return;
         }
         if (queuedAbilityActivation != null) {
-            TableView targetTable = (TableView) targetCreature.getParent();
-            TableView parentTable = (TableView) queuedAbilityActivation.getParent().getParent();
-            PlayerView target = (PlayerView) targetTable.getParent();
-            PlayerView player = (PlayerView) parentTable.getParent();
-            CreatureView parentCreature = (CreatureView) queuedAbilityActivation.getParent();
+            CreatureView activatedCreature = (CreatureView) queuedAbilityActivation.getParent();
             switch (queuedAbilityActivation.getName()) {
                 case "carnivorous":
-//                    if (server.requestPredation(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getID(), target.getID())) {
-//                        queuedAbilityActivation.resumeActivation(targetCreature);
-//                    }
+                    client.eat(game.getGameWorldState().getSelfID(), activatedCreature.getID(), targetCreature.getID());
+                    cancelAbilityUsage();
                     break;
                 case "piracy":
-//                    if (server.requestPiracy(parentTable.getCreatureIndex(parentCreature), targetTable.getCreatureIndex(targetCreature), player.getID(), target.getID())) {
-//                        queuedAbilityActivation.resumeActivation(targetCreature);
-//                    }
-//                    break;
+
+                    cancelAbilityUsage();
+                    break;
             }
         }
     }
@@ -297,17 +291,18 @@ public class SessionScreen extends GameScreen {
     }
 
     private void updateStage() {
-        GameStage stage = game.getGameWorldState().getGameStage();
+        GameStage stage = game.getGameWorldState().getGameStageFlag();
         if (stage != null) {
             switch (stage) {
                 case DEVELOPMENT:
+                    game.getGameWorldState().setGameStageFlag(null);
                     initDevelopment();
                     break;
                 case FEEDING:
+                    game.getGameWorldState().setGameStageFlag(null);
                     initFeeding();
                     break;
             }
-            game.getGameWorldState().setGameStage(null);
         }
     }
 }
