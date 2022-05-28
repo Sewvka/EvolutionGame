@@ -73,7 +73,7 @@ public class LobbyScreen extends GameScreen {
         for (Label playerLabel : playerLabels) {
             playerLabel.setVisible(false);
         }
-        if (!game.getGameWorldState().isHost()) {
+        if (game.getGameWorldState().notHost()) {
             startLobbyButton.setTouchable(Touchable.disabled);
             startLobbyButton.setVisible(false);
         }
@@ -96,7 +96,7 @@ public class LobbyScreen extends GameScreen {
             }
         }
 
-        if (!game.getGameWorldState().isHost()) {
+        if (game.getGameWorldState().notHost()) {
             startLobbyButton.setVisible(false);
             startLobbyButton.setTouchable(Touchable.disabled);
         } else {
