@@ -6,7 +6,10 @@ import com.badlogic.gdx.net.*;
 import ru.nsu.ccfit.evolution.server.listeners.*;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -258,6 +261,7 @@ public class Client {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("user", String.valueOf(userID));
         parameters.put("creature_card", String.valueOf(creatureID));
+        parameters.put("target_id", String.valueOf(targetID));
 
         Net.HttpRequest httpRequest = new Net.HttpRequest(Net.HttpMethods.POST);
         httpRequest.setUrl(baseURL + "eat");

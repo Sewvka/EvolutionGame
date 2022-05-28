@@ -125,6 +125,9 @@ public class SessionScreen extends GameScreen {
     }
 
     public boolean activateAbility(AbilityView abilityView) {
+        if (game.getGameWorldState().getCurrentGameStage() != GameStage.FEEDING) return false;
+
+
         CreatureView parent = (CreatureView) abilityView.getParent();
         switch (abilityView.getName()) {
             case "carnivorous":
@@ -238,7 +241,6 @@ public class SessionScreen extends GameScreen {
                     cancelAbilityUsage();
                     break;
                 case "piracy":
-
                     cancelAbilityUsage();
                     break;
             }
@@ -277,7 +279,7 @@ public class SessionScreen extends GameScreen {
     }
 
     private void updateTurn() {
-        int activePlayerID = game.getGameWorldState().getActivePlayerID();
+        int activePlayerID = game.getGameWorldState().getCurrentTurnFlag();
         if (activePlayerID != -1) {
             if (activePlayerID == game.getGameWorldState().getSelfID()) {
                 passButton.setTouchable(Touchable.enabled);
@@ -286,7 +288,7 @@ public class SessionScreen extends GameScreen {
                 passButton.setTouchable(Touchable.disabled);
                 sessionStage.otherTurn();
             }
-            game.getGameWorldState().setActivePlayerID(-1);
+            game.getGameWorldState().setCurrentTurnFlag(-1);
         }
     }
 

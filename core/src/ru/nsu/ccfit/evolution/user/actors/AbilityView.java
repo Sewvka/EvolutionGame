@@ -64,6 +64,7 @@ public class AbilityView extends GameActor {
 
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            if (game.getGameWorldState().getCurrentTurn() != game.getGameWorldState().getSelfID()) return false;
             SessionScreen screen = (SessionScreen) game.getScreen();
             if (button == Input.Buttons.LEFT && !screen.isAbilityQueued()) {
                 return activate();

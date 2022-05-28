@@ -26,14 +26,15 @@ public class GameWorldState {
     private final Map<Integer, TableModel> tables = new HashMap<>();
 
     private boolean isGameStarted = false;
+    private GameStage currentGameStage;
+    private int currentTurn = -1;
 
     //stuff to remember when playing cards/creatures.
     private int placedCardIndex = -1;
 
     //'flags' for turn and stage changes.
-    private int activePlayerID = -1;
+    private int currentTurnFlag = -1;
     private GameStage gameStageFlag = null;
-    private GameStage currentGameStage;
 
     public int getFoodAvailable() {
         return foodAvailable;
@@ -59,12 +60,20 @@ public class GameWorldState {
         return currentGameStage;
     }
 
-    public int getActivePlayerID() {
-        return activePlayerID;
+    public void setCurrentTurn(int currentTurn) {
+        this.currentTurn = currentTurn;
     }
 
-    public void setActivePlayerID(int activePlayerID) {
-        this.activePlayerID = activePlayerID;
+    public int getCurrentTurn() {
+        return currentTurn;
+    }
+
+    public int getCurrentTurnFlag() {
+        return currentTurnFlag;
+    }
+
+    public void setCurrentTurnFlag(int currentTurnFlag) {
+        this.currentTurnFlag = currentTurnFlag;
     }
 
     public ArrayList<Integer> getHand() {
@@ -173,7 +182,7 @@ public class GameWorldState {
         isGameStarted = false;
 
         placedCardIndex = -1;
-        activePlayerID = -1;
+        currentTurnFlag = -1;
         gameStageFlag = null;
     }
 

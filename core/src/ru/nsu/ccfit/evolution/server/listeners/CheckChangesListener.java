@@ -79,7 +79,8 @@ public class CheckChangesListener extends AbstractListener {
         }
         if (response.has("turn")) {
             int activePlayerID = response.get("turn").getInt("id");
-            gameWorldState.setActivePlayerID(activePlayerID);
+            gameWorldState.setCurrentTurnFlag(activePlayerID);
+            gameWorldState.setCurrentTurn(activePlayerID);
             logger.info("new player turn: " + activePlayerID);
         }
         if (response.has("turn") || response.has("food_available") || response.has("game_stage")
