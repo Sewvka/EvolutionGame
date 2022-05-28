@@ -52,6 +52,10 @@ public class PlayerView extends Group {
         return playerName;
     }
 
+    public Label getNameLabel() {
+        return nameLabel;
+    }
+
     public void setAlignment(String alignment) {
         float worldW = GameScreen.WORLD_SIZE_X;
         float worldH = GameScreen.WORLD_SIZE_Y;

@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import ru.nsu.ccfit.evolution.server.AbilityModel;
@@ -258,10 +259,23 @@ public class SessionStage extends Stage {
         if (game.getGameWorldState().getCurrentGameStage() != GameStage.FEEDING)
             playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
         food.setTouchable(Touchable.enabled);
+        updateNameLabels();
     }
 
     public void otherTurn() {
         playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(false);
         food.setTouchable(Touchable.disabled);
+        updateNameLabels();
+    }
+
+    private void updateNameLabels() {
+        for (PlayerView p : playerActors.values()) {
+            if (p.getID() == game.getGameWorldState().getCurrentTurn()) {
+                p.getNameLabel().setColor(Color.GREEN);
+            }
+            else {
+                p.getNameLabel().setColor(Color.WHITE);
+            }
+        }
     }
 }
