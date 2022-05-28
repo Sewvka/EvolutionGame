@@ -127,7 +127,6 @@ public class SessionScreen extends GameScreen {
     public boolean activateAbility(AbilityView abilityView) {
         if (game.getGameWorldState().getCurrentGameStage() != GameStage.FEEDING) return false;
 
-
         CreatureView parent = (CreatureView) abilityView.getParent();
         switch (abilityView.getName()) {
             case "carnivorous":

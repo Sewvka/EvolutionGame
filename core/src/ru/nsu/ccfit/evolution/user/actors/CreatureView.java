@@ -158,7 +158,7 @@ public class CreatureView extends GameActor implements Hoverable {
         } else if (carnivorousIndex != -1 && !abilities.get(carnivorousIndex).hasChildren()) {
             addFoodToAbility(f, carnivorousIndex, 0);
         } else if (parasiteIndex != -1 && parasiteCount < 2) {
-            addFoodToAbility(f, carnivorousIndex, parasiteCount);
+            addFoodToAbility(f, parasiteIndex, parasiteCount);
         }
     }
 

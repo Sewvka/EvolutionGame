@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import ru.nsu.ccfit.evolution.server.AbilityModel;
 import ru.nsu.ccfit.evolution.server.CreatureModel;
+import ru.nsu.ccfit.evolution.server.GameStage;
 import ru.nsu.ccfit.evolution.server.TableModel;
 import ru.nsu.ccfit.evolution.user.actors.*;
 
@@ -254,7 +255,8 @@ public class SessionStage extends Stage {
 
     public void myTurn() {
         setHandTouchable(Touchable.enabled);
-        playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
+        if (game.getGameWorldState().getCurrentGameStage() == GameStage.DEVELOPMENT)
+            playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
         food.setTouchable(Touchable.enabled);
     }
 
