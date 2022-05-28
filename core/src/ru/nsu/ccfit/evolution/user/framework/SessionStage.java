@@ -255,7 +255,7 @@ public class SessionStage extends Stage {
 
     public void myTurn() {
         setHandTouchable(Touchable.enabled);
-        if (game.getGameWorldState().getCurrentGameStage() == GameStage.DEVELOPMENT)
+        if (game.getGameWorldState().getCurrentGameStage() != GameStage.FEEDING)
             playerActors.get(game.getGameWorldState().getSelfID()).getHand().setDraggable(true);
         food.setTouchable(Touchable.enabled);
     }
