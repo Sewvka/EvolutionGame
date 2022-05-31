@@ -53,7 +53,7 @@ public class LobbyListScreen extends GameScreen {
         label.setPosition(9 * W / 20, 8 * H / 10);
         label.setSize(W / 10, H / 5);
 
-        Stage stage = new Stage();
+        Stage stage = new Stage(getViewport());
         stage.addActor(scrollPane);
         stage.addActor(label);
         addStage(stage);

@@ -72,7 +72,7 @@ public class LobbyScreen extends GameScreen {
             }
         });
 
-        Stage stage = new Stage();
+        Stage stage = new Stage(getViewport());
         stage.addActor(gameIDLabel);
         stage.addActor(selfPlayerLabel);
         stage.addActor(playerLabel2);

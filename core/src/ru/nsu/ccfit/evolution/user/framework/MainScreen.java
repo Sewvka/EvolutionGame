@@ -45,7 +45,7 @@ public class MainScreen extends GameScreen {
             }
         });
 
-        Stage stage = new Stage();
+        Stage stage = new Stage(getViewport());
         stage.addActor(joinLobby);
         stage.addActor(createLobby);
         addStage(stage);

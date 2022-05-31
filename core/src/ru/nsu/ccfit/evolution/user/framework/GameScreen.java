@@ -15,8 +15,8 @@ public class GameScreen implements Screen {
     private final Viewport viewport;
     private final OrthographicCamera camera;
     private final StageMultiplexer stageMultiplexer;
-    public static final float WORLD_SIZE_X = Gdx.graphics.getWidth();
-    public static final float WORLD_SIZE_Y = Gdx.graphics.getHeight();
+    public static final float WORLD_SIZE_X = 1280;
+    public static final float WORLD_SIZE_Y = 720;
 
     public GameScreen(EvolutionGame game, Client client) {
         this.game = game;
