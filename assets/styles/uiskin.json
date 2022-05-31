@@ -1,71 +1,170 @@
 {
-  BitmapFont: { default-font: { file: default.fnt } },
-  Color: {
-    green: { a: 1, b: 0, g: 1, r: 0 },
-    white: { a: 1, b: 1, g: 1, r: 1 },
-    red: { a: 1, b: 0, g: 0, r: 1 },
-    black: { a: 1, b: 0, g: 0, r: 0 },
-    gray: { a: 1, b: 0.8, g: 0.8, r: 0.8 },
-  },
-  TintedDrawable: {
-    dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } },
-  },
-  ButtonStyle: {
-    default: { down: default-round-down, up: default-round, disabled: default-round },
-    toggle: { parent: default, checked: default-round-down }
-  },
-  TextButtonStyle: {
-    default: { parent: default, font: default-font, fontColor: white, disabledFontColor: gray },
-    toggle: { parent: default, checked: default-round-down, downFontColor: red }
-  },
-  ScrollPaneStyle: {
-    default: { vScroll: default-scroll, hScrollKnob: default-round-large, background: default-rect, hScroll: default-scroll, vScrollKnob: default-round-large }
-  },
-  SelectBoxStyle: {
-    default: {
-      font: default-font, fontColor: white, background: default-select,
-      scrollStyle: default,
-      listStyle: { font: default-font, selection: default-select-selection }
-    }
-  },
-  SplitPaneStyle: {
-    default-vertical: { handle: default-splitpane-vertical },
-    default-horizontal: { handle: default-splitpane }
-  },
-  WindowStyle: {
-    default: { titleFont: default-font, background: default-window, titleFontColor: white },
-    dialog: { parent: default, stageBackground: dialogDim }
-  },
-  ProgressBarStyle: {
-    default-horizontal: { background: default-slider, knob: default-slider-knob },
-    default-vertical: { background: default-slider, knob: default-round-large }
-  },
-  SliderStyle: {
-    default-horizontal: { parent: default-horizontal },
-    default-vertical: { parent: default-vertical }
-  },
-  LabelStyle: {
-    default: { font: default-font, fontColor: white }
-  },
-  TextFieldStyle: {
-    default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }
-  },
-  CheckBoxStyle: {
-    default: { checkboxOn: check-on, checkboxOff: check-off, font: default-font, fontColor: white }
-  },
-  ListStyle: {
-    default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: default-font }
-  },
-  TouchpadStyle: {
-    default: { background: default-pane, knob: default-round-large }
-  },
-  TreeStyle: {
-    default: { minus: tree-minus, plus: tree-plus, selection: default-select-selection }
-  },
-  TextTooltipStyle: {
-    default: {
-      label: { font: default-font, fontColor: white },
-      background: default-pane, wrapWidth: 150
-    }
-  },
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	bold: {
+		file: font-bold-export.fnt
+	}
+	font: {
+		file: font-export.fnt
+	}
+	title: {
+		file: font-title-export.fnt
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	gray: {
+		r: 0.55
+		g: 0.55
+		b: 0.55
+		a: 1
+	}
+	green: {
+		r: 0.03529522
+		g: 0.77666664
+		b: 0
+		a: 1
+	}
+	white: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	gray: {
+		name: white
+		color: {
+			r: 0.73666674
+			g: 0.73666674
+			b: 0.73666674
+			a: 1
+		}
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	default: {
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	default: {
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
+	default: {
+		font: font
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: font
+		fontColor: gray
+	}
+	dim: {
+		font: font
+		fontColor: gray
+	}
+	bold: {
+		font: bold
+		background: underline
+	}
+	title: {
+		font: title
+	}
+	xp: {
+		font: bold
+		fontColor: green
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+	default: {
+		font: font
+		fontColorSelected: green
+		fontColorUnselected: white
+		selection: white
+		background: text-field
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-horizontal: {
+		background: slider
+		knobBefore: slider-knob
+	}
+	default-vertical: {
+		background: slider
+		knob: slider-knob
+	}
+	hunger: {
+		background: meat-bg
+		knobAfter: meat
+	}
+	health: {
+		background: heart-bg
+		knobBefore: heart
+	}
+	xp: {
+		background: xp-bg
+		knobBefore: xp
+	}
+	armor: {
+		background: armor-bg
+		knobBefore: armor
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: {
+		background: scroll-bg
+		hScroll: scroll-horizontal
+		hScrollKnob: scroll-knob-horizontal
+		vScroll: scroll-vertical
+		vScrollKnob: scroll-knob-vertical
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	default-horizontal: {
+		background: slider
+		knob: slider-knob
+	}
+	default-vertical: {
+		background: slider
+		knob: slider-knob
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: {
+		font: font
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: font
+		fontColor: white
+		background: text-field
+		cursor: cursor
+		selection: gray
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+		background: tooltip
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: {
+		background: window
+		titleFont: font
+	}
+}
 }

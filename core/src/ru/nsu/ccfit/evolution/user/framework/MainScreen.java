@@ -1,8 +1,10 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.ietf.jgss.GSSManager;
@@ -20,8 +22,8 @@ public class MainScreen extends GameScreen {
         float H = GameScreen.WORLD_SIZE_Y;
 
         joinLobby = new TextButton("Join lobby", game.getAssets().getSkin());
-        joinLobby.setSize(W / 8, H / 16);
-        joinLobby.setPosition(7 * W / 16, 6 * H / 16);
+        joinLobby.setSize(W / 5, H / 16);
+        joinLobby.setPosition(2 * W / 5, 6 * H / 16);
         joinLobby.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -31,8 +33,8 @@ public class MainScreen extends GameScreen {
         });
 
         createLobby = new TextButton("Create lobby", game.getAssets().getSkin());
-        createLobby.setSize(W / 8, H / 16);
-        createLobby.setPosition(7 * W / 16, 9 * H / 16);
+        createLobby.setSize(W / 5, H / 16);
+        createLobby.setPosition(2 * W / 5, 9 * H / 16);
         createLobby.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
