@@ -16,7 +16,6 @@ import java.util.Map;
 public class LobbyScreen extends GameScreen {
 
     private Label gameIDLabel;
-    private Label selfPlayerLabel;
     private List<Label> playerLabels = new ArrayList<>();
     private TextButton startLobbyButton;
     private TextButton leaveLobbyButton;
@@ -31,28 +30,28 @@ public class LobbyScreen extends GameScreen {
         gameIDLabel.setSize(W / 8, H / 16);
         gameIDLabel.setPosition(W / 16, 14 * H / 16);
 
-        selfPlayerLabel = new Label("", game.getAssets().getSkin());
-        selfPlayerLabel.setSize(W / 8, H / 16);
-        selfPlayerLabel.setPosition(13 * W / 16, 14 * H / 16);
+        Label playerLabel1 = new Label("", game.getAssets().getSkin());
+        playerLabel1.setSize(W / 8, H / 16);
+        playerLabel1.setPosition(12 * W / 16, 14 * H / 16);
 
         Label playerLabel2 = new Label("", game.getAssets().getSkin());
         playerLabel2.setSize(W / 8, H / 16);
-        playerLabel2.setPosition(13 * W / 16, 12 * H / 16);
+        playerLabel2.setPosition(12 * W / 16, 12 * H / 16);
 
         Label playerLabel3 = new Label("", game.getAssets().getSkin());
         playerLabel3.setSize(W / 8, H / 16);
-        playerLabel3.setPosition(13 * W / 16, 10 * H / 16);
+        playerLabel3.setPosition(12 * W / 16, 10 * H / 16);
 
         Label playerLabel4 = new Label("", game.getAssets().getSkin());
         playerLabel3.setSize(W / 8, H / 16);
-        playerLabel3.setPosition(13 * W / 16, 8 * H / 16);
+        playerLabel3.setPosition(12 * W / 16, 8 * H / 16);
 
-        playerLabels.add(selfPlayerLabel);
+        playerLabels.add(playerLabel1);
         playerLabels.add(playerLabel2);
         playerLabels.add(playerLabel3);
         playerLabels.add(playerLabel4);
 
-        startLobbyButton = new TextButton("Submit", game.getAssets().getSkin());
+        startLobbyButton = new TextButton("Start", game.getAssets().getSkin());
         startLobbyButton.setSize(W / 8, H / 16);
         startLobbyButton.setPosition(7 * W / 16, H / 8);
         startLobbyButton.addListener(new ChangeListener() {
@@ -74,7 +73,7 @@ public class LobbyScreen extends GameScreen {
 
         Stage stage = new Stage();
         stage.addActor(gameIDLabel);
-        stage.addActor(selfPlayerLabel);
+        stage.addActor(playerLabel1);
         stage.addActor(playerLabel2);
         stage.addActor(playerLabel3);
         stage.addActor(playerLabel4);
@@ -95,6 +94,9 @@ public class LobbyScreen extends GameScreen {
     public void render(float delta) {
         super.render(delta);
 
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
+
         for (Label label : playerLabels) {
             label.setVisible(false);
         }
@@ -102,9 +104,11 @@ public class LobbyScreen extends GameScreen {
         if (game.getGameWorldState().getPlayers() != null) {
             int index = 0;
             for (Map.Entry<Integer, String> player : game.getGameWorldState().getPlayers().entrySet()) {
-                Label playerLabel = playerLabels.get(index++);
+                Label playerLabel = playerLabels.get(index);
                 playerLabel.setText(player.getValue());
+                playerLabel.setPosition(12 * W / 16, (14 - 2 * index) * H / 16);
                 playerLabel.setVisible(true);
+                index++;
             }
         }
 
@@ -121,7 +125,7 @@ public class LobbyScreen extends GameScreen {
             game.setScreen(new SessionScreen(game, client));
         }
 
-        if (!game.getGameWorldState().isInLobby()) {
+        if (game.getGameWorldState().getGameID() == -1) {
             game.setScreen(new MainScreen(game, client));
         }
     }
