@@ -16,8 +16,8 @@ public class MainScreen extends GameScreen {
     public MainScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = Gdx.graphics.getWidth();
-        float H = Gdx.graphics.getHeight();
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         joinLobby = new TextButton("Join lobby", game.getAssets().getSkin());
         joinLobby.setSize(W / 8, H / 16);

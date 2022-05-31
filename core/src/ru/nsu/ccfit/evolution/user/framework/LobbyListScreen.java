@@ -24,8 +24,8 @@ public class LobbyListScreen extends GameScreen {
     public LobbyListScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = Gdx.graphics.getWidth();
-        float H = Gdx.graphics.getHeight();
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         lobbies = new Array<>();
         lobbiesList = new List<>(game.getAssets().getSkin());

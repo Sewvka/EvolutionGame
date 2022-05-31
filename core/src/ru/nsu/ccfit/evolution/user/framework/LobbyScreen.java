@@ -23,8 +23,8 @@ public class LobbyScreen extends GameScreen {
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = Gdx.graphics.getWidth();
-        float H = Gdx.graphics.getHeight();
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         gameIDLabel = new Label("Game ID: " + game.getGameWorldState().getGameID(), game.getAssets().getSkin());
         gameIDLabel.setSize(W / 8, H / 16);

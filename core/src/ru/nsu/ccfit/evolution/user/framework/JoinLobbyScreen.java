@@ -16,8 +16,8 @@ public class JoinLobbyScreen extends GameScreen {
     public JoinLobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
 
-        float W = Gdx.graphics.getWidth();
-        float H = Gdx.graphics.getHeight();
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         gameIDTextField = new TextField("Game ID", game.getAssets().getSkin());
         gameIDTextField.setSize(W / 4, H / 16);

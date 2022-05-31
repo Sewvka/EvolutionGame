@@ -16,8 +16,8 @@ public class LoginScreen extends GameScreen {
     public LoginScreen(final EvolutionGame evolutionGame, final Client client) {
         super(evolutionGame, client);
 
-        float W = Gdx.graphics.getWidth();
-        float H = Gdx.graphics.getHeight();
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         loginInput = new TextField("your login", evolutionGame.getAssets().getSkin());
         loginInput.setSize(W / 4, H / 16);
