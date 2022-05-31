@@ -25,9 +25,9 @@ public class Client {
 
     private static final Logger logger;
 
-    private Timer lobbyCheckTimer = new Timer(true);
-    private Timer checkChangesTimer = new Timer(true);
-    private Timer gamesListTimer = new Timer(true);
+    private Timer lobbyCheckTimer;
+    private Timer checkChangesTimer;
+    private Timer gamesListTimer;
 
     static {
         logger = Logger.getLogger(Client.class.getName());
@@ -209,11 +209,13 @@ public class Client {
 
     public void startChangeChecking() {
         logger.info("Starting timer for change checking");
+        checkChangesTimer = new Timer(true);
         checkChangesTimer.scheduleAtFixedRate(new ChangeChecker(), 0, 500);
     }
 
     public void startLobbyChecking() {
         logger.info("Starting timer for lobby checking");
+        lobbyCheckTimer = new Timer(true);
         lobbyCheckTimer.scheduleAtFixedRate(new LobbyChecker(), 0, 500);
     }
 
@@ -240,6 +242,7 @@ public class Client {
 
     public void startGamesListChecking() {
         logger.info("Starting timer for games list checking");
+        gamesListTimer = new Timer(true);
         gamesListTimer.scheduleAtFixedRate(new GamesListChecker(), 0, 500);
     }
 

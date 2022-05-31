@@ -19,6 +19,7 @@ public class LobbyScreen extends GameScreen {
     private Label selfPlayerLabel;
     private List<Label> playerLabels = new ArrayList<>();
     private TextButton startLobbyButton;
+    private TextButton leaveLobbyButton;
 
     public LobbyScreen(final EvolutionGame game, final Client client) {
         super(game, client);
@@ -30,7 +31,7 @@ public class LobbyScreen extends GameScreen {
         gameIDLabel.setSize(W / 8, H / 16);
         gameIDLabel.setPosition(W / 16, 14 * H / 16);
 
-        selfPlayerLabel = new Label(game.getGameWorldState().getSelfUsername(), game.getAssets().getSkin());
+        selfPlayerLabel = new Label("", game.getAssets().getSkin());
         selfPlayerLabel.setSize(W / 8, H / 16);
         selfPlayerLabel.setPosition(13 * W / 16, 14 * H / 16);
 
@@ -61,6 +62,16 @@ public class LobbyScreen extends GameScreen {
             }
         });
 
+        leaveLobbyButton = new TextButton("Leave", game.getAssets().getSkin());
+        leaveLobbyButton.setSize(W / 8, H / 16);
+        leaveLobbyButton.setPosition(W / 16, H / 8);
+        leaveLobbyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                client.quitGame(game.getGameWorldState().getSelfID());
+            }
+        });
+
         Stage stage = new Stage();
         stage.addActor(gameIDLabel);
         stage.addActor(selfPlayerLabel);
@@ -68,6 +79,7 @@ public class LobbyScreen extends GameScreen {
         stage.addActor(playerLabel3);
         stage.addActor(playerLabel4);
         stage.addActor(startLobbyButton);
+        stage.addActor(leaveLobbyButton);
         addStage(stage);
 
         for (Label playerLabel : playerLabels) {
@@ -107,6 +119,10 @@ public class LobbyScreen extends GameScreen {
         if (game.getGameWorldState().isGameStarted()) {
             game.getClient().stopLobbyChecking();
             game.setScreen(new SessionScreen(game, client));
+        }
+
+        if (!game.getGameWorldState().isInLobby()) {
+            game.setScreen(new MainScreen(game, client));
         }
     }
 
