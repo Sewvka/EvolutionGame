@@ -31,7 +31,7 @@ public class PlayerView extends Group {
         nameLabel = new Label(playerName, game.getAssets().getSkin());
         nameLabel.setColor(Color.WHITE);
         labelWrapper = new Group();
-        labelWrapper.setPosition(0, getHeight() * 0.35f);
+        labelWrapper.setPosition(0, getHeight() * 0.32f);
         labelWrapper.addActor(nameLabel);
         addActor(labelWrapper);
     }
@@ -67,7 +67,7 @@ public class PlayerView extends Group {
                 setPosition(-worldW / 16, worldH / 2 + getWidth() / 2);
                 setRotation(-90);
                 labelWrapper.rotateBy(90);
-                labelWrapper.setPosition(0, getHeight()*0.4f);
+                labelWrapper.setPosition(0, getHeight()*0.32f);
                 break;
             case "right":
                 setPosition(worldW / 16 + worldW, worldH / 2 - getWidth() / 2);
@@ -79,22 +79,22 @@ public class PlayerView extends Group {
                 setPosition(worldW / 2 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 labelWrapper.rotateBy(180);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
                 break;
             case "topL":
                 setPosition(worldW / 4 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 labelWrapper.rotateBy(180);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
                 break;
             case "topR":
                 setPosition(worldW / 4 * 3 + getWidth() / 2, worldH / 9 + worldH);
                 setRotation(180);
                 labelWrapper.rotateBy(180);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
-                labelWrapper.setPosition(getWidth(), getHeight()*0.4f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
+                labelWrapper.setPosition(getWidth(), getHeight()*0.32f);
                 break;
         }
     }
