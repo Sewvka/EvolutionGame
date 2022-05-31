@@ -1,5 +1,6 @@
 package ru.nsu.ccfit.evolution.user.framework;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,8 +15,8 @@ public class GameScreen implements Screen {
     private final Viewport viewport;
     private final OrthographicCamera camera;
     private final StageMultiplexer stageMultiplexer;
-    public static final float WORLD_SIZE_X = 1280;
-    public static final float WORLD_SIZE_Y = 720;
+    public static final float WORLD_SIZE_X = Gdx.graphics.getWidth();
+    public static final float WORLD_SIZE_Y = Gdx.graphics.getHeight();
 
     public GameScreen(EvolutionGame game, Client client) {
         this.game = game;

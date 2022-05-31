@@ -6,12 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.server.Client;
 import ru.nsu.ccfit.evolution.server.LobbyModel;
-import sun.font.TextLabel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
