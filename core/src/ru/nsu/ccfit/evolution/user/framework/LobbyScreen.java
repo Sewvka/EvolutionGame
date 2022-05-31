@@ -106,7 +106,7 @@ public class LobbyScreen extends GameScreen {
 
         if (game.getGameWorldState().isGameStarted()) {
             game.getClient().stopLobbyChecking();
-            game.setScreen(new LoadingScreen(game, client));
+            game.setScreen(new SessionScreen(game, client));
         }
     }
 

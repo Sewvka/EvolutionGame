@@ -32,6 +32,7 @@ public class AssetLoader {
         assets.load("food/food_red.png", Texture.class);
         assets.load("food/food_yellow.png", Texture.class);
         assets.load("food/food_blue.png", Texture.class);
+        assets.load("logo.png", Texture.class);
     }
 
     public BitmapFont getFont() {

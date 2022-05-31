@@ -18,7 +18,7 @@ public class EvolutionGame extends Game {
         this.gameWorldState = new GameWorldState();
         this.client = new Client(this, gameWorldState);
         playerID = 0;
-        this.setScreen(new LoginScreen(this, client));
+        this.setScreen(new LoadingScreen(this, client));
     }
 
     public GameWorldState getGameWorldState() {

@@ -2,8 +2,10 @@ package ru.nsu.ccfit.evolution.user.framework;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -14,6 +16,7 @@ public class LoginScreen extends GameScreen {
 
     private TextField loginInput;
     private TextButton submitButton;
+    private Image icon;
 
     public LoginScreen(final EvolutionGame evolutionGame, final Client client) {
         super(evolutionGame, client);
@@ -40,9 +43,14 @@ public class LoginScreen extends GameScreen {
             }
         });
 
+        icon = new Image(new TextureRegion(game.getAssets().getTexture("logo.png")));
+        icon.setPosition((W - icon.getWidth()) / 2, 3 * (H - icon.getHeight()) / 4);
+        icon.setVisible(true);
+
         Stage stage = new Stage(getViewport());
         stage.addActor(loginInput);
         stage.addActor(submitButton);
+        stage.addActor(icon);
         addStage(stage);
     }
 

@@ -22,7 +22,7 @@ public class LoadingScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if (game.getAssets().isLoaded()) {
-            game.setScreen(new SessionScreen(game, client));
+            game.setScreen(new LoginScreen(game, client));
         } else {
             super.render(delta);
             bar.setValue(game.getAssets().progress() * 100);
