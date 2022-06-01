@@ -33,7 +33,8 @@ public class SessionScreen extends GameScreen {
         addStage(uiStage);
 
         passButton = new TextButton("Pass turn", game.getAssets().getSkin());
-        passButton.setPosition(GameScreen.WORLD_SIZE_X / 32, GameScreen.WORLD_SIZE_Y / 18);
+        passButton.setSize(GameScreen.WORLD_SIZE_X/6, GameScreen.WORLD_SIZE_Y/16);
+        passButton.setPosition(GameScreen.WORLD_SIZE_X / 32, GameScreen.WORLD_SIZE_Y/32);
         passButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

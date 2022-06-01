@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 
 // TODO: create Net.HttpResponseListener() for each post request
 public class Client {
-
     private String baseURL = "http://37.230.115.215:5000/";
 
     private GameWorldState gameWorldState;
