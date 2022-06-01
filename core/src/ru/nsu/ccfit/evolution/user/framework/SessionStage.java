@@ -30,8 +30,7 @@ public class SessionStage extends Stage {
         this.sessionScreen = sessionScreen;
         playerActors = new HashMap<>();
         food = new FoodTray(game);
-        food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y/8);
-        addActor(food);
+        food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y/9);
 
         Map<Integer, String> players = game.getGameWorldState().getPlayers();
 
@@ -39,6 +38,7 @@ public class SessionStage extends Stage {
             playerActors.put(id, new PlayerView(game, id, players.get(id)));
             addActor(playerActors.get(id));
         }
+        addActor(food);
         playerActors.get(game.getGameWorldState().getSelfID()).getHand().setTouchable(Touchable.disabled);
         alignPlayers();
     }
