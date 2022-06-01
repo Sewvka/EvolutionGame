@@ -55,10 +55,6 @@ public class SessionStage extends Stage {
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         user.getHand().addAction(moveTo(user.getHand().getX(), 0, 0.3f));
         food.setVisible(false);
-    }
-
-    public void cardAllocation() {
-        PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
         game.getClient().cardAllocation(user.getID());
         for (PlayerView p : playerActors.values()) {
             p.getTable().clearAllFood();
