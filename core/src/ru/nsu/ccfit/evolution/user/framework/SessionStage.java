@@ -9,7 +9,6 @@ import ru.nsu.ccfit.evolution.server.GameStage;
 import ru.nsu.ccfit.evolution.server.TableModel;
 import ru.nsu.ccfit.evolution.user.actors.*;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -187,6 +186,7 @@ public class SessionStage extends Stage {
     }
 
     private void removePlayer(int playerID) {
+        game.getGameWorldState().getPlayers().remove(playerID);
         playerActors.get(playerID).remove();
         playerActors.remove(playerID);
         alignPlayers();
