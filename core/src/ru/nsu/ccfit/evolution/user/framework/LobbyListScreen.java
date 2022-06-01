@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import ru.nsu.ccfit.evolution.server.Client;
 import ru.nsu.ccfit.evolution.server.LobbyModel;
@@ -19,6 +21,7 @@ public class LobbyListScreen extends GameScreen {
     private List<LobbyModel> lobbiesList;
     private ScrollPane scrollPane;
     private Label label;
+    private TextButton leaveLobbyButton;
 
     private Array<LobbyModel> lobbies;
 
@@ -53,9 +56,20 @@ public class LobbyListScreen extends GameScreen {
         label.setPosition(9 * W / 20, 8 * H / 10);
         label.setSize(W / 10, H / 5);
 
+        leaveLobbyButton = new TextButton("Back", game.getAssets().getSkin());
+        leaveLobbyButton.setSize(W / 8, H / 16);
+        leaveLobbyButton.setPosition(W / 16, 14 * H / 16);
+        leaveLobbyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new MainScreen(game, client));
+            }
+        });
+
         Stage stage = new Stage(getViewport());
         stage.addActor(scrollPane);
         stage.addActor(label);
+        stage.addActor(leaveLobbyButton);
         addStage(stage);
     }
 

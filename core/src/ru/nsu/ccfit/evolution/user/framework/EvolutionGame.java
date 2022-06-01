@@ -41,7 +41,7 @@ public class EvolutionGame extends Game {
     @Override
     public void dispose() {
         assets.dispose();
-        if (gameWorldState.isInLobby()) {
+        if (gameWorldState.isInLobby() || gameWorldState.getGameID() != -1) {
             client.quitGame(gameWorldState.getSelfID());
             gameWorldState.clear();
         }

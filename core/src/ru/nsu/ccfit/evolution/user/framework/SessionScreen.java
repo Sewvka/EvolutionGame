@@ -22,6 +22,7 @@ public class SessionScreen extends GameScreen {
     private AbilityView queuedAbilityActivation;
     private CreatureView queuedCreature;
     private TextButton passButton;
+    private TextButton leaveGameButton;
 
     public SessionScreen(final EvolutionGame game, final Client client) {
         super(game, client);
@@ -31,6 +32,9 @@ public class SessionScreen extends GameScreen {
         addStage(sessionStage);
         addStage(overlayStage);
         addStage(uiStage);
+
+        float W = GameScreen.WORLD_SIZE_X;
+        float H = GameScreen.WORLD_SIZE_Y;
 
         passButton = new TextButton("Pass turn", game.getAssets().getSkin());
         passButton.setSize(GameScreen.WORLD_SIZE_X/6, GameScreen.WORLD_SIZE_Y/16);
@@ -43,7 +47,21 @@ public class SessionScreen extends GameScreen {
                 }
             }
         });
+
+        leaveGameButton = new TextButton("Leave", game.getAssets().getSkin());
+        leaveGameButton.setSize(W / 6, H / 16);
+        leaveGameButton.setPosition(77 * W / 96, H / 32);
+        leaveGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                client.quitGame(game.getGameWorldState().getSelfID());
+                client.stopChangeChecking();
+                game.setScreen(new MainScreen(game, client));
+            }
+        });
+
         uiStage.addActor(passButton);
+        uiStage.addActor(leaveGameButton);
         passButton.setTouchable(Touchable.disabled);
         initDevelopment();
     }
