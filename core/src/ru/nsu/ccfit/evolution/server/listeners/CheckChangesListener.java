@@ -87,6 +87,11 @@ public class CheckChangesListener extends AbstractListener {
             || response.has("creatures")) {
             logger.info("Changes received.");
         }
+        if (response.has("card_allocation")) {
+            if (response.getBoolean("card_allocation")) {
+                gameWorldState.setCardAllocation(true);
+            }
+        }
         else logger.info("No changes received.");
     }
 }

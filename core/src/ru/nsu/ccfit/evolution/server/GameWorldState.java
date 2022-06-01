@@ -35,6 +35,15 @@ public class GameWorldState {
     //'flags' for turn and stage changes.
     private int currentTurnFlag = -1;
     private GameStage gameStageFlag = null;
+    private boolean cardAllocation = false;
+
+    public boolean getCardAllocation() {
+        return cardAllocation;
+    }
+
+    public void setCardAllocation(boolean cardAllocation) {
+        this.cardAllocation = cardAllocation;
+    }
 
     public int getFoodAvailable() {
         return foodAvailable;
