@@ -26,7 +26,7 @@ public class SessionScreen extends GameScreen {
 
     public SessionScreen(final EvolutionGame game, final Client client) {
         super(game, client);
-        sessionStage = new SessionStage(game, game.getGameWorldState().getPlayers().size(), this);
+        sessionStage = new SessionStage(game, this);
         overlayStage = new Stage(getViewport());
         uiStage = new Stage(getViewport());
         addStage(sessionStage);

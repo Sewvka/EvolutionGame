@@ -36,6 +36,8 @@ public class GameWorldState {
     private int currentTurnFlag = -1;
     private GameStage gameStageFlag = null;
     private boolean cardAllocation = false;
+    private ArrayList<Integer> leavers = new ArrayList<>();
+
 
     public boolean getCardAllocation() {
         return cardAllocation;
@@ -43,6 +45,14 @@ public class GameWorldState {
 
     public void setCardAllocation(boolean cardAllocation) {
         this.cardAllocation = cardAllocation;
+    }
+
+    public ArrayList<Integer> getLeavers() {
+        return leavers;
+    }
+
+    public void setLeavers(ArrayList<Integer> leavers) {
+        this.leavers = leavers;
     }
 
     public int getFoodAvailable() {

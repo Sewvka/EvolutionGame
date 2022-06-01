@@ -8,6 +8,7 @@ import ru.nsu.ccfit.evolution.server.GameStage;
 import ru.nsu.ccfit.evolution.server.GameWorldState;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class CheckChangesListener extends AbstractListener {
@@ -18,6 +19,14 @@ public class CheckChangesListener extends AbstractListener {
     @Override
     public void handle(JsonValue httpResponse) {
         JsonValue response = httpResponse.get("response");
+        if (response.has("leavers")) {
+            JsonValue jsonLeavers = response.get("leavers");
+            ArrayList<Integer> leavers = new ArrayList<>();
+            for (JsonValue jsonPlayer = jsonLeavers.child; jsonPlayer != null; jsonPlayer = jsonPlayer.next) {
+                leavers.add(jsonPlayer.getInt("id"));
+            }
+            gameWorldState.setLeavers(leavers);
+        }
         if (response.has("creatures")) {
             JsonValue jsonCreatures = response.get("creatures");
 

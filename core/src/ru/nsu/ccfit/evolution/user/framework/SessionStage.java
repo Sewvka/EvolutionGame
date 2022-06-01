@@ -22,15 +22,13 @@ public class SessionStage extends Stage {
     private final SessionScreen sessionScreen;
     private final EvolutionGame game;
 
-    public SessionStage(EvolutionGame game, int playerCount, SessionScreen sessionScreen) {
+    public SessionStage(EvolutionGame game, SessionScreen sessionScreen) {
         super(sessionScreen.getViewport());
         this.game = game;
-        if (playerCount > 4) throw new InvalidParameterException("Game does not support more than 4 players!");
-        if (playerCount < 1) throw new InvalidParameterException("Game requires at least one player!");
         this.sessionScreen = sessionScreen;
         playerActors = new HashMap<>();
         food = new FoodTray(game);
-        food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y/9);
+        food.setPosition(GameScreen.WORLD_SIZE_X / 16, GameScreen.WORLD_SIZE_Y / 9);
 
         Map<Integer, String> players = game.getGameWorldState().getPlayers();
 
@@ -64,7 +62,7 @@ public class SessionStage extends Stage {
     public void initFeeding(int foodTotal) {
         setHandTouchable(Touchable.disabled);
         PlayerView user = playerActors.get(game.getGameWorldState().getSelfID());
-        user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y/9, 0.3f));
+        user.getHand().addAction(moveTo(user.getHand().getX(), -GameScreen.WORLD_SIZE_Y / 9, 0.3f));
         food.init(foodTotal);
         food.setVisible(true);
     }
@@ -164,6 +162,9 @@ public class SessionStage extends Stage {
         for (int playerID : game.getGameWorldState().getPlayers().keySet()) {
             updatePlayer(playerID);
         }
+        for (int playerID : game.getGameWorldState().getLeavers()) {
+            removePlayer(playerID);
+        }
     }
 
     private void updatePlayer(int playerID) {
@@ -185,6 +186,12 @@ public class SessionStage extends Stage {
         }
     }
 
+    private void removePlayer(int playerID) {
+        playerActors.get(playerID).remove();
+        playerActors.remove(playerID);
+        alignPlayers();
+    }
+
     private void updateCreature(int playerID, int creatureID) {
         CreatureModel creatureModel = game.getGameWorldState().getTables().get(playerID).getCreatures().get(creatureID);
         TableView tableView = playerActors.get(playerID).getTable();
@@ -200,8 +207,7 @@ public class SessionStage extends Stage {
                     AbilityView a2 = tableView.get(partnerID).addAbility(abilityModel.getName());
                     a1.setBuddy(a2);
                     a2.setBuddy(a1);
-                }
-                else {
+                } else {
                     creatureView.addAbility(abilityModel.getName());
                 }
             }
@@ -238,9 +244,8 @@ public class SessionStage extends Stage {
         for (int i = 0; i < handModel.size(); i++) {
             if (i >= playerView.getHand().getCards().size) {
                 playerView.getHand().addCard(handModel.get(i));
-            }
-            else if (playerView.getHand().getCards().get(i).getId() != handModel.get(i)) {
-                i+=0;
+            } else if (playerView.getHand().getCards().get(i).getId() != handModel.get(i)) {
+                i += 0;
                 playerView.getHand().removeCardAt(i);
                 i--;
             }
@@ -272,8 +277,7 @@ public class SessionStage extends Stage {
         for (PlayerView p : playerActors.values()) {
             if (p.getID() == game.getGameWorldState().getCurrentTurn()) {
                 p.getNameLabel().setColor(Color.GREEN);
-            }
-            else {
+            } else {
                 p.getNameLabel().setColor(Color.WHITE);
             }
         }

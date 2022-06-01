@@ -2,15 +2,15 @@ package ru.nsu.ccfit.evolution.user.actors;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Pool;
-import ru.nsu.ccfit.evolution.server.CreatureModel;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ public class TableView extends Group {
     private boolean tableSelected;
     private final Pool<CreatureView> creaturePool;
     final TextureRegion tableTexture;
+    private final ArrayList<CreatureView> deadCreatures = new ArrayList<>();
 
     public TableView(final EvolutionGame game, float x, float y, float tableW, float tableH) {
         super();
@@ -88,17 +89,20 @@ public class TableView extends Group {
         addActor(c);
     }
 
+    public ArrayList<CreatureView> getDeadCreatures() {
+        return deadCreatures;
+    }
+
     public void removeCreature(CreatureView c) {
         removeCreature(c.getID());
     }
 
-    public void removeCreature(int id) {
-        CreatureView c = creatures.get(id);
-        c.removeBuddies();
-        creatures.remove(id);
-        creaturePool.free(c);
-        removeActor(c);
+    public void removeCreature(final int id) {
+        final CreatureView c = creatures.get(id);
+        c.die();
     }
+
+
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -107,13 +111,21 @@ public class TableView extends Group {
     }
 
     public void act(float delta) {
+        super.act(delta);
         int i = 0;
         for (CreatureView c : creatures.values()) {
-            float x = (i - (float) (creatures.size() - 1) / 2) * (c.getWidth() + 2) - c.getWidth() / 2 + c.getParent().getOriginX();
-            c.addAction(moveTo(x, c.getY(), 0.1f));
-            i++;
+            if (!c.isDead()) {
+                float x = (i - (float) (creatures.size() - 1) / 2) * (c.getWidth() + 2) - c.getWidth() / 2 + c.getParent().getOriginX();
+                c.addAction(moveTo(x, c.getY(), 0.1f));
+                i++;
+            }
         }
-        super.act(delta);
+        for (CreatureView c : deadCreatures) {
+            c.removeBuddies();
+            creatures.remove(c.getID());
+            creaturePool.free(c);
+            removeActor(c);
+        }
     }
 
     public void clearAllFood() {

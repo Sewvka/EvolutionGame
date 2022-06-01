@@ -1,19 +1,23 @@
 package ru.nsu.ccfit.evolution.user.actors;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import ru.nsu.ccfit.evolution.common.Abilities;
 import ru.nsu.ccfit.evolution.user.actors.listeners.Hoverable;
 import ru.nsu.ccfit.evolution.user.actors.listeners.HoverableListener;
 import ru.nsu.ccfit.evolution.user.framework.EvolutionGame;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 
 public class CreatureView extends GameActor implements Hoverable {
     private final EvolutionGame game;
     private final Cover cover;
     private final ArrayList<AbilityView> abilities;
     private int id;
+    private AtomicBoolean dead = new AtomicBoolean(false);
 
     public CreatureView(EvolutionGame game, float w, float h) {
         super(null, w, h);
@@ -22,6 +26,25 @@ public class CreatureView extends GameActor implements Hoverable {
         cover = new Cover(game, w, h);
         addActor(cover);
         addListener(new HoverableListener(this));
+    }
+
+    public void die() {
+        final CreatureView c = this;
+        addAction(sequence(
+                parallel(scaleTo(0.1f, 0.1f, 0.3f),
+                        Actions.rotateTo(45, 0.3f)),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        TableView parent = (TableView) getParent();
+                        dead.set(true);
+                        parent.getDeadCreatures().add(c);
+                    }
+                })));
+    }
+
+    public boolean isDead() {
+        return dead.get();
     }
 
     @Override
