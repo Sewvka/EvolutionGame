@@ -162,7 +162,7 @@ public class SessionStage extends Stage {
             updatePlayer(playerID);
         }
         for (int playerID : game.getGameWorldState().getLeavers()) {
-            removePlayer(playerID);
+            if (game.getGameWorldState().getPlayers().containsKey(playerID)) removePlayer(playerID);
         }
     }
 
