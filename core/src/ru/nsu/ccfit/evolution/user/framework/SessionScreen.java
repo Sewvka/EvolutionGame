@@ -281,10 +281,6 @@ public class SessionScreen extends GameScreen {
         int activePlayerID = game.getGameWorldState().getCurrentTurnFlag();
         if (activePlayerID != -1) {
             if (activePlayerID == game.getGameWorldState().getSelfID()) {
-                if (game.getGameWorldState().getCardAllocation()) {
-                    sessionStage.cardAllocation();
-                    game.getGameWorldState().setCardAllocation(false);
-                }
                 passButton.setTouchable(Touchable.enabled);
                 sessionStage.myTurn();
             } else {
